@@ -1,0 +1,4 @@
+name: Marketcraft
+version: ${project.version}
+main: com.kitdacatsun.marketcraft.MarketCraft
+api-version: 1.16

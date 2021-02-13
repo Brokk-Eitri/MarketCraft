@@ -2,7 +2,6 @@ package com.kitdacatsun.marketcraft;
 
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.entity.Item;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -18,8 +17,8 @@ public final class MarketCraft extends JavaPlugin {
     public static World world;
     public static Logger logger;
 
-    private final static HashMap<Item, Integer> itemMap = new HashMap<>();
-    public static ArrayList<ItemChange> itemChanges = new ArrayList<>();
+    private final static HashMap<String, Integer> itemMap = new HashMap<>();
+    public static ArrayList<ItemChange> changeBuffer = new ArrayList<>();
 
     private static final long updateTimeTicks = 24000;
 
@@ -51,35 +50,35 @@ public final class MarketCraft extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        writeItemCounts();
+        saveItemCounts();
     }
 
-    private static void writeItemCounts() {
-        for (Item item : itemMap.keySet()) {
-            itemCounts.set(item.getName(), itemMap.get(item));
+    private static void saveItemCounts() {
+        for (String item : itemMap.keySet()) {
+            itemCounts.set(item, itemMap.get(item));
         }
     }
 
     private static void updateItemDict() {
-        for (int i = 0; i < itemChanges.size(); i++) {
-            ItemChange itemChange = itemChanges.get(i);
-            logger.info("Item: " + itemChange.item.getName());
-            itemMap.put(itemChange.item, itemMap.getOrDefault(itemChange.item, 0) + itemChange.change);
-            itemChanges.remove(itemChange);
+        for (int i = 0; i < changeBuffer.size(); i++) {
+            ItemChange itemChange = changeBuffer.get(i);
+            logger.info("Item: " + itemChange.name);
+            itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
+            changeBuffer.remove(itemChange);
         }
 
-        writeItemCounts();
+        saveItemCounts();
 
         System.gc();
     }
 }
 
 class ItemChange {
-    public Item item;
+    public String name;
     public int change;
 
-    public ItemChange(Item item, int change) {
-        this.item = item;
+    public ItemChange(String name, int change) {
+        this.name = name;
         this.change = change;
     }
 }

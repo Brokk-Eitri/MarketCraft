@@ -16,28 +16,25 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
         if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER){
-            if (event.getView().getTitle().equals(ChatColor.AQUA + "Bank")) {
+            if (event.getView().getTitle().equals("Shop")) {
                 event.setCancelled(true);
 
                 ItemStack clickedItem = event.getCurrentItem();
                 assert clickedItem != null;
 
                 Player player = (Player) event.getWhoClicked();
-                player.sendMessage(clickedItem.getType().toString() + " " + clickedItem.getAmount());
+
 
                 int cost = 10;
-                String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
-                String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
 
-
-                if(!displayNameOf(clickedItem).equals(sellOne) && !displayNameOf(clickedItem).equals(sellAll)) {
-                    player.sendMessage("Item not in bank");
+                if(clickedItem.getLore().getType.equals("Null")) {
 
                     GuiBuilder Bank = new GuiBuilder();
-                    Bank.openInventory(player, clickedItem.getType().toString(), clickedItem.getAmount());
-                    clickedItem.setAmount(0);
+                    Bank.openInventory(player, clickedItem.getType().toString(), 1);
+
                 } else {
-                    player.sendMessage("Item in bank");
+                    //blank for now lol
+
                 }
             }
 

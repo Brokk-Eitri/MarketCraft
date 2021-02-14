@@ -16,9 +16,12 @@ public class GuiBuilder{
         return Bukkit.getServer().createInventory(null, size, title);
     }
 
-    public ItemStack build(Material material, String name, int amount){
+    public ItemStack build(Material material, String name, int amount, String loreString){
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
+        ArrayList<String> lore = new ArrayList();
+        lore.add(loreString);
+        meta.setLore(lore);
         meta.setDisplayName(name);
         item.setAmount(amount);
         item.setItemMeta(meta);
@@ -28,17 +31,30 @@ public class GuiBuilder{
 
 
     public void openInventory(Player player, String material, int amount) {
-        Inventory Bank = this.createGui(ChatColor.AQUA + "Bank", 27);
+        Inventory Bank = this.createGui("Shop", 27);
 
         int cost = 10;
-        ItemStack sellOne = build(Material.GREEN_STAINED_GLASS_PANE,ChatColor.GREEN + "Sell 1 for " + cost,1);
-        ItemStack sellAll = build(Material.GREEN_STAINED_GLASS_PANE,ChatColor.GREEN + "Sell all for " + cost + " each",1);
+        ItemStack sell1 = build(Material.RED_STAINED_GLASS_PANE,ChatColor.RED + "Sell 1",1, "Shop");
+        ItemStack sell10 = build(Material.RED_STAINED_GLASS_PANE,ChatColor.RED + "Sell 10",10, "Shop");
+        ItemStack sell64 = build(Material.RED_STAINED_GLASS_PANE,ChatColor.RED + "Sell 64",64, "Shop");
+        ItemStack buy1 = build(Material.GREEN_STAINED_GLASS_PANE,ChatColor.GREEN + "Buy 1",1, "Shop");
+        ItemStack buy10 = build(Material.GREEN_STAINED_GLASS_PANE,ChatColor.GREEN + "Buy 10",10, "Shop");
+        ItemStack buy64 = build(Material.GREEN_STAINED_GLASS_PANE,ChatColor.GREEN + "Buy 64",64, "Shop");
+        ItemStack back = build(Material.RED_DYE,"Back",1);
 
-        ItemStack middle = build(Material.getMaterial(material),ChatColor.BLUE+ "Selected Item",amount);
 
-        Bank.setItem(15, sellOne);
-        Bank.setItem(11, sellAll);
+        ItemStack middle = build(Material.getMaterial(material),Material.getMaterial(material).getName() ,amount);
+
+        Bank.setItem(11, sell1);
+        Bank.setItem(10, sell10);
+        Bank.setItem(9, sell64);
         Bank.setItem(13, middle);
+        Bank.setItem(15, buy1);
+        Bank.setItem(16, buy10);
+        Bank.setItem(17, buy64);
+        Bank.setItem(4, back);
+
+
 
         player.openInventory(Bank);
 

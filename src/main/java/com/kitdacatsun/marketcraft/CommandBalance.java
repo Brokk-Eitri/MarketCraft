@@ -1,4 +1,4 @@
-package me.jame.chestinterface;
+package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

@@ -1,4 +1,4 @@
-package me.jame.chestinterface;
+package com.kitdacatsun.marketcraft;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
@@ -29,7 +29,7 @@ public class GuiListener implements Listener {
                 player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GREEN+"Sell all for "+cost+" each"))));
                 player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GREEN+"Sell 1 for "+cost)) && !(clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GREEN+"Sell all for "+cost+" each"))));
                 if(!(clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GREEN+"Sell 1 for "+cost)) && !(clickedItem.getItemMeta().getDisplayName().equals(ChatColor.GREEN+"Sell all for "+cost+" each"))){
-                    if (event.getView().getItem(13))
+                    //if (event.getView().getItem(13))
                     player.getInventory().addItem(event.getView().getItem(13));
                     player.sendMessage("Item not in bank");
                     GuiBuilder Bank = new GuiBuilder();

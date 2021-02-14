@@ -29,12 +29,9 @@ public class GuiListener implements Listener {
                 String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
                 String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
 
-                // For testing? If not u rly need to make this look less someone threw up some ascii on my screen
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellOne)) && !(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
 
                 if(!displayNameOf(clickedItem).equals(sellOne) && !displayNameOf(clickedItem).equals(sellAll)) {
-                    player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
+                    //player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
                     player.sendMessage("Item not in bank");
 
                     GuiBuilder Bank = new GuiBuilder();

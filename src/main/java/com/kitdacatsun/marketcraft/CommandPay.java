@@ -1,54 +1,47 @@
 package com.kitdacatsun.marketcraft;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 
-public class Commandpay implements CommandExecutor {
-    private static ChestInterface plugin;
+public class CommandPay implements CommandExecutor {
 
-    public Commandpay(ChestInterface chestInterface) {
-    }
-
-    public Commandpay(){
-
-    }
     @Override
-    public boolean onCommand(CommandSender sender , Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args) {
 
         if (args.length != 2) {
             return false;
         }
-        Player player = Bukkit.getServer().getPlayer(args[0]);
-        if( player == null ) {
-            sender.sendMessage( ChatColor.RED  + "Error: Player not found" );
+
+        Player player = MarketCraft.server.getPlayer(args[0]);
+        if (player == null) {
+            sender.sendMessage(ChatColor.RED  + "Player not found");
             return true;
         }
+
         UUID Uuid = player.getUniqueId();
 
         int amount = Integer.parseInt(args[1]);
-        int balance = 0;
-        player.sendMessage(ChatColor.GOLD+"You have been payed £"+amount+" by "+sender.getName());
+        player.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
 
+        String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-        if(Files.get().contains("Players."+ Uuid.toString()+".balance")) {
-            balance = Files.get().getInt("Players."+Uuid.toString()+".balance");
-            balance = balance+amount;
+        if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
+            int balance = (int) MarketCraft.playerBalances.get("Players." + Uuid.toString() + ".balance") + amount;
             sender.sendMessage(String.valueOf(balance));
-            Files.get().set("Players." + Uuid.toString() + ".balance",balance);
-            Files.save();
+            MarketCraft.playerBalances.set(playerBalanceKey, balance);
+        } else {
+            MarketCraft.playerBalances.set(playerBalanceKey, amount);
+            MarketCraft.playerBalances.options().copyDefaults(true);
         }
-        else{
-            Files.get().set("Players." + Uuid.toString() + ".balance", amount);
-            Files.get().options().copyDefaults(true);
-            Files.save();
-        }
+
         return true;
     }
 

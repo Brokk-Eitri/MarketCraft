@@ -1,10 +1,12 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 public class SettingsFile {
     private final File file;
@@ -19,6 +21,8 @@ public class SettingsFile {
                     MarketCraft.logger.info("Created new file " + fileName);
                 }
             } catch (IOException ignored) {}
+        } else {
+            MarketCraft.logger.info("Found file");
         }
 
         customFile = YamlConfiguration.loadConfiguration(file);
@@ -39,5 +43,17 @@ public class SettingsFile {
 
     public Object get(String key) {
         return customFile.get(key);
+    }
+
+    public boolean contains(String key) {
+        return customFile.contains(key);
+    }
+
+    public FileConfigurationOptions options() {
+        return customFile.options();
+    }
+
+    public Set<String> getKeys(boolean deep) {
+        return customFile.getKeys(deep);
     }
 }

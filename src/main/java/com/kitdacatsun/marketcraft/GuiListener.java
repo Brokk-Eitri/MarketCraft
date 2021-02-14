@@ -31,7 +31,6 @@ public class GuiListener implements Listener {
 
 
                 if(!displayNameOf(clickedItem).equals(sellOne) && !displayNameOf(clickedItem).equals(sellAll)) {
-                    //player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
                     player.sendMessage("Item not in bank");
 
                     GuiBuilder Bank = new GuiBuilder();

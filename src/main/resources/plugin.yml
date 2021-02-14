@@ -2,3 +2,28 @@ name: Marketcraft
 version: ${project.version}
 main: com.kitdacatsun.marketcraft.MarketCraft
 api-version: 1.16
+
+commands:
+  shop:
+    description: A simple shop command
+    usage: /shop
+
+  pay:
+    description: A command for op's to give player curency
+    usage: /pay <player> <amount>
+
+  balance:
+    description: A commmand to cheak player balance
+    useage: /balance
+    aliases: bal
+    permission: balance
+
+  bank:
+    description: Used to spawn the bank villager
+    usage: /bank
+
+permissions:
+  balance:
+    description: Allows all players to cheak their balance
+    default: true
+

@@ -1,26 +1,24 @@
-package me.jame.chestinterface;
+package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandBalance implements CommandExecutor {
 
-    public CommandBalance(ChestInterface chestInterface) {
-    }
-
-    public CommandBalance() {
-
-    }
-
     @Override
-    public boolean onCommand(CommandSender sender , Command cmd, String label, String[] args){
-        if(sender instanceof Player){
-            Player player = (Player) sender;
-            player.sendMessage(ChatColor.GOLD+"Your balance is £"+Files.get().getInt("Players."+player.getUniqueId().toString()+".balance"));
+    public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args){
+        if (sender instanceof Player) {
+            String name = ((Player) sender).getUniqueId().toString();
+            String balance = (String) MarketCraft.playerBalances.get("Players." + name + ".balance");
+            sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balance);
+
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 }

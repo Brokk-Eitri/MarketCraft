@@ -14,7 +14,7 @@ public class CommandBank implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             GuiBuilder Bank = new GuiBuilder();
-            Bank.openInventory(player, "BARRIER",0);
+            Bank.openInventory(player, "BARRIER","",0,"center","BARRIER","",0);
             return true;
         } else {
             return false;

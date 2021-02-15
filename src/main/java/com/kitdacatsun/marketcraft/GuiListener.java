@@ -1,6 +1,7 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,32 +17,46 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
         if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER){
-            if (event.getView().getTitle().equals(ChatColor.AQUA + "Bank")) {
+            if (event.getView().getTitle().equals("Shop")) {
                 event.setCancelled(true);
 
                 ItemStack clickedItem = event.getCurrentItem();
                 assert clickedItem != null;
+                if (clickedItem != null){
+                    Player player = (Player) event.getWhoClicked();
 
-                Player player = (Player) event.getWhoClicked();
-                player.sendMessage(clickedItem.getType().toString() + " " + clickedItem.getAmount());
+                    int cost = 10;
 
-                int cost = 10;
-                String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
-                String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
+                    if(clickedItem.getLore() != null) {
+                        if (clickedItem.getItemMeta().getLore().toString().equals("[Shop]")){
+                            GuiBuilder bank = new GuiBuilder();
+                            if (event.getView().getItem(13) != null){
+                                String originalMaterial = event.getView().getItem(13).getType().toString();
+                                String originalName = event.getView().getItem(13).getItemMeta().getDisplayName();
+                                int originalAmount = event.getView().getItem(13).getAmount();
+                                bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector",originalMaterial,originalName,originalAmount);
 
-                // For testing? If not u rly need to make this look less someone threw up some ascii on my screen
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellOne)) && !(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
+                            }else{
+                                bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector","BARRIER","",0);
+                            }
+                        }else{
+                            //return to previous menu
+                        }
 
-                if(!displayNameOf(clickedItem).equals(sellOne) && !displayNameOf(clickedItem).equals(sellAll)) {
-                    player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
-                    player.sendMessage("Item not in bank");
+                    } else {
 
-                    GuiBuilder Bank = new GuiBuilder();
-                    Bank.openInventory(player, clickedItem.getType().toString(), clickedItem.getAmount());
-                    clickedItem.setAmount(0);
-                } else {
-                    player.sendMessage("Item in bank");
+                        GuiBuilder bank = new GuiBuilder();
+                        if (event.getView().getItem(22) != null){
+                            String originalMaterial = event.getView().getItem(22).getType().toString();
+                            String originalName = event.getView().getItem(22).getItemMeta().getDisplayName();
+                            int originalAmount = event.getView().getItem(22).getAmount();
+
+                            bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center",originalMaterial,originalName,originalAmount);
+
+                        }else{
+                            bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center","BARRIER","",0);
+                        }
+                    }
                 }
             }
 

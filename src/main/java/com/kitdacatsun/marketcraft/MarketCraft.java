@@ -52,7 +52,7 @@ public final class MarketCraft extends JavaPlugin {
         for (String key : changeBufferSave.getKeys(false)) {
             ItemChange itemChange = new ItemChange();
             itemChange.name = key;
-            itemChange.change = (int) changeBufferSave.get("key");
+            itemChange.change = (int) changeBufferSave.get(key);
             changeBuffer.add(itemChange);
         }
 

@@ -8,14 +8,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class GuiListener implements Listener {
 
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER){
+        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER) {
             if (event.getView().getTitle().equals(ChatColor.AQUA + "Bank")) {
                 event.setCancelled(true);
 
@@ -29,7 +27,7 @@ public class GuiListener implements Listener {
                 String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
                 String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
 
-                    if(clickedItem.getLore() != null) {
+                    if (clickedItem.getLore() != null) {
                         if (clickedItem.getItemMeta().getLore().toString().equals("[Shop]")){
                             GuiBuilder bank = new GuiBuilder();
                             if (event.getView().getItem(13) != null){
@@ -38,10 +36,10 @@ public class GuiListener implements Listener {
                                 int originalAmount = event.getView().getItem(13).getAmount();
                                 bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector",originalMaterial,originalName,originalAmount);
 
-                            }else{
+                            } else {
                                 bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector","BARRIER","",0);
                             }
-                        }else{
+                        } else {
                             //return to previous menu
                         }
 
@@ -55,7 +53,7 @@ public class GuiListener implements Listener {
 
                             bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center",originalMaterial,originalName,originalAmount);
 
-                        }else{
+                        } else {
                             bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center","BARRIER","",0);
                         }
                     }
@@ -63,7 +61,6 @@ public class GuiListener implements Listener {
             }
 
         }
-    }
 
     private String displayNameOf(ItemStack item) {
         return item.getItemMeta().getDisplayName();

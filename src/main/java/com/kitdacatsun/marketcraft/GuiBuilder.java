@@ -9,8 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
-
-public class GuiBuilder{
+public class GuiBuilder {
 
     public Inventory createGui(String title, int size){
         return Bukkit.getServer().createInventory(null, size, title);
@@ -41,7 +40,6 @@ public class GuiBuilder{
         Bank.setItem(13, middle);
 
         player.openInventory(Bank);
-
     }
 }
 

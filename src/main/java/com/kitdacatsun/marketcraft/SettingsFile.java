@@ -45,6 +45,10 @@ public class SettingsFile {
         return customFile.get(key);
     }
 
+    public int getInt(String key) {
+        return customFile.getInt(key);
+    }
+
     public boolean contains(String key) {
         return customFile.contains(key);
     }
@@ -53,7 +57,11 @@ public class SettingsFile {
         return customFile.options();
     }
 
-    public Set<String> getKeys(boolean deep) {
-        return customFile.getKeys(deep);
+    public Object[] getKeys(boolean deep) {
+        return customFile.getKeys(deep).toArray();
+    }
+
+    public FileConfiguration getCustomFile() {
+        return customFile;
     }
 }

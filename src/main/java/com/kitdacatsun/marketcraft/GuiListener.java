@@ -1,11 +1,13 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -15,7 +17,7 @@ public class GuiListener implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER){
+        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER) {
             if (event.getView().getTitle().equals(ChatColor.AQUA + "Bank")) {
                 event.setCancelled(true);
 
@@ -29,22 +31,23 @@ public class GuiListener implements Listener {
                 String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
                 String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
 
-                // For testing? If not u rly need to make this look less someone threw up some ascii on my screen
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
-                player.sendMessage(String.valueOf(!(clickedItem.getItemMeta().getDisplayName().equals(sellOne)) && !(clickedItem.getItemMeta().getDisplayName().equals(sellAll))));
-
-                if(!displayNameOf(clickedItem).equals(sellOne) && !displayNameOf(clickedItem).equals(sellAll)) {
+                if(!displayNameOf(clickedItem).contains("SELL")) {
                     player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
-                    player.sendMessage("Item not in bank");
 
                     GuiBuilder Bank = new GuiBuilder();
                     Bank.openInventory(player, clickedItem.getType().toString(), clickedItem.getAmount());
                     clickedItem.setAmount(0);
-                } else {
-                    player.sendMessage("Item in bank");
                 }
             }
 
+            if (event.getView().getTitle().equals("Shop")) {
+                event.setCancelled(true);
+
+                String clicked = Objects.requireNonNull(event.getCurrentItem()).getType().name();
+                MarketCraft.logger.info(clicked);
+
+                CommandShop.doMenu(clicked, (Player) event.getWhoClicked());
+            }
         }
     }
 

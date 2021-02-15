@@ -1,6 +1,5 @@
 package com.kitdacatsun.marketcraft;
 
-import jdk.internal.net.http.common.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,11 +20,13 @@ public class GuiListener implements Listener {
         }
 
         if (event.getView().getTitle().equals("Shop")) {
-            if (event.getCurrentItem().getLore() != null) {
-                shopEvent(event);
-            } else {
-                switchView(event);
-            }
+            try {
+                if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
+                    shopEvent(event);
+                } else {
+                    switchView(event);
+                }
+            } catch (NullPointerException ignored) { }
         }
     }
 

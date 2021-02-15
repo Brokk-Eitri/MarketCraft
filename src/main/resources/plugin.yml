@@ -5,7 +5,7 @@ api-version: 1.16
 
 commands:
   shop:
-    description: A simple shop command
+    description: Opens the shop
     usage: /shop
 
   pay:

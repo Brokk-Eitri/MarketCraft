@@ -41,15 +41,7 @@ public class GuiListener implements Listener {
         switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
             case "Buy":
             case "Sell":
-                Inventory inventory = GUIBuilder.playerInventories.getOrDefault(player, null);
-                if (inventory == null) {
-                    MarketCraft.logger.warning("Could not find inventory to edit for " + player.getName());
-                    return;
-                }
-
-                if (inventory.getItem(GUIBuilder.MID) == null) {
-                    return;
-                }
+                Inventory inventory = player.getInventory();
 
                 GUIItem item;
 

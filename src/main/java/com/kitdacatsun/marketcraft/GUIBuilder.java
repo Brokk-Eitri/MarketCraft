@@ -16,8 +16,6 @@ public class GUIBuilder {
     public static int MID = 13;
     public static int BOT_MID = 27;
 
-    public static HashMap<Player, Inventory> playerInventories = new HashMap<>();
-
     private Inventory inventory;
 
     public void createInventory(String title, List<GUIItem> itemPairs) {
@@ -40,7 +38,6 @@ public class GUIBuilder {
 
     public void showInventory(Player player) {
         player.openInventory(inventory);
-        playerInventories.put(player, inventory);
     }
 }
 

@@ -75,9 +75,9 @@ public final class MarketCraft extends JavaPlugin {
         server.getPluginManager().registerEvents(new ItemPickupListener(), this);
         server.getPluginManager().registerEvents(new GuiListener(), this);
 
-        Objects.requireNonNull(getCommand("bank")).setExecutor(new CommandBank());
+        Objects.requireNonNull(getCommand("bank")).setExecutor(new CommandShop());
         Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
-        Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShop());
+        Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());
     }
 

@@ -7,14 +7,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class GUIBuilder {
 
-    public static int TOP_MID = 4;
-    public static int MID = 13;
-    public static int BOT_MID = 27;
+    public static final int TOP_MID = 4;
+    public static final int MID = 13;
+    public static final int BOT_MID = 22;
 
     private Inventory inventory;
 

@@ -1,13 +1,11 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -17,7 +15,7 @@ public class GuiListener implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER) {
+        if (event.getView().getBottomInventory().getType() == InventoryType.PLAYER){
             if (event.getView().getTitle().equals(ChatColor.AQUA + "Bank")) {
                 event.setCancelled(true);
 
@@ -31,23 +29,39 @@ public class GuiListener implements Listener {
                 String sellAll = ChatColor.GREEN + "Sell all for " + cost + " each";
                 String sellOne = ChatColor.GREEN + "Sell 1 for " + cost;
 
-                if(!displayNameOf(clickedItem).contains("SELL")) {
-                    player.getInventory().addItem(Objects.requireNonNull(event.getView().getItem(13)));
+                    if(clickedItem.getLore() != null) {
+                        if (clickedItem.getItemMeta().getLore().toString().equals("[Shop]")){
+                            GuiBuilder bank = new GuiBuilder();
+                            if (event.getView().getItem(13) != null){
+                                String originalMaterial = event.getView().getItem(13).getType().toString();
+                                String originalName = event.getView().getItem(13).getItemMeta().getDisplayName();
+                                int originalAmount = event.getView().getItem(13).getAmount();
+                                bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector",originalMaterial,originalName,originalAmount);
 
-                    GuiBuilder Bank = new GuiBuilder();
-                    Bank.openInventory(player, clickedItem.getType().toString(), clickedItem.getAmount());
-                    clickedItem.setAmount(0);
+                            }else{
+                                bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), clickedItem.getAmount(),"selector","BARRIER","",0);
+                            }
+                        }else{
+                            //return to previous menu
+                        }
+
+                    } else {
+
+                        GuiBuilder bank = new GuiBuilder();
+                        if (event.getView().getItem(22) != null){
+                            String originalMaterial = event.getView().getItem(22).getType().toString();
+                            String originalName = event.getView().getItem(22).getItemMeta().getDisplayName();
+                            int originalAmount = event.getView().getItem(22).getAmount();
+
+                            bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center",originalMaterial,originalName,originalAmount);
+
+                        }else{
+                            bank.openInventory(player, clickedItem.getType().toString(),clickedItem.getItemMeta().getDisplayName(), 1,"center","BARRIER","",0);
+                        }
+                    }
                 }
             }
 
-            if (event.getView().getTitle().equals("Shop")) {
-                event.setCancelled(true);
-
-                String clicked = Objects.requireNonNull(event.getCurrentItem()).getType().name();
-                MarketCraft.logger.info(clicked);
-
-                CommandShop.doMenu(clicked, (Player) event.getWhoClicked());
-            }
         }
     }
 

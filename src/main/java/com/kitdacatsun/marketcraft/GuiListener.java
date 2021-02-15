@@ -48,13 +48,15 @@ public class GuiListener implements Listener {
 
                 GUIItem item;
 
-                // Confirm item
-                item = new GUIItem();
-                item.name = clickedItem.getItemMeta().getDisplayName();
-                item.lore = null;
-                item.amount = 1;
-                item.material = Material.LIME_DYE;
-                inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
+                if (inventory.getItem(GUIBuilder.BOT_MID) != null) {
+                    item = new GUIItem();
+                    item.name = clickedItem.getItemMeta().getDisplayName();
+                    item.lore = "Confirm";
+                    item.amount = 1;
+                    item.material = Material.LIME_DYE;
+                    inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
+                }
+
 
                 // Selected item
                 item = new GUIItem();

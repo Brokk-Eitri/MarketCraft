@@ -43,7 +43,7 @@ public class CommandShop implements CommandExecutor {
 
         // Row 3
         items.add(new GUIItem(4));
-        items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, null, 1));
+        items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, "Confirm", 1));
         items.add(new GUIItem(4));
 
         shop.createInventory("Shop", items);

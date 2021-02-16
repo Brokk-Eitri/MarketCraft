@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class CommandBalance implements CommandExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args){
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             String name = ((Player) sender).getUniqueId().toString();
             String balance = (String) MarketCraft.playerBalances.get("Players." + name + ".balance");

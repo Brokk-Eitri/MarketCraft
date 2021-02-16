@@ -28,7 +28,8 @@ public class GuiListener implements Listener {
                 } else {
                     switchView(event);
                 }
-            } catch (NullPointerException ignored) { }
+            } catch (NullPointerException ignored) {
+            }
         }
     }
 

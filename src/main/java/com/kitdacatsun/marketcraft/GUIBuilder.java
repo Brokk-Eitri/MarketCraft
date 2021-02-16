@@ -47,7 +47,8 @@ class GUIItem {
     public String lore;
     public int count;
 
-    public GUIItem() {}
+    public GUIItem() {
+    }
 
     public GUIItem(int count) {
         this.count = count;

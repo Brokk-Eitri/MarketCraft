@@ -14,12 +14,13 @@ public class SettingsFile {
     public SettingsFile(String fileName) {
         file = new File(MarketCraft.plugin.getDataFolder(), fileName);
 
-        if (!file.exists()){
+        if (!file.exists()) {
             try {
                 if (file.createNewFile()) {
                     MarketCraft.logger.info("Created new file " + fileName);
                 }
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         } else {
             MarketCraft.logger.info("Found file");
         }
@@ -27,10 +28,10 @@ public class SettingsFile {
         customFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void save(){
+    public void save() {
         try {
             customFile.save(file);
-        } catch (IOException e){
+        } catch (IOException e) {
             MarketCraft.logger.warning("Could not save settings file " + customFile.getName());
         }
     }

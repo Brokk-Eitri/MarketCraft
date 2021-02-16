@@ -15,12 +15,12 @@ public class CommandShopMenu implements CommandExecutor {
     private static String location;
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args){
-        if (!(sender instanceof Player)){
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        if (!(sender instanceof Player)) {
             return false;
         }
 
-        Player player = (Player)sender;
+        Player player = (Player) sender;
 
         doMenu("", player);
 
@@ -43,7 +43,7 @@ public class CommandShopMenu implements CommandExecutor {
             ArrayList<String> children = new ArrayList<>();
 
             Object[] keys = MarketCraft.shopMenus.getKeys(true);
-            for (Object key: keys) {
+            for (Object key : keys) {
                 String keyStr = (String) key;
                 if (keyStr.startsWith(location) && !keyStr.replace(location, "").contains(".")) {
                     children.add(keyStr.replace(location, ""));

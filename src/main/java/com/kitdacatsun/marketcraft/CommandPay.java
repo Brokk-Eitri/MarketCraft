@@ -34,8 +34,7 @@ public class CommandPay implements CommandExecutor {
         String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
         if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
-            int balance = (int) MarketCraft.playerBalances.get("Players." + Uuid.toString() + ".balance") + amount;
-            sender.sendMessage(String.valueOf(balance));
+            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + amount;
             MarketCraft.playerBalances.set(playerBalanceKey, balance);
         } else {
             MarketCraft.playerBalances.set(playerBalanceKey, amount);

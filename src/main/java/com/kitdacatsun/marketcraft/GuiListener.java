@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,10 +8,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class GuiListener implements Listener {
 
@@ -74,6 +76,69 @@ public class GuiListener implements Listener {
                 return;
             case "Confirm":
                 // Do order
+
+                ItemMeta clickedItemMeta = clickedItem.getItemMeta();
+
+                Inventory shop = player.getOpenInventory().getTopInventory();
+                Inventory playersInv = player.getOpenInventory().getBottomInventory();
+
+                int cost = 10;
+
+
+                if (clickedItemMeta.getLore().get(0).equals("Confirm") && !clickedItemMeta.getDisplayName().equals("Select an option") && shop.getItem(13) != null){
+
+                    int saleAmount = Objects.requireNonNull(shop.getItem(13)).getAmount();
+
+                    Material selectedItemMaterial = Objects.requireNonNull(shop.getItem(13)).getType();
+                    ItemStack selectedItem = new ItemStack(selectedItemMaterial, saleAmount);
+
+                    //Selling an item
+                    if (clickedItemMeta.getDisplayName().contains("Sell")){
+
+                        //checking if player has enough of the item type
+                        if (playersInv.contains(selectedItem.getType(), saleAmount)){
+                            playersInv.removeItemAnySlot(selectedItem);
+
+                            UUID Uuid = player.getUniqueId();
+                            String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+
+                            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + cost;
+                            MarketCraft.playerBalances.set(playerBalanceKey, balance);
+
+                            player.sendMessage(ChatColor.GOLD + "You have sold " + saleAmount + " of " + selectedItem.getI18NDisplayName() + " for: £" + saleAmount * cost);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Not enough of that item type to sell");
+                        }
+
+                    //Buying an item
+                    } else if (clickedItemMeta.getDisplayName().contains("Buy")){
+
+                        //checking for room in their inventory
+                        if (!(player.getInventory().firstEmpty() == -1)){
+
+                            UUID Uuid = player.getUniqueId();
+                            String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+                            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey);
+
+                            //checking if the player has enough money
+                            if (balance > cost * saleAmount) {
+
+                                playersInv.addItem(selectedItem);
+
+                                balance = balance - cost * saleAmount;
+                                MarketCraft.playerBalances.set(playerBalanceKey, balance);
+
+                                player.sendMessage(ChatColor.GOLD + "You have Bought " + saleAmount + " of " + selectedItem.getI18NDisplayName() + " for: £" + saleAmount * cost);
+
+                            } else {
+                                player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
+                        }
+                    }
+                }
+
                 return;
             default:
         }

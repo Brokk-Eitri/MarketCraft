@@ -121,7 +121,7 @@ public class GuiListener implements Listener {
                             int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey);
 
                             //checking if the player has enough money
-                            if (balance > cost * saleAmount) {
+                            if (balance >= cost * saleAmount) {
 
                                 playersInv.addItem(selectedItem);
 

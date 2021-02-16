@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CommandPay implements CommandExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
 
         if (args.length != 2) {
             return false;
@@ -22,7 +22,7 @@ public class CommandPay implements CommandExecutor {
 
         Player player = MarketCraft.server.getPlayer(args[0]);
         if (player == null) {
-            sender.sendMessage(ChatColor.RED  + "Player not found");
+            sender.sendMessage(ChatColor.RED + "Player not found");
             return true;
         }
 
@@ -34,8 +34,7 @@ public class CommandPay implements CommandExecutor {
         String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
         if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
-            int balance = (int) MarketCraft.playerBalances.get("Players." + Uuid.toString() + ".balance") + amount;
-            sender.sendMessage(String.valueOf(balance));
+            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + amount;
             MarketCraft.playerBalances.set(playerBalanceKey, balance);
         } else {
             MarketCraft.playerBalances.set(playerBalanceKey, amount);

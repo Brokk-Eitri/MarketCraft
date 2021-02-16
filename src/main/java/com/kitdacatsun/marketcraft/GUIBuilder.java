@@ -15,7 +15,7 @@ public class GUIBuilder {
     public static final int MID = 13;
     public static final int BOT_MID = 22;
 
-    private Inventory inventory;
+    public Inventory inventory;
 
     public void createInventory(String title, List<GUIItem> itemPairs) {
         inventory = MarketCraft.server.createInventory(null, 27, title);
@@ -62,6 +62,16 @@ class GUIItem {
         this.count = count;
     }
 
+    public GUIItem(ItemStack itemStack, int count) {
+        this.material = itemStack.getType();
+        this.name = material.name();
+        this.amount = 1;
+        if (itemStack.getLore() != null) {
+            this.lore = itemStack.getLore().get(0);
+        }
+        this.count = count;
+    }
+
     public ItemStack getItemStack() {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta meta = itemStack.getItemMeta();
@@ -70,7 +80,11 @@ class GUIItem {
         loreList.add(lore);
         meta.setLore(loreList);
 
-        meta.setDisplayName(name);
+        if (name == null) {
+            meta.setDisplayName(itemStack.getItemMeta().getDisplayName());
+        } else {
+            meta.setDisplayName(name);
+        }
 
         itemStack.setAmount(amount);
 

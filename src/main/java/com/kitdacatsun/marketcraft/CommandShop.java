@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,6 +22,12 @@ public class CommandShop implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        openShop(player, null);
+
+        return true;
+    }
+
+    public static void openShop(Player player, ItemStack item) {
         GUIBuilder shop = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
@@ -35,7 +42,10 @@ public class CommandShop implements CommandExecutor {
         items.add(new GUIItem("Sell 10", Material.RED_STAINED_GLASS_PANE,   10,"Sell", 1));
         items.add(new GUIItem("Sell 1",  Material.RED_STAINED_GLASS_PANE,   1, "Sell", 1));
 
-        items.add(new GUIItem(3));
+        items.add(new GUIItem(1));
+        items.add(new GUIItem(item, 1));
+        items.add(new GUIItem(1));
+
 
         items.add(new GUIItem("Buy 1",   Material.GREEN_STAINED_GLASS_PANE, 1, "Buy",  1));
         items.add(new GUIItem("Buy 10",  Material.GREEN_STAINED_GLASS_PANE, 10,"Buy",  1));
@@ -48,7 +58,5 @@ public class CommandShop implements CommandExecutor {
 
         shop.createInventory("Shop", items);
         shop.showInventory(player);
-
-        return true;
     }
 }

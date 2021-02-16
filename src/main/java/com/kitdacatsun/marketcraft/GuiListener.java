@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -26,13 +25,15 @@ public class GuiListener implements Listener {
                 if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
                     shopEvent(event);
                 } else {
-                    switchView(event);
+                    switchItem(event);
                 }
             } catch (NullPointerException ignored) { }
+        } else if (event.getView().getTitle().equals("Shop Menu")) {
+            shopMenu(event);
         }
     }
 
-    public void shopEvent(InventoryClickEvent event) {
+    private void shopEvent(InventoryClickEvent event) {
         event.setCancelled(true);
 
         ItemStack clickedItem = event.getCurrentItem();
@@ -79,13 +80,21 @@ public class GuiListener implements Listener {
 
     }
 
-    public void switchView(InventoryClickEvent event) {
+    private void switchItem(InventoryClickEvent event) {
         event.setCancelled(true);
         Player player = (Player) event.getWhoClicked();
 
         Inventory shop = player.getOpenInventory().getTopInventory();
 
         shop.setItem(GUIBuilder.MID, event.getCurrentItem());
+    }
+
+    private void shopMenu(InventoryClickEvent event) {
+        event.setCancelled(true);
+        Player player = (Player) event.getWhoClicked();
+
+        CommandShopMenu commandShopMenu = new CommandShopMenu();
+        commandShopMenu.doMenu(Objects.requireNonNull(event.getCurrentItem()).getType().name(), player);
     }
 }
 

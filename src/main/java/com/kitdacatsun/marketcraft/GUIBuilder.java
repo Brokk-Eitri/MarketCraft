@@ -47,8 +47,7 @@ class GUIItem {
     public String lore;
     public int count;
 
-    public GUIItem() {
-    }
+    public GUIItem() { }
 
     public GUIItem(int count) {
         this.count = count;
@@ -64,12 +63,18 @@ class GUIItem {
     }
 
     public GUIItem(ItemStack itemStack, int count) {
-        this.material = itemStack.getType();
-        this.name = material.name();
-        this.amount = 1;
-        if (itemStack.getLore() != null) {
-            this.lore = itemStack.getLore().get(0);
+        if (itemStack != null) {
+            this.material = itemStack.getType();
+            this.name = material.name();
+            this.amount = 1;
+            if (itemStack.getLore() != null) {
+                this.lore = itemStack.getLore().get(0);
+            }
+        } else {
+            name = null;
+            this.count = count;
         }
+
         this.count = count;
     }
 

@@ -1,12 +1,15 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -83,6 +86,7 @@ public class GuiListener implements Listener {
                 Inventory shop = player.getOpenInventory().getTopInventory();
                 Inventory playersInv = player.getOpenInventory().getBottomInventory();
 
+
                 int cost = 10;
 
 
@@ -146,6 +150,8 @@ public class GuiListener implements Listener {
 
     }
 
+
+
     private void switchItem(InventoryClickEvent event) {
         event.setCancelled(true);
         Player player = (Player) event.getWhoClicked();
@@ -162,6 +168,26 @@ public class GuiListener implements Listener {
         CommandShopMenu commandShopMenu = new CommandShopMenu();
         commandShopMenu.doMenu(Objects.requireNonNull(event.getCurrentItem()).getType().name(), player);
     }
+
+
+    //villager interface
+    @EventHandler
+    private void entityInteract(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        if(event.getRightClicked() instanceof Villager) {
+
+            Villager villager = (Villager) event.getRightClicked();
+
+            String name = Objects.requireNonNull(villager.getCustomName());
+
+            if(name.equals("Bank") && villager.isInvulnerable()) {
+
+                CommandShop.openShop(player, null);
+
+            }
+        }
+    }
+
 }
 
 

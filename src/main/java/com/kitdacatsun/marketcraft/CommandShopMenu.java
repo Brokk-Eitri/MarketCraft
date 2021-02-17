@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,8 +40,10 @@ public class CommandShopMenu implements CommandExecutor {
             location = location.substring(1);
         }
 
-        ArrayList<String> children = new ArrayList<>();
+        ArrayList<GUIItem> items = new ArrayList<>();
 
+
+        // Get children of item
         Object[] keys = MarketCraft.shopMenus.getKeys(true);
         for (Object keyObj : keys) {
             String key = (String) keyObj;
@@ -54,11 +55,16 @@ public class CommandShopMenu implements CommandExecutor {
                 }
 
                 if (!child.contains(".") && !child.replace(" ", "").isEmpty()) {
-                    children.add(child);
+                    GUIItem guiItem = new GUIItem();
+                    guiItem.name = getName(Objects.requireNonNull(Material.getMaterial(child)), location);
+                    guiItem.amount = 1;
+                    guiItem.lore = "Go to section";
+                    items.add(guiItem);
                 }
             }
         }
 
+        // Has no children
         String directChildren;
         try {
             directChildren = MarketCraft.shopMenus.get(location).toString();
@@ -67,33 +73,25 @@ public class CommandShopMenu implements CommandExecutor {
             return;
         }
 
+        // Non-Parent Children
         if (!directChildren.contains("[")) {
-            children.addAll(Arrays.asList(directChildren.split(" ")));
-        }
-
-        if (children.size() == 0) {
-            CommandShop.openShop(player, new ItemStack(Material.valueOf(item)));
-        } else {
-            showGUI(children, player);
-        }
-    }
-
-    private void showGUI(ArrayList<String> items, Player player) {
-        GUIBuilder guiBuilder = new GUIBuilder();
-        List<GUIItem> guiItemList = new ArrayList<>();
-
-        for (String item : items) {
-            try {
-                GUIItem guiItem = new GUIItem(new ItemStack(Objects.requireNonNull(Material.getMaterial(item))), 1);
-                guiItem.name = formatName(guiItem.name);
-                guiItemList.add(guiItem);
-            } catch (NullPointerException e) {
-                MarketCraft.logger.warning("Could not find item '" + item + "'");
+            for (String i : directChildren.split(" ")) {
+                GUIItem guiItem = new GUIItem();
+                guiItem.name = getName(Objects.requireNonNull(Material.getMaterial(i)), location);
+                guiItem.amount = 1;
+                guiItem.lore = "Go to shop";
+                guiItem.material = Material.getMaterial(i);
+                items.add(guiItem);
             }
         }
 
-        guiBuilder.createInventory("Shop Menu", guiItemList);
-        guiBuilder.showInventory(player);
+        if (items.size() == 0) {
+            CommandShop.openShop(player, new ItemStack(Material.valueOf(item)));
+        } else {
+            GUIBuilder guiBuilder = new GUIBuilder();
+            guiBuilder.createInventory("Shop Menu", items);
+            guiBuilder.showInventory(player);
+        }
     }
 
     private String formatName(String name) {
@@ -115,6 +113,19 @@ public class CommandShopMenu implements CommandExecutor {
         }
 
         return String.join("", out);
+    }
+
+    private String getName(Material material, String location) {
+        String name = formatName(material.name());
+
+        // Try and get name from yaml if it exists
+        try {
+            MarketCraft.shopMenus.get(location + ".name");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return name;
     }
 }
 

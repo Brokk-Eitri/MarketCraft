@@ -65,7 +65,7 @@ public class GuiListener implements Listener {
                 // Selected item
                 item = new GUIItem();
                 item.material = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)).getType();
-                item.amount = clickedItem.getAmount();
+                item.amount = 1;
                 item.lore = "Selected Item";
                 inventory.setItem(GUIBuilder.MID, item.getItemStack());
 

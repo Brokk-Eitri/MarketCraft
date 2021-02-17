@@ -19,8 +19,7 @@ public class SettingsFile {
                 if (file.createNewFile()) {
                     MarketCraft.logger.info("Created new file " + fileName);
                 }
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) { }
         } else {
             MarketCraft.logger.info("Found file");
         }
@@ -59,9 +58,5 @@ public class SettingsFile {
 
     public Object[] getKeys(boolean deep) {
         return customFile.getKeys(deep).toArray();
-    }
-
-    public FileConfiguration getCustomFile() {
-        return customFile;
     }
 }

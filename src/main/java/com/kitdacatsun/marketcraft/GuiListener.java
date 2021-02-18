@@ -182,7 +182,8 @@ public class GuiListener implements Listener {
 
             if(name.equals("Bank") && villager.isInvulnerable()) {
 
-                CommandShop.openShop(player, null);
+                CommandShopMenu commandShopMenu = new CommandShopMenu();
+                commandShopMenu.doMenu("",player);
 
             }
         }

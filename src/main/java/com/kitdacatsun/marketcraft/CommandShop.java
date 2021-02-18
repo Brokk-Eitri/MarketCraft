@@ -33,10 +33,10 @@ public class CommandShop implements CommandExecutor{
         villager.setVillagerType(Villager.Type.SWAMP);
         villager.setAI(false);
         villager.setCanPickupItems(false);
-        villager.setSilent(true);
         villager.setInvulnerable(true);
-        villager.setCustomName("Bank");
+        villager.setCustomName("Shop");
         villager.setRecipes(trades);
+
 
 
         return true;

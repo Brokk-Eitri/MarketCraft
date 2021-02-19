@@ -23,6 +23,12 @@ public class GuiListener implements Listener {
             return;
         }
 
+        try {
+            Objects.requireNonNull(event.getCurrentItem());
+        } catch (NullPointerException e) { // Clicked empty slot
+            return;
+        }
+
         if (event.getView().getTitle().equals("Shop")) {
             try {
                 if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
@@ -32,7 +38,11 @@ public class GuiListener implements Listener {
                 }
             } catch (NullPointerException ignored) { }
         } else if (event.getView().getTitle().equals("Shop Menu")) {
-            shopMenu(event);
+            try {
+                shopMenu(event);
+            } catch (NullPointerException e) {
+                switchItem(event);
+            }
         }
     }
 
@@ -52,22 +62,20 @@ public class GuiListener implements Listener {
 
                 GUIItem item;
 
-                if (inventory.getItem(GUIBuilder.BOT_MID) != null) {
-                    item = new GUIItem();
-                    item.name = clickedItem.getItemMeta().getDisplayName();
-                    item.lore = "Confirm";
-                    item.amount = 1;
-                    item.material = Material.LIME_DYE;
-                    inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
-                }
-
-
-                // Selected item
+                // Update Selected item
                 item = new GUIItem();
                 item.material = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)).getType();
-                item.amount = 1;
+                item.amount = clickedItem.getAmount();
                 item.lore = "Selected Item";
                 inventory.setItem(GUIBuilder.MID, item.getItemStack());
+
+                // Update Confirm Button
+                item = new GUIItem();
+                item.name = clickedItem.getItemMeta().getDisplayName();
+                item.lore = "Confirm";
+                item.amount = 1;
+                item.material = Material.LIME_DYE;
+                inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
 
                 player.openInventory(inventory);
 
@@ -85,18 +93,17 @@ public class GuiListener implements Listener {
 
                 int cost = 10;
 
+                if (clickedItemMeta.getLore().get(0).equals("Confirm") && !clickedItemMeta.getDisplayName().equals("Select an option") && shop.getItem(GUIBuilder.MID) != null){
 
-                if (clickedItemMeta.getLore().get(0).equals("Confirm") && !clickedItemMeta.getDisplayName().equals("Select an option") && shop.getItem(13) != null){
+                    int saleAmount = Objects.requireNonNull(shop.getItem(GUIBuilder.MID)).getAmount();
 
-                    int saleAmount = Objects.requireNonNull(shop.getItem(13)).getAmount();
-
-                    Material selectedItemMaterial = Objects.requireNonNull(shop.getItem(13)).getType();
+                    Material selectedItemMaterial = Objects.requireNonNull(shop.getItem(GUIBuilder.MID)).getType();
                     ItemStack selectedItem = new ItemStack(selectedItemMaterial, saleAmount);
 
-                    //Selling an item
+                    // Selling an item
                     if (clickedItemMeta.getDisplayName().contains("Sell")){
 
-                        //checking if player has enough of the item type
+                        // Check if player has enough of the item type
                         if (playersInv.contains(selectedItem.getType(), saleAmount)){
                             playersInv.removeItemAnySlot(selectedItem);
 
@@ -111,17 +118,17 @@ public class GuiListener implements Listener {
                             player.sendMessage(ChatColor.RED + "Not enough of that item type to sell");
                         }
 
-                    //Buying an item
+                    // Buying an item
                     } else if (clickedItemMeta.getDisplayName().contains("Buy")){
 
-                        //checking for room in their inventory
+                        // Check for room in their inventory
                         if (!(player.getInventory().firstEmpty() == -1)){
 
                             UUID Uuid = player.getUniqueId();
                             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
                             int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey);
 
-                            //checking if the player has enough money
+                            // Check if the player has enough money
                             if (balance >= cost * saleAmount) {
 
                                 playersInv.addItem(selectedItem);
@@ -150,9 +157,12 @@ public class GuiListener implements Listener {
         event.setCancelled(true);
         Player player = (Player) event.getWhoClicked();
 
-        Inventory shop = player.getOpenInventory().getTopInventory();
+        GUIItem item = new GUIItem();
+        item.material = Objects.requireNonNull(event.getCurrentItem().getType());
+        item.amount = event.getCurrentItem().getAmount();
+        item.lore = "Selected Item";
 
-        shop.setItem(GUIBuilder.MID, event.getCurrentItem());
+        CommandShop.openShop(player, item.getItemStack());
     }
 
     private void shopMenu(InventoryClickEvent event) {
@@ -160,10 +170,6 @@ public class GuiListener implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         CommandShopMenu commandShopMenu = new CommandShopMenu();
-        commandShopMenu.doMenu(Objects.requireNonNull(event.getCurrentItem()).getType().name(), player);
+        commandShopMenu.doMenu(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().getDisplayName(), player);
     }
 }
-
-
-
-

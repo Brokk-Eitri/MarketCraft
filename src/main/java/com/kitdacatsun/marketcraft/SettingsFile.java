@@ -3,9 +3,12 @@ package com.kitdacatsun.marketcraft;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public class SettingsFile {
     private final File file;
@@ -21,7 +24,7 @@ public class SettingsFile {
                 }
             } catch (IOException ignored) { }
         } else {
-            MarketCraft.logger.info("Found file");
+            MarketCraft.logger.info("Found file " + fileName);
         }
 
         customFile = YamlConfiguration.loadConfiguration(file);
@@ -48,6 +51,14 @@ public class SettingsFile {
         return customFile.getInt(key);
     }
 
+    public String getString(String key) {
+        return customFile.getString(key);
+    }
+
+    public @NotNull List<String> getStringList(String key) {
+        return customFile.getStringList(key);
+    }
+
     public boolean contains(String key) {
         return customFile.contains(key);
     }
@@ -56,7 +67,7 @@ public class SettingsFile {
         return customFile.options();
     }
 
-    public Object[] getKeys(boolean deep) {
-        return customFile.getKeys(deep).toArray();
+    public @NotNull Set<String> getKeys(boolean deep) {
+        return customFile.getKeys(deep);
     }
 }

@@ -29,6 +29,7 @@ public class GUIBuilder {
                 i += 1;
 
                 if (i > 27) {
+                    MarketCraft.logger.warning("GUIBuilder given too many items");
                     return;
                 }
             }
@@ -43,9 +44,9 @@ public class GUIBuilder {
 class GUIItem {
     public Material material;
     public String name;
-    public int amount;
-    public String lore;
-    public int count;
+    public int amount = 1;
+    public String lore = null;
+    public int count = 1;
 
     public GUIItem() { }
 
@@ -92,9 +93,8 @@ class GUIItem {
             meta.setDisplayName(name);
         }
 
-        itemStack.setAmount(amount);
-
         itemStack.setItemMeta(meta);
+        itemStack.setAmount(amount);
 
         return itemStack;
     }

@@ -1,6 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
-import org.bukkit.Bukkit;
+import org.apache.commons.lang.enums.Enum;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class GuiListener implements Listener {
@@ -36,6 +37,79 @@ public class GuiListener implements Listener {
             } catch (NullPointerException ignored) { }
         } else if (event.getView().getTitle().equals("Shop Menu")) {
             shopMenu(event);
+        } else if (event.getView().getTitle().equals("Player Shop")){
+            try {
+                if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
+                    playerShopEvent(event);
+                } else {
+                    switchItem(event);
+                }
+            } catch (NullPointerException ignored) { }
+        }
+    }
+
+    private void  playerShopEvent(InventoryClickEvent event){
+        event.setCancelled(true);
+
+        ItemStack clickedItem = event.getCurrentItem();
+        assert clickedItem != null;
+
+        Player player = (Player) event.getWhoClicked();
+
+        switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
+            case "Decrease price":
+            case "Increase price":
+                Inventory inventory = event.getClickedInventory();
+                assert inventory != null;
+
+                GUIItem item;
+                int price;
+
+                if (Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")){
+                    price = 0;
+                } else {
+                    Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+                    price = in.nextInt();
+                }
+
+                if (clickedItem.getItemMeta().getDisplayName().contains("Increase")){
+                    price +=  clickedItem.getAmount();
+                } else {
+                    price -=  clickedItem.getAmount();
+                }
+
+
+                item = new GUIItem();
+                item.name = "Add to shop for £" + price ;
+                item.lore = "Confirm";
+                item.amount = 1;
+                item.material = Material.LIME_DYE;
+                inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
+
+                item = new GUIItem();
+                item.material = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)).getType();
+                item.amount = 1;
+                item.lore = "Selected Item";
+                inventory.setItem(GUIBuilder.MID, item.getItemStack());
+
+                player.openInventory(inventory);
+
+                return;
+            case "Confirm":
+
+                inventory = event.getClickedInventory();
+                assert inventory != null;
+
+                Scanner num = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+                price = num.nextInt();
+
+                CommandPlayerShop.addItem(player, Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)), price);
+                CommandPlayerShop.openPlayerShop(player);
+
+
+            case "Exit":
+                player.closeInventory();
+            default:
         }
     }
 
@@ -107,8 +181,8 @@ public class GuiListener implements Listener {
                             UUID Uuid = player.getUniqueId();
                             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-                            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + cost;
-                            MarketCraft.playerBalances.set(playerBalanceKey, balance);
+                            int balance = (int) MarketCraft.balance.get(playerBalanceKey) + cost;
+                            MarketCraft.balance.set(playerBalanceKey, balance);
 
                             player.sendMessage(ChatColor.GOLD + "You have sold " + saleAmount + " of " + selectedItem.getI18NDisplayName() + " for: £" + saleAmount * cost);
                         } else {
@@ -123,7 +197,7 @@ public class GuiListener implements Listener {
 
                             UUID Uuid = player.getUniqueId();
                             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
-                            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey);
+                            int balance = (int) MarketCraft.balance.get(playerBalanceKey);
 
                             //checking if the player has enough money
                             if (balance >= cost * saleAmount) {
@@ -131,7 +205,7 @@ public class GuiListener implements Listener {
                                 playersInv.addItem(selectedItem);
 
                                 balance = balance - cost * saleAmount;
-                                MarketCraft.playerBalances.set(playerBalanceKey, balance);
+                                MarketCraft.balance.set(playerBalanceKey, balance);
 
                                 player.sendMessage(ChatColor.GOLD + "You have Bought " + saleAmount + " of " + selectedItem.getI18NDisplayName() + " for: £" + saleAmount * cost);
 
@@ -190,7 +264,3 @@ public class GuiListener implements Listener {
     }
 
 }
-
-
-
-

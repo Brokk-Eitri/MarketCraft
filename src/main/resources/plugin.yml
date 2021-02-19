@@ -22,6 +22,10 @@ commands:
     description: Used to spawn the bank villager
     usage: /bank
 
+  playerShop:
+    description: A command to add an item to the player shop
+    usage: /playerShop
+
 permissions:
   balance:
     description: Allows all players to cheak their balance

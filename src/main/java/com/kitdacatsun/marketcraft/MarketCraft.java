@@ -25,8 +25,9 @@ public final class MarketCraft extends JavaPlugin {
 
     public static SettingsFile itemCounts;
     public static SettingsFile changeBufferSave;
-    public static SettingsFile playerBalances;
+    public static SettingsFile balance;
     public static SettingsFile shopMenus;
+    public static SettingsFile playerShop;
 
     @Override
     public void onLoad() {
@@ -44,7 +45,8 @@ public final class MarketCraft extends JavaPlugin {
 
         itemCounts = new SettingsFile("itemCounts.yml");
         changeBufferSave = new SettingsFile("changeBufferSave.yml");
-        playerBalances = new SettingsFile("playerBalances.yml");
+        balance = new SettingsFile("playerBalances.yml");
+        playerShop = new SettingsFile("playerShop.yml");
         shopMenus = new SettingsFile("shopMenus.yml");
 
         for (Object key : itemCounts.getKeys(false)) {
@@ -79,6 +81,7 @@ public final class MarketCraft extends JavaPlugin {
         Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());
+        Objects.requireNonNull(getCommand("playerShop")).setExecutor(new CommandPlayerShop());
     }
 
     @Override

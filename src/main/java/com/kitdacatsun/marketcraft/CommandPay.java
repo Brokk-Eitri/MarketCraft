@@ -43,14 +43,14 @@ public class CommandPay implements CommandExecutor {
             UUID Uuid = player.getUniqueId();
             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-            if ((int) MarketCraft.playerBalances.get(playerBalanceKey) >= amount){
+            if ((int) MarketCraft.balance.get(playerBalanceKey) >= amount){
 
-                if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
-                    int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) - amount;
-                    MarketCraft.playerBalances.set(playerBalanceKey, balance);
+                if (MarketCraft.balance.contains(playerBalanceKey)) {
+                    int balance = (int) MarketCraft.balance.get(playerBalanceKey) - amount;
+                    MarketCraft.balance.set(playerBalanceKey, balance);
                 } else {
-                    MarketCraft.playerBalances.set(playerBalanceKey, amount);
-                    MarketCraft.playerBalances.options().copyDefaults(true);
+                    MarketCraft.balance.set(playerBalanceKey, amount);
+                    MarketCraft.balance.options().copyDefaults(true);
                 }
 
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
@@ -59,12 +59,12 @@ public class CommandPay implements CommandExecutor {
                 Uuid = receiver.getUniqueId();
                 playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-                if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
-                    int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + amount;
-                    MarketCraft.playerBalances.set(playerBalanceKey, balance);
+                if (MarketCraft.balance.contains(playerBalanceKey)) {
+                    int balance = (int) MarketCraft.balance.get(playerBalanceKey) + amount;
+                    MarketCraft.balance.set(playerBalanceKey, balance);
                 } else {
-                    MarketCraft.playerBalances.set(playerBalanceKey, amount);
-                    MarketCraft.playerBalances.options().copyDefaults(true);
+                    MarketCraft.balance.set(playerBalanceKey, amount);
+                    MarketCraft.balance.options().copyDefaults(true);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have enough money to pay the specified player");
@@ -93,12 +93,12 @@ public class CommandPay implements CommandExecutor {
 
         String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-        if (MarketCraft.playerBalances.contains(playerBalanceKey)) {
-            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey) + amount;
-            MarketCraft.playerBalances.set(playerBalanceKey, balance);
+        if (MarketCraft.balance.contains(playerBalanceKey)) {
+            int balance = (int) MarketCraft.balance.get(playerBalanceKey) + amount;
+            MarketCraft.balance.set(playerBalanceKey, balance);
         } else {
-            MarketCraft.playerBalances.set(playerBalanceKey, amount);
-            MarketCraft.playerBalances.options().copyDefaults(true);
+            MarketCraft.balance.set(playerBalanceKey, amount);
+            MarketCraft.balance.options().copyDefaults(true);
         }
 
     }

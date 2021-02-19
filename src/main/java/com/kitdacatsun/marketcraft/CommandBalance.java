@@ -20,7 +20,7 @@ public class CommandBalance implements CommandExecutor {
             UUID Uuid = player.getUniqueId();
             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-            int balance = (int) MarketCraft.playerBalances.get(playerBalanceKey);
+            int balance = (int) MarketCraft.balance.get(playerBalanceKey);
 
             sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balance);
 

@@ -18,7 +18,15 @@ public class GUIBuilder {
     public Inventory inventory;
 
     public void createInventory(String title, List<GUIItem> itemPairs) {
-        inventory = MarketCraft.server.createInventory(null, 27, title);
+        makeInv(title, itemPairs, 27);
+    }
+
+    public void createInventory(String title, List<GUIItem> itemPairs, int size) {
+        makeInv(title, itemPairs, size);
+    }
+
+    private void makeInv(String title, List<GUIItem> itemPairs, int size) {
+        inventory = MarketCraft.server.createInventory(null, size, title);
 
         int i = 0;
         for (GUIItem item : itemPairs) {
@@ -28,7 +36,7 @@ public class GUIBuilder {
                 }
                 i += 1;
 
-                if (i > 27) {
+                if (i > size) {
                     MarketCraft.logger.warning("GUIBuilder given too many items");
                     return;
                 }
@@ -83,9 +91,11 @@ class GUIItem {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta meta = itemStack.getItemMeta();
 
-        ArrayList<String> loreList = new ArrayList<>();
-        loreList.add(lore);
-        meta.setLore(loreList);
+        if (lore != null) {
+            ArrayList<String> loreList = new ArrayList<>();
+            loreList.add(lore);
+            meta.setLore(loreList);
+        }
 
         if (name == null) {
             meta.setDisplayName(itemStack.getItemMeta().getDisplayName());

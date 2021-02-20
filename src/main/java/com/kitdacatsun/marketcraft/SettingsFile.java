@@ -59,6 +59,11 @@ public class SettingsFile {
         return customFile.getStringList(key);
     }
 
+    public void setStringList(String key, List<String> list) {
+        String value = "[" + String.join(", ", list) + "]";
+        customFile.set(key, value);
+    }
+
     public boolean contains(String key) {
         return customFile.contains(key);
     }

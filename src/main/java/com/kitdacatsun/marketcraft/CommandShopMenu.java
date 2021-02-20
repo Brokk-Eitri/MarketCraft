@@ -31,7 +31,7 @@ public class CommandShopMenu implements CommandExecutor {
     }
 
     public void doMenu(String menu, Player player) {
-        List<GUIItem> items = new ArrayList<>();
+        int itemSpace = 36; // How many slots are available for items
 
         List<String> children = MarketCraft.shopMenus.getStringList(menu + ".children");
         if (children.size() == 0) {
@@ -39,15 +39,30 @@ public class CommandShopMenu implements CommandExecutor {
             return;
         }
 
+        List<GUIItem> items = new ArrayList<>();
+
+        items.add(new GUIItem(4));
+        items.add(new GUIItem("Back", Material.RED_DYE, 1, "Return to Previous Menu", 1));
+        items.add(new GUIItem(4));
+
+
         for (String item: children) {
             GUIItem guiItem = new GUIItem();
-            guiItem.name = item;
-            guiItem.material = Material.getMaterial(shopMenuFile.getString(item + ".material"));
+            if (!item.equals("BLANK")) {
+                guiItem.name = item;
+                guiItem.material = Material.getMaterial(shopMenuFile.getString(item + ".material"));
+            }
             items.add(guiItem);
         }
 
+        items.add(new GUIItem(itemSpace - children.size()));
+
+        items.add(new GUIItem(4));
+        items.add(new GUIItem("Home", Material.LIME_DYE, 1, "Return Home", 1));
+        items.add(new GUIItem(4));
+
         GUIBuilder guiBuilder = new GUIBuilder();
-        guiBuilder.createInventory("Shop Menu", items);
+        guiBuilder.createInventory("Shop Menu", items, 54);
         guiBuilder.showInventory(player);
     }
 }

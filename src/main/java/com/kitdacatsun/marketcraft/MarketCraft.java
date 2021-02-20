@@ -49,14 +49,14 @@ public final class MarketCraft extends JavaPlugin {
         playerShop = new SettingsFile("playerShop.yml");
         shopMenus = new SettingsFile("shopMenus.yml");
 
-        for (Object key : itemCounts.getKeys(false)) {
-            itemMap.put((String) key, itemCounts.getInt((String) key));
+        for (String key : itemCounts.getKeys(false)) {
+            itemMap.put(key, itemCounts.getInt(key));
         }
 
-        for (Object key : changeBufferSave.getKeys(false)) {
+        for (String key : changeBufferSave.getKeys(false)) {
             ItemChange itemChange = new ItemChange();
-            itemChange.name = (String) key;
-            itemChange.change = (int) changeBufferSave.get((String) key);
+            itemChange.name = key;
+            itemChange.change = (int) changeBufferSave.get(key);
             changeBuffer.add(itemChange);
         }
 

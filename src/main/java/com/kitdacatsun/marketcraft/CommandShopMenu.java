@@ -45,7 +45,6 @@ public class CommandShopMenu implements CommandExecutor {
         items.add(new GUIItem("Back", Material.RED_DYE, 1, "Return to Previous Menu", 1));
         items.add(new GUIItem(4));
 
-
         for (String item: children) {
             GUIItem guiItem = new GUIItem();
             if (!item.equals("BLANK")) {

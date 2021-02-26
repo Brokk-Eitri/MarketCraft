@@ -4,16 +4,11 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommandPlayerShop implements CommandExecutor {
 
@@ -31,7 +26,7 @@ public class CommandPlayerShop implements CommandExecutor {
     }
 
     public static void addPLayerShop(Player player, ItemStack item) {
-        GUIBuilder playerShop = new GUIBuilder();
+        GUIBuilder playerShopMenu = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
 
@@ -59,19 +54,57 @@ public class CommandPlayerShop implements CommandExecutor {
         items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, "Confirm", 1));
         items.add(new GUIItem(4));
 
-        playerShop.createInventory("Player Shop", items);
-        playerShop.showInventory(player);
+
+        playerShopMenu.createInventory("Player Shop", items);
+        playerShopMenu.showInventory(player);
 
     }
 
-    public static void addItem(Player player, ItemStack item, int amount){
-        Map serialized = item.serialize();
-        player.sendMessage(String.valueOf(serialized));
-        //add items
+    public static void addItem(Player player, ItemStack item, int price){
+
+        List<String> uids = MarketCraft.playerShop.getStringList("uid");
+        int uid = uids.size();
+        uids.add(String.valueOf(uid));
+        MarketCraft.playerShop.set("uid",uids);
+
+
+
+        Map<String, Object> itemMap = new HashMap<>();
+        itemMap.put("item" , item);
+        itemMap.put("price", price);
+        itemMap.put("seller", player.getName());
+
+        player.sendMessage(String.valueOf(item));
+        for (String key: itemMap.keySet()) {
+            MarketCraft.playerShop.set(uid + "." + key, itemMap.get(key));
+        }
     }
 
     public static void openPlayerShop(Player player){
-        //open player shop
-    }
+        List<String> uids = MarketCraft.playerShop.getStringList("uid");
+        GUIBuilder playerShop = new GUIBuilder();
 
+        List<GUIItem> items = new ArrayList<>();
+        int x = 0;
+        for (Object i : uids) {
+            x += 1;
+
+            if (x < 27) {
+                player.sendMessage("test");
+                String price  = String.valueOf(MarketCraft.playerShop.get(i + ".price"));
+                String seller = String.valueOf(MarketCraft.playerShop.get(i + ".seller"));
+                ItemStack item = (ItemStack) MarketCraft.playerShop.get(i + ".item");
+
+                player.getInventory().addItem(item);
+
+                player.sendMessage(price + seller);
+                items.add(new GUIItem(item.getI18NDisplayName() , item.getType() , item.getAmount() ,seller + price , 1));
+            }
+        }
+
+
+        player.sendMessage(String.valueOf(items));
+        playerShop.createInventory("Player Shop", items);
+        playerShop.showInventory(player);
+    }
 }

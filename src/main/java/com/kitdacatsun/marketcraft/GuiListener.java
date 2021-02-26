@@ -1,6 +1,5 @@
 package com.kitdacatsun.marketcraft;
 
-import org.apache.commons.lang.enums.Enum;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,9 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class GuiListener implements Listener {
 
@@ -86,12 +83,6 @@ public class GuiListener implements Listener {
                 item.material = Material.LIME_DYE;
                 inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
 
-                item = new GUIItem();
-                item.material = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)).getType();
-                item.amount = 1;
-                item.lore = "Selected Item";
-                inventory.setItem(GUIBuilder.MID, item.getItemStack());
-
                 player.openInventory(inventory);
 
                 return;
@@ -103,8 +94,11 @@ public class GuiListener implements Listener {
                 Scanner num = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
                 price = num.nextInt();
 
-                CommandPlayerShop.addItem(player, Objects.requireNonNull(inventory.getItem(GUIBuilder.MID)), price);
+                ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID));
+
+                CommandPlayerShop.addItem(player, selected , price);
                 CommandPlayerShop.openPlayerShop(player);
+
 
 
             case "Exit":

@@ -54,6 +54,7 @@ class GUIItem {
     public String name;
     public int amount = 1;
     public String lore = null;
+    public ItemMeta meta = null;
     public int count = 1;
 
     public GUIItem() { }
@@ -73,12 +74,13 @@ class GUIItem {
 
     public GUIItem(ItemStack itemStack, int count) {
         if (itemStack != null) {
-            this.material = itemStack.getType();
-            this.name = material.name();
-            this.amount = 1;
+            material = itemStack.getType();
+            name = itemStack.getI18NDisplayName();
+            amount = 1;
             if (itemStack.getLore() != null) {
                 this.lore = itemStack.getLore().get(0);
             }
+            meta = itemStack.getItemMeta();
         } else {
             name = null;
             this.count = count;
@@ -89,7 +91,12 @@ class GUIItem {
 
     public ItemStack getItemStack() {
         ItemStack itemStack = new ItemStack(material);
-        ItemMeta meta = itemStack.getItemMeta();
+
+        if (meta != null) {
+            itemStack.setItemMeta(meta);
+        } else {
+            meta = itemStack.getItemMeta();
+        }
 
         if (lore != null) {
             ArrayList<String> loreList = new ArrayList<>();
@@ -103,7 +110,6 @@ class GUIItem {
             meta.setDisplayName(name);
         }
 
-        itemStack.setItemMeta(meta);
         itemStack.setAmount(amount);
 
         return itemStack;

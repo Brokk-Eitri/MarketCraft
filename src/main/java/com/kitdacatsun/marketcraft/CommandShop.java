@@ -32,13 +32,9 @@ public class CommandShop implements CommandExecutor {
 
         List<GUIItem> items = new ArrayList<>();
 
-        List<String> lore = new ArrayList<>();
-        lore.add("Selected Item");
-        item.setLore(lore);
-
         // Row 1
         items.add(new GUIItem(4));
-        items.add(new GUIItem("Return to Previous Menu", Material.RED_DYE, 1, "Back", 1));
+        items.add(new GUIItem("Back", Material.RED_DYE, 1, "Return to Previous Menu", 1));
         items.add(new GUIItem(4));
 
         // Row 2

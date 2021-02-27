@@ -97,7 +97,6 @@ public class GuiListener implements Listener {
                 ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID));
 
                 CommandPlayerShop.addItem(player, selected , price);
-                CommandPlayerShop.openPlayerShop(player);
 
 
 

@@ -94,20 +94,18 @@ class GUIItem {
 
         if (meta != null) {
             itemStack.setItemMeta(meta);
-        } else {
-            meta = itemStack.getItemMeta();
         }
 
         if (lore != null) {
             ArrayList<String> loreList = new ArrayList<>();
             loreList.add(lore);
-            meta.setLore(loreList);
+            itemStack.setLore(loreList);
         }
 
-        if (name == null) {
-            meta.setDisplayName(itemStack.getItemMeta().getDisplayName());
+        if (name != null) {
+            itemStack.getItemMeta().setDisplayName(name);
         } else {
-            meta.setDisplayName(name);
+            itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
         }
 
         itemStack.setAmount(amount);

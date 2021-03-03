@@ -1,25 +1,28 @@
 package com.kitdacatsun.marketcraft;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.EventHandler;
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 
 
 public class ItemPickupListener implements Listener {
 
-    @EventHandler
-    public void EntityPickupItemEvent(EntityPickupItemEvent event) {
-        if (event.getEntity().getType() != EntityType.PLAYER) {
-            return;
-        }
+    // BlockPlaceEvent
+    // CraftItemEvent
+    // InventoryPickupItemEvent
+    // EntityDropItemEvent (Not by player)
 
-        // TODO record if it has been picked up before
 
+    private void logItemChange(String name, int change) {
         ItemChange itemChange = new ItemChange();
-        itemChange.name = event.getItem().getName().toUpperCase().replace(" ", "_");
-        itemChange.change = event.getItem().getItemStack().getAmount();
+        itemChange.name = name.toUpperCase().replace(" ", "_");
+        itemChange.change = change;
+        MarketCraft.changeBuffer.add(itemChange);
+    }
 
+    private void logItemChange(Material material, int change) {
+        ItemChange itemChange = new ItemChange();
+        itemChange.name = material.name();
+        itemChange.change = change;
         MarketCraft.changeBuffer.add(itemChange);
     }
 }

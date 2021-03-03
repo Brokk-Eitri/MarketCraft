@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
 
-public class ItemPickupListener implements Listener {
+public class ItemChangeListener implements Listener {
 
     @EventHandler
     private void BlockDropItemEvent(BlockDropItemEvent event) {

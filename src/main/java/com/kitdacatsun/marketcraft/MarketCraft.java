@@ -59,20 +59,9 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, () -> {
-            if (world.getTime() % updateTimeTicks == 0) {
-                logger.info("Updating prices");
+        scheduler.scheduleSyncRepeatingTask(plugin, this::updatePrices, 24000 - world.getTime(), updateTimeTicks);
 
-                for (int i = 0; i < changeBuffer.size(); i++) {
-                    ItemChange itemChange = changeBuffer.get(i);
-                    logger.info("Item: " + itemChange.name);
-                    itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
-                    changeBuffer.remove(itemChange);
-                }
-            }
-        }, 100L, 1L);
-
-        server.getPluginManager().registerEvents(new ItemPickupListener(), this);
+        server.getPluginManager().registerEvents(new ItemChangeListener(), this);
         server.getPluginManager().registerEvents(new GuiListener(), this);
 
         Objects.requireNonNull(getCommand("bank")).setExecutor(new CommandShop());
@@ -91,6 +80,17 @@ public final class MarketCraft extends JavaPlugin {
 
         for (ItemChange itemChange : changeBuffer) {
             changeBufferSave.set(itemChange.name, itemChange.change);
+        }
+    }
+
+    private void updatePrices() {
+        logger.info("Updating prices");
+
+        for (int i = 0; i < changeBuffer.size(); i++) {
+            ItemChange itemChange = changeBuffer.get(i);
+            logger.info("Item: " + itemChange.name);
+            itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
+            changeBuffer.remove(itemChange);
         }
     }
 }

@@ -18,10 +18,7 @@ public class CommandPay implements CommandExecutor {
             pay(sender, args);
             return true;
         }
-
         Player player = (Player) sender;
-        player.sendMessage(String.valueOf(player.getGameMode()));
-        player.sendMessage(String.valueOf(player.getGameMode().toString().equals("CREATIVE")));
 
         if (player.isOp() && player.getGameMode().toString().equals("CREATIVE")) {
             pay(sender, args);

@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -76,7 +77,7 @@ class GUIItem {
         if (itemStack != null) {
             material = itemStack.getType();
             name = itemStack.getI18NDisplayName();
-            amount = 1;
+            amount = itemStack.getAmount();
             if (itemStack.getLore() != null) {
                 this.lore = itemStack.getLore().get(0);
             }
@@ -103,10 +104,14 @@ class GUIItem {
         }
 
         if (name != null) {
-            itemStack.getItemMeta().setDisplayName(name);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setDisplayName(name);
+            itemStack.setItemMeta(itemMeta);
         } else {
             itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
         }
+
+
 
         itemStack.setAmount(amount);
 

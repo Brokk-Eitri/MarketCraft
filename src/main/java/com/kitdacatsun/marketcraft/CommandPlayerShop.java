@@ -21,7 +21,7 @@ public class CommandPlayerShop implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args[0].equals("open")){
-            openPlayerShop(player);
+            openPlayerShop(player, Integer.parseInt(args[1]));
         } else {
             addPLayerShop(player, null);
         }
@@ -58,7 +58,7 @@ public class CommandPlayerShop implements CommandExecutor {
         items.add(new GUIItem(4));
 
 
-        playerShopMenu.createInventory("Player Shop", items);
+        playerShopMenu.createInventory("Player Shop - Add", items);
         playerShopMenu.showInventory(player);
 
     }
@@ -70,17 +70,12 @@ public class CommandPlayerShop implements CommandExecutor {
         uids.add(String.valueOf(uid));
         MarketCraft.playerShop.set("uid",uids);
 
-        player.sendMessage(String.valueOf((uid - 1) / 36));
-
-        int page = (uid - 1) / 36;
-
         Map<String, Object> itemMap = new HashMap<>();
         itemMap.put("item" , item);
         itemMap.put("price", price);
         itemMap.put("seller", player.getName());
-        itemMap.put("page", page);
+        itemMap.put("uid", player.getUniqueId());
 
-        player.sendMessage(String.valueOf(item));
         for (String key: itemMap.keySet()) {
             MarketCraft.playerShop.set(uid + "." + key, itemMap.get(key));
         }
@@ -88,41 +83,33 @@ public class CommandPlayerShop implements CommandExecutor {
         addPLayerShop(player, null);
     }
 
-    public static void openPlayerShop(Player player){
+    public static void openPlayerShop(Player player, int page){
         List<String> uids = MarketCraft.playerShop.getStringList("uid");
         List<GUIItem> items = new ArrayList<>();
 
         items.add(new GUIItem(3));
-        items.add(new GUIItem("Previous page", Material.ORANGE_DYE, 1 , "Chose page", 1));
-        items.add(new GUIItem("Page 0", Material.PAPER, 1, "Current page", 1));
-        items.add(new GUIItem("Next page", Material.ORANGE_DYE, 1 , "Chose page", 1));
+        items.add(new GUIItem("Previous page", Material.ORANGE_DYE, 1 , "Choose page", 1));
+        items.add(new GUIItem("Page " + page, Material.PAPER, 1, "Current page", 1));
+        items.add(new GUIItem("Next page", Material.ORANGE_DYE, 1 , "Choose page", 1));
         items.add(new GUIItem(3));
 
-        int x = 0;
-        for (Object i : uids) {
-            x += 1;
-
-            GUIItem guiItem = new GUIItem();
-            if (x < 36) {
-
-
-                player.sendMessage("test");
+        int counter = 0;
+        int addedAmount = 0;
+        for (Object i : uids){
+            if (page * 36 <= counter && counter < (page + 1) * 36){
                 String price = String.valueOf(MarketCraft.playerShop.get(i + ".price"));
                 String seller = String.valueOf(MarketCraft.playerShop.get(i + ".seller"));
                 ItemStack item = (ItemStack) MarketCraft.playerShop.get(i + ".item");
-                int page = (Integer) MarketCraft.playerShop.get(i + ".page");
-
-                guiItem.name = item.getI18NDisplayName();
-                guiItem.material = item.getType();
-                guiItem.amount = item.getAmount();
-                guiItem.lore = seller + " " + price;
+                ArrayList<String> loreList = new ArrayList<>();
+                loreList.add("Price: £" + price + ", Seller: " + seller);
+                item.setLore(loreList);
+                items.add(new GUIItem(item, 1));
+                addedAmount += 1;
             }
-
-            items.add(guiItem);
-
+            counter += 1;
         }
 
-        int empty = 36 - uids.size();
+        int empty = 36 - addedAmount;
         items.add(new GUIItem(empty));
 
         items.add(new GUIItem(3));

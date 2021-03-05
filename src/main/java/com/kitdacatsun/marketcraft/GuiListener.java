@@ -1,6 +1,7 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -34,76 +36,207 @@ public class GuiListener implements Listener {
             } catch (NullPointerException ignored) { }
         } else if (event.getView().getTitle().equals("Shop Menu")) {
             shopMenu(event);
-        } else if (event.getView().getTitle().equals("Player Shop")){
+        } else if (event.getView().getTitle().equals("Player Shop - Add")){
+            try {
+                if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
+                    addPlayerShopEvent(event);
+                } else {
+                    switchItem(event);
+                }
+            } catch (NullPointerException ignored) { }
+        } else if (event.getView().getTitle().equals("Player Shop")) {
             try {
                 if (Objects.requireNonNull(event.getCurrentItem()).getLore() != null) {
                     playerShopEvent(event);
-                } else {
-                    switchItem(event);
                 }
             } catch (NullPointerException ignored) { }
         }
     }
 
-    private void  playerShopEvent(InventoryClickEvent event){
-        event.setCancelled(true);
 
+    private void playerShopEvent(InventoryClickEvent event) {
+        event.setCancelled(true);
         ItemStack clickedItem = event.getCurrentItem();
         assert clickedItem != null;
 
+        Inventory inventory = event.getClickedInventory();
+        assert inventory != null;
+
         Player player = (Player) event.getWhoClicked();
 
+        ArrayList<String> lore;
+        ItemStack grayDye;
+        int page;
+        Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.TOP_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+        page = in.nextInt();
+
         switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
-            case "Decrease price":
-            case "Increase price":
-                Inventory inventory = event.getClickedInventory();
-                assert inventory != null;
+            case "Choose page":
+                if (clickedItem.getItemMeta().getDisplayName().equals("Next page")) {
+                    page += 1;
+                    CommandPlayerShop.openPlayerShop(player, page);
 
-                GUIItem item;
-                int price;
-
-                if (Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")){
-                    price = 0;
-                } else {
-                    Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
-                    price = in.nextInt();
+                } else if (clickedItem.getItemMeta().getDisplayName().equals("Previous page") && page > 0){
+                    page -= 1;
+                    CommandPlayerShop.openPlayerShop(player, page);
                 }
+                break;
 
-                if (clickedItem.getItemMeta().getDisplayName().contains("Increase")){
-                    price +=  clickedItem.getAmount();
-                } else {
-                    price -=  clickedItem.getAmount();
-                }
-
-
-                item = new GUIItem();
-                item.name = "Add to shop for £" + price ;
-                item.lore = "Confirm";
-                item.amount = 1;
-                item.material = Material.LIME_DYE;
-                inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
-
-                player.openInventory(inventory);
-
-                return;
+            case "Cancel":
+                inventory.clear(49);
+                grayDye = new ItemStack(Material.GRAY_DYE,1);
+                lore = new ArrayList<>();
+                lore.add("Confirm");
+                grayDye.setLore(lore);
+                inventory.setItem(50,grayDye);
+                break;
             case "Confirm":
+                if (inventory.getItem(49) != null){
+                    ArrayList<String> itemLore = (ArrayList<String>) Objects.requireNonNull(inventory.getItem(49)).getLore();
+                    assert itemLore != null;
+                    int position = Integer.parseInt(itemLore.get(0));
+                    int price = Integer.parseInt(String.valueOf(MarketCraft.playerShop.get(position + ".price")));
+                    String seller = String.valueOf(MarketCraft.playerShop.get(position + ".seller"));
 
-                inventory = event.getClickedInventory();
-                assert inventory != null;
+                    UUID Uuid = player.getUniqueId();
+                    UUID receiverUuid = UUID.fromString(String.valueOf(MarketCraft.playerShop.get(position + ".uid")));
+                    String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+                    String receiverBalanceKey = "Players." + receiverUuid.toString() + ".balance";
 
-                Scanner num = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
-                price = num.nextInt();
+                    Player receiver = MarketCraft.server.getPlayer(seller);
 
-                ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID));
+                    int balance = (int) MarketCraft.balance.get(playerBalanceKey);
+                    int receverBalance = (int) MarketCraft.balance.get(receiverBalanceKey);
+                    Inventory playersInv = player.getOpenInventory().getBottomInventory();
+                    ItemStack selectedItem = Objects.requireNonNull(inventory.getItem(49));
+                    selectedItem.setLore(null);
 
-                CommandPlayerShop.addItem(player, selected , price);
+                    //checking for room in their inventory
+                    if (!(player.getInventory().firstEmpty() == -1)){
 
+                        //checking if the player has enough money
+                        if (balance >= price) {
 
+                            playersInv.addItem(selectedItem);
 
-            case "Exit":
-                player.closeInventory();
+                            balance -= price;
+                            receverBalance += price;
+                            MarketCraft.balance.set(playerBalanceKey, balance);
+                            MarketCraft.balance.set(receiverBalanceKey, receverBalance);
+                            inventory.clear(position + 9);
+
+                            List<String> uids = MarketCraft.playerShop.getStringList("uid");
+                            int size = uids.size() -1 ;
+                            uids.remove(size);
+                            int counter = 0;
+                            for (Object i : uids){
+                                if (counter == position){
+                                    MarketCraft.playerShop.set(String.valueOf(i) , MarketCraft.playerShop.get(String.valueOf(size)));
+                                }
+                                counter += 1;
+                            }
+                            MarketCraft.playerShop.set(String.valueOf(size),null);
+                            MarketCraft.playerShop.set("uid",uids);
+
+                            assert receiver != null;
+                            receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
+                            player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + price);
+
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + " No items selected please select an item");
+                }
+                inventory.clear(49);
+                grayDye = new ItemStack(Material.GRAY_DYE,1);
+                lore = new ArrayList<>();
+                lore.add("Confirm");
+                grayDye.setLore(lore);
+                inventory.setItem(50,grayDye);
+                break;
             default:
+                if (!clickedItem.getLore().get(0).equals("Current page")){
+                    lore = new ArrayList<>();
+                    ArrayList<String> position = new ArrayList<>();
+                    position.add(String.valueOf(event.getRawSlot() - 9 + page));
+                    inventory.setItem(49, clickedItem);
+                    ItemStack item = Objects.requireNonNull(inventory.getItem(49));
+                    item.setLore(position);
+                    inventory.setItem(49, item);
+                    ItemStack limeDye = new ItemStack(Material.LIME_DYE, 1);
+                    lore.add("Confirm");
+                    limeDye.setLore(lore);
+                    inventory.setItem(50, limeDye);
+                    break;
+                }
         }
+    }
+
+    private void addPlayerShopEvent(InventoryClickEvent event){
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            assert clickedItem != null;
+
+            Player player = (Player) event.getWhoClicked();
+
+            switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
+                case "Decrease price":
+                case "Increase price":
+                    Inventory inventory = event.getClickedInventory();
+                    assert inventory != null;
+
+                    GUIItem item;
+                    int price;
+
+                    if (Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")){
+                        price = 0;
+                    } else {
+                        Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+                        price = in.nextInt();
+                    }
+
+                    if (clickedItem.getItemMeta().getDisplayName().contains("Increase")){
+                        price +=  clickedItem.getAmount();
+                    } else {
+                        price -=  clickedItem.getAmount();
+                    }
+
+
+                    item = new GUIItem();
+                    item.name = "Add to shop for £" + price ;
+                    item.lore = "Confirm";
+                    item.amount = 1;
+                    item.material = Material.LIME_DYE;
+                    inventory.setItem(GUIBuilder.BOT_MID, item.getItemStack());
+
+                    player.openInventory(inventory);
+
+                    return;
+                case "Confirm":
+
+                    inventory = event.getClickedInventory();
+                    Inventory playerInvontory = event.getView().getBottomInventory();
+                    assert inventory != null;
+
+                    Scanner num = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+                    price = num.nextInt();
+
+                    ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.MID));
+                    playerInvontory.remove(selected);
+
+                    CommandPlayerShop.addItem(player, selected , price);
+
+
+
+                case "Exit":
+                    player.closeInventory();
+                default:
+            }
     }
 
     private void shopEvent(InventoryClickEvent event) {

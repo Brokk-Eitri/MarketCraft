@@ -51,6 +51,10 @@ public class SettingsFile {
         return customFile.getInt(key);
     }
 
+    public double getDouble(String key) {
+        return customFile.getDouble(key);
+    }
+
     public String getString(String key) {
         return customFile.getString(key);
     }

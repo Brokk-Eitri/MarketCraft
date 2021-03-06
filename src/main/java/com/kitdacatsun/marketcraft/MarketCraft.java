@@ -87,8 +87,12 @@ public final class MarketCraft extends JavaPlugin {
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
 
+        logger.info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+
         for (String key: itemMap.keySet()) {
             int value = itemMap.get(key);
+
+            logger.info( ChatColor.BLUE + key + ": \t " + value);
 
             if (value < lowest) {
                 lowest = value;

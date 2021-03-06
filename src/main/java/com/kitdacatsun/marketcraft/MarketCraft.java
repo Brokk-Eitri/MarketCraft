@@ -29,7 +29,6 @@ public final class MarketCraft extends JavaPlugin {
     public static SettingsFile shopMenus;
     public static SettingsFile playerShop;
 
-
     @Override
     public void onLoad() {
         logger = getLogger();

@@ -382,7 +382,9 @@ public class GuiListener implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         CommandShopMenu commandShopMenu = new CommandShopMenu();
-        commandShopMenu.doMenu(Objects.requireNonNull(event.getCurrentItem()).getI18NDisplayName(), player);
+        ItemStack item = Objects.requireNonNull(event.getCurrentItem());
+        String name = Objects.requireNonNull(item.getItemMeta().displayName()).toString();
+        commandShopMenu.doMenu(name, player);
     }
 
 

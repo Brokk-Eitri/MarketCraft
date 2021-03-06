@@ -10,12 +10,13 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
 
-public class ItemPickupListener implements Listener {
+public class ItemChangeListener implements Listener {
 
     @EventHandler
     private void BlockDropItemEvent(BlockDropItemEvent event) {
@@ -34,6 +35,11 @@ public class ItemPickupListener implements Listener {
     @EventHandler
     private void CraftItemEvent(CraftItemEvent event) {
         logItemChange(event.getRecipe().getResult().getType(), event.getRecipe().getResult().getAmount());
+    }
+
+    @EventHandler
+    private void FurnaceSmeltEvent(FurnaceSmeltEvent event) {
+        logItemChange(event.getResult().getType(), event.getResult().getAmount());
     }
 
     @EventHandler
@@ -77,9 +83,9 @@ public class ItemPickupListener implements Listener {
 
     private void log(ItemChange change) {
         if (change.change > 0) {
-            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] " + change.name + ", +" + change.change);
+            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
         } else if (change.change < 0) {
-            MarketCraft.logger.info(ChatColor.RED + "[ITEM CHANGE] " + change.name + ", " + change.change);
+            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
         }
     }
 }

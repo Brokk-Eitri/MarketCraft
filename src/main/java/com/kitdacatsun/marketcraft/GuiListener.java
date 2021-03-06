@@ -106,10 +106,15 @@ public class GuiListener implements Listener {
                     Player receiver = MarketCraft.server.getPlayer(seller);
 
                     int balance = (int) MarketCraft.balance.get(playerBalanceKey);
-                    int receverBalance = (int) MarketCraft.balance.get(receiverBalanceKey);
+                    int receiverBalance = (int) MarketCraft.balance.get(receiverBalanceKey);
                     Inventory playersInv = player.getOpenInventory().getBottomInventory();
-                    ItemStack selectedItem = Objects.requireNonNull(inventory.getItem(49));
-                    selectedItem.setLore(null);
+
+                    ItemStack selectedItemInShop = Objects.requireNonNull(inventory.getItem(49));
+                    Material material = selectedItemInShop.getType();
+                    int amount = selectedItemInShop.getAmount();
+                    ItemStack selectedItem = new ItemStack(material , amount);
+                    selectedItem.addEnchantments(selectedItemInShop.getEnchantments());
+                    selectedItem.setDurability(selectedItemInShop.getDurability());
 
                     //checking for room in their inventory
                     if (!(player.getInventory().firstEmpty() == -1)){
@@ -120,9 +125,9 @@ public class GuiListener implements Listener {
                             playersInv.addItem(selectedItem);
 
                             balance -= price;
-                            receverBalance += price;
+                            receiverBalance += price;
                             MarketCraft.balance.set(playerBalanceKey, balance);
-                            MarketCraft.balance.set(receiverBalanceKey, receverBalance);
+                            MarketCraft.balance.set(receiverBalanceKey, receiverBalance);
                             inventory.clear(position + 9);
 
                             List<String> uids = MarketCraft.playerShop.getStringList("uid");

@@ -39,8 +39,8 @@ public class CommandPlayerShop implements CommandExecutor {
         items.add(new GUIItem(4));
 
         // Row 2
-        items.add(new GUIItem("Decrease price by 50", Material.RED_STAINED_GLASS_PANE, 50, "Decrease price", 1));
-        items.add(new GUIItem("Decrease price by 10", Material.RED_STAINED_GLASS_PANE, 10, "Decrease price", 1));
+        items.add(new GUIItem("Decrease price by 32", Material.RED_STAINED_GLASS_PANE, 50, "Decrease price", 1));
+        items.add(new GUIItem("Decrease price by 16", Material.RED_STAINED_GLASS_PANE, 10, "Decrease price", 1));
         items.add(new GUIItem("Decrease price by 1", Material.RED_STAINED_GLASS_PANE, 1, "Decrease price", 1));
 
         items.add(new GUIItem(1));
@@ -49,8 +49,8 @@ public class CommandPlayerShop implements CommandExecutor {
 
 
         items.add(new GUIItem("Increase price by 1", Material.GREEN_STAINED_GLASS_PANE, 1, "Increase price", 1));
-        items.add(new GUIItem("Increase price by 10", Material.GREEN_STAINED_GLASS_PANE, 10, "Increase price", 1));
-        items.add(new GUIItem("Increase price by 50", Material.GREEN_STAINED_GLASS_PANE, 50, "Increase price", 1));
+        items.add(new GUIItem("Increase price by 16", Material.GREEN_STAINED_GLASS_PANE, 10, "Increase price", 1));
+        items.add(new GUIItem("Increase price by 32", Material.GREEN_STAINED_GLASS_PANE, 50, "Increase price", 1));
 
         // Row 3
         items.add(new GUIItem(4));

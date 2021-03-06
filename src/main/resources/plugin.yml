@@ -18,9 +18,9 @@ commands:
     aliases: bal
     permission: balance
 
-  bank:
-    description: Used to spawn the bank villager
-    usage: /bank
+  villager:
+    description: Used to spawn the villagers for the GUI interface
+    usage: /villager <name>
 
   playerShop:
     description: A command to add an item to the player shop

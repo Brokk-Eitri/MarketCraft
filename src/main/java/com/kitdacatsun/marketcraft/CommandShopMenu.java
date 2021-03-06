@@ -24,7 +24,6 @@ public class CommandShopMenu implements CommandExecutor {
 
         Player player = (Player)sender;
 
-        shopMenuFile = MarketCraft.shopMenus;
         doMenu("root", player);
 
         return true;
@@ -35,7 +34,7 @@ public class CommandShopMenu implements CommandExecutor {
 
         List<String> children = MarketCraft.shopMenus.getStringList(menu + ".children");
         if (children.size() == 0) {
-            CommandShop.openShop(player, new ItemStack(Objects.requireNonNull(Material.getMaterial(shopMenuFile.getString(menu + ".material")))));
+            CommandVillager.openShop(player, new ItemStack(Objects.requireNonNull(Material.getMaterial(MarketCraft.shopMenus.getString(menu + ".material")))));
             return;
         }
 
@@ -49,7 +48,7 @@ public class CommandShopMenu implements CommandExecutor {
             GUIItem guiItem = new GUIItem();
             if (!item.equals("BLANK")) {
                 guiItem.name = item;
-                guiItem.material = Material.getMaterial(shopMenuFile.getString(item + ".material"));
+                guiItem.material = Material.getMaterial(MarketCraft.shopMenus.getString(item + ".material"));
             }
             items.add(guiItem);
         }
@@ -65,4 +64,3 @@ public class CommandShopMenu implements CommandExecutor {
         guiBuilder.showInventory(player);
     }
 }
-

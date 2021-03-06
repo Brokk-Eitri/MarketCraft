@@ -12,10 +12,11 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public class CommandShop implements CommandExecutor{
+public class CommandVillager implements CommandExecutor{
 
 
     @Override
@@ -23,9 +24,15 @@ public class CommandShop implements CommandExecutor{
         if (!(sender instanceof Player)) {
             return false;
         }
-
+        StringBuilder name = new StringBuilder();
         Player player = (Player) sender;
 
+        for (String i : args){
+            name.append(i);
+            if (!i.equals(args[args.length - 1])) {
+                name.append(" ");
+            }
+        }
         ArrayList<MerchantRecipe> trades = new ArrayList<>();
 
         Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
@@ -34,7 +41,7 @@ public class CommandShop implements CommandExecutor{
         villager.setAI(false);
         villager.setCanPickupItems(false);
         villager.setInvulnerable(true);
-        villager.setCustomName("Shop");
+        villager.setCustomName(name.toString());
         villager.setRecipes(trades);
 
 

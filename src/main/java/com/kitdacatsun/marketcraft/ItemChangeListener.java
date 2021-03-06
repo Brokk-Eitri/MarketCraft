@@ -15,11 +15,35 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ItemChangeListener implements Listener {
 
+    private List<Material> inventoryMaterials() {
+        List<Material> materials = new ArrayList<>();
+        materials.add(Material.CHEST);
+        materials.add(Material.CHEST_MINECART);
+        materials.add(Material.HOPPER);
+        materials.add(Material.HOPPER_MINECART);
+        materials.add(Material.BREWING_STAND);
+        return materials;
+    }
+
     @EventHandler
     private void BlockDropItemEvent(BlockDropItemEvent event) {
+        if (event.getItems().size() == 0) {
+            return;
+        }
+
+        Item lastItem = event.getItems().get(event.getItems().size() - 1);
+
+        if (inventoryMaterials().contains(lastItem.getItemStack().getType())) {
+            logItemChange(lastItem.getName(), lastItem.getItemStack().getAmount());
+            return;
+        }
+
         for (Item item: event.getItems()) {
             logItemChange(item.getName(), item.getItemStack().getAmount());
         }
@@ -44,6 +68,10 @@ public class ItemChangeListener implements Listener {
 
     @EventHandler
     private void InventoryPickupItemEvent(InventoryPickupItemEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         logItemChange(event.getItem().getName(), event.getItem().getItemStack().getAmount());
     }
 

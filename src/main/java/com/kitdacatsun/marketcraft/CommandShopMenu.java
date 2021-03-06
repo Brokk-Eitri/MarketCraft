@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class CommandShopMenu implements CommandExecutor {
-
-    private static SettingsFile shopMenuFile;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender , @NotNull Command cmd, @NotNull String label, String[] args){
@@ -24,7 +21,6 @@ public class CommandShopMenu implements CommandExecutor {
 
         Player player = (Player)sender;
 
-        shopMenuFile = MarketCraft.shopMenus;
         doMenu("root", player);
 
         return true;
@@ -34,8 +30,13 @@ public class CommandShopMenu implements CommandExecutor {
         int itemSpace = 36; // How many slots are available for items
 
         List<String> children = MarketCraft.shopMenus.getStringList(menu + ".children");
+        player.sendMessage(menu);
+
         if (children.size() == 0) {
-            CommandShop.openShop(player, new ItemStack(Objects.requireNonNull(Material.getMaterial(shopMenuFile.getString(menu + ".material")))));
+            GUIItem item = new GUIItem();
+            item.material = Objects.requireNonNull(Material.getMaterial(MarketCraft.shopMenus.getString(menu + ".material")));
+            item.name = menu;
+            CommandVillager.openShop(player, item.getItemStack());
             return;
         }
 
@@ -49,7 +50,7 @@ public class CommandShopMenu implements CommandExecutor {
             GUIItem guiItem = new GUIItem();
             if (!item.equals("BLANK")) {
                 guiItem.name = item;
-                guiItem.material = Material.getMaterial(shopMenuFile.getString(item + ".material"));
+                guiItem.material = Objects.requireNonNull(Material.getMaterial(MarketCraft.shopMenus.getString(item + ".material")));
             }
             items.add(guiItem);
         }
@@ -65,4 +66,3 @@ public class CommandShopMenu implements CommandExecutor {
         guiBuilder.showInventory(player);
     }
 }
-

@@ -24,8 +24,10 @@ public final class MarketCraft extends JavaPlugin {
     private static final long updateTimeTicks = 60 * 20;
 
     public static SettingsFile itemCounts;
-    public static SettingsFile playerBalances;
+    public static SettingsFile changeBufferSave;
+    public static SettingsFile balance;
     public static SettingsFile shopMenus;
+    public static SettingsFile playerShop;
 
     @Override
     public void onLoad() {
@@ -42,7 +44,9 @@ public final class MarketCraft extends JavaPlugin {
         world = server.getWorld("world");
 
         itemCounts = new SettingsFile("itemCounts.yml");
-        playerBalances = new SettingsFile("playerBalances.yml");
+        changeBufferSave = new SettingsFile("changeBufferSave.yml");
+        balance = new SettingsFile("playerBalances.yml");
+        playerShop = new SettingsFile("playerShop.yml");
         shopMenus = new SettingsFile("shop.yml");
 
         for (String key : itemCounts.getKeys(false)) {
@@ -55,7 +59,7 @@ public final class MarketCraft extends JavaPlugin {
         server.getPluginManager().registerEvents(new ItemChangeListener(), this);
         server.getPluginManager().registerEvents(new GuiListener(), this);
 
-        Objects.requireNonNull(getCommand("bank")).setExecutor(new CommandShop());
+        Objects.requireNonNull(getCommand("villager")).setExecutor(new CommandVillager());
         Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());

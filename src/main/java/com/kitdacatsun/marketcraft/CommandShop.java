@@ -4,15 +4,19 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class CommandShop implements CommandExecutor {
+public class CommandShop implements CommandExecutor{
+
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
@@ -22,10 +26,24 @@ public class CommandShop implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        openShop(player, null);
+        ArrayList<MerchantRecipe> trades = new ArrayList<>();
+
+        Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+        villager.setProfession(Villager.Profession.LIBRARIAN);
+        villager.setVillagerType(Villager.Type.SWAMP);
+        villager.setAI(false);
+        villager.setCanPickupItems(false);
+        villager.setInvulnerable(true);
+        villager.setCustomName("Shop");
+        villager.setRecipes(trades);
+
+
 
         return true;
     }
+
+
+
 
     public static void openShop(Player player, ItemStack item) {
         GUIBuilder shop = new GUIBuilder();

@@ -24,7 +24,6 @@ public final class MarketCraft extends JavaPlugin {
     private static final long updateTimeTicks = 60 * 20;
 
     public static SettingsFile itemCounts;
-    public static SettingsFile changeBufferSave;
     public static SettingsFile balance;
     public static SettingsFile shopMenus;
     public static SettingsFile playerShop;
@@ -44,7 +43,6 @@ public final class MarketCraft extends JavaPlugin {
         world = server.getWorld("world");
 
         itemCounts = new SettingsFile("itemCounts.yml");
-        changeBufferSave = new SettingsFile("changeBufferSave.yml");
         balance = new SettingsFile("playerBalances.yml");
         playerShop = new SettingsFile("playerShop.yml");
         shopMenus = new SettingsFile("shop.yml");

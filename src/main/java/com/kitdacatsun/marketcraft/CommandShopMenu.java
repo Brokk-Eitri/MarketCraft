@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import com.kitdacatsun.marketcraft.MarketCraft.files;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,12 +30,12 @@ public class CommandShopMenu implements CommandExecutor {
     public void doMenu(String menu, Player player) {
         int itemSpace = 36; // How many slots are available for items
 
-        List<String> children = MarketCraft.shopMenus.getStringList(menu + ".children");
+        List<String> children = files.shopMenus.getStringList(menu + ".children");
         player.sendMessage(menu);
 
         if (children.size() == 0) {
             GUIItem item = new GUIItem();
-            item.material = Objects.requireNonNull(Material.getMaterial(MarketCraft.shopMenus.getString(menu + ".material")));
+            item.material = Objects.requireNonNull(Material.getMaterial(files.shopMenus.getString(menu + ".material")));
             item.name = menu;
             CommandVillager.openShop(player, item.getItemStack());
             return;
@@ -50,7 +51,7 @@ public class CommandShopMenu implements CommandExecutor {
             GUIItem guiItem = new GUIItem();
             if (!item.equals("BLANK")) {
                 guiItem.name = item;
-                guiItem.material = Objects.requireNonNull(Material.getMaterial(MarketCraft.shopMenus.getString(item + ".material")));
+                guiItem.material = Objects.requireNonNull(Material.getMaterial(files.shopMenus.getString(item + ".material")));
             }
             items.add(guiItem);
         }
@@ -62,7 +63,7 @@ public class CommandShopMenu implements CommandExecutor {
         items.add(new GUIItem(4));
 
         GUIBuilder guiBuilder = new GUIBuilder();
-        guiBuilder.createInventory("Shop Menu", items, 54);
-        guiBuilder.showInventory(player);
+        guiBuilder.makeGUI("Shop Menu", items, 54);
+        guiBuilder.showGUI(player);
     }
 }

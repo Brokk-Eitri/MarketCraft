@@ -8,11 +8,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -24,16 +22,17 @@ public class CommandVillager implements CommandExecutor{
         if (!(sender instanceof Player)) {
             return false;
         }
-        StringBuilder name = new StringBuilder();
+
         Player player = (Player) sender;
 
+        // TODO: Check if this can just be name = String.join("", args);
+        StringBuilder name = new StringBuilder();
         for (String i : args){
             name.append(i);
             if (!i.equals(args[args.length - 1])) {
                 name.append(" ");
             }
         }
-        ArrayList<MerchantRecipe> trades = new ArrayList<>();
 
         Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
         villager.setProfession(Villager.Profession.LIBRARIAN);
@@ -42,14 +41,10 @@ public class CommandVillager implements CommandExecutor{
         villager.setCanPickupItems(false);
         villager.setInvulnerable(true);
         villager.setCustomName(name.toString());
-        villager.setRecipes(trades);
-
-
+        villager.setRecipes(new ArrayList<>());
 
         return true;
     }
-
-
 
 
     public static void openShop(Player player, ItemStack item) {
@@ -81,7 +76,7 @@ public class CommandVillager implements CommandExecutor{
         items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, "Confirm", 1));
         items.add(new GUIItem(4));
 
-        shop.createInventory("Shop", items);
-        shop.showInventory(player);
+        shop.makeGUI("Shop", items);
+        shop.showGUI(player);
     }
 }

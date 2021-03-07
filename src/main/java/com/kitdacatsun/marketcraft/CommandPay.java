@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import com.kitdacatsun.marketcraft.MarketCraft.files;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,14 +41,14 @@ public class CommandPay implements CommandExecutor {
             UUID Uuid = player.getUniqueId();
             String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-            if ((int) MarketCraft.balance.get(playerBalanceKey) >= amount){
+            if ((int) files.balance.get(playerBalanceKey) >= amount){
 
-                if (MarketCraft.balance.contains(playerBalanceKey)) {
-                    int balance = (int) MarketCraft.balance.get(playerBalanceKey) - amount;
-                    MarketCraft.balance.set(playerBalanceKey, balance);
+                if (files.balance.contains(playerBalanceKey)) {
+                    int balance = (int) files.balance.get(playerBalanceKey) - amount;
+                    files.balance.set(playerBalanceKey, balance);
                 } else {
-                    MarketCraft.balance.set(playerBalanceKey, amount);
-                    MarketCraft.balance.options().copyDefaults(true);
+                    files.balance.set(playerBalanceKey, amount);
+                    files.balance.options().copyDefaults(true);
                 }
 
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
@@ -56,12 +57,12 @@ public class CommandPay implements CommandExecutor {
                 Uuid = receiver.getUniqueId();
                 playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-                if (MarketCraft.balance.contains(playerBalanceKey)) {
-                    int balance = (int) MarketCraft.balance.get(playerBalanceKey) + amount;
-                    MarketCraft.balance.set(playerBalanceKey, balance);
+                if (files.balance.contains(playerBalanceKey)) {
+                    int balance = (int) files.balance.get(playerBalanceKey) + amount;
+                    files.balance.set(playerBalanceKey, balance);
                 } else {
-                    MarketCraft.balance.set(playerBalanceKey, amount);
-                    MarketCraft.balance.options().copyDefaults(true);
+                    files.balance.set(playerBalanceKey, amount);
+                    files.balance.options().copyDefaults(true);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have enough money to pay the specified player");
@@ -90,12 +91,12 @@ public class CommandPay implements CommandExecutor {
 
         String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
 
-        if (MarketCraft.balance.contains(playerBalanceKey)) {
-            int balance = (int) MarketCraft.balance.get(playerBalanceKey) + amount;
-            MarketCraft.balance.set(playerBalanceKey, balance);
+        if (files.balance.contains(playerBalanceKey)) {
+            int balance = (int) files.balance.get(playerBalanceKey) + amount;
+            files.balance.set(playerBalanceKey, balance);
         } else {
-            MarketCraft.balance.set(playerBalanceKey, amount);
-            MarketCraft.balance.options().copyDefaults(true);
+            files.balance.set(playerBalanceKey, amount);
+            files.balance.options().copyDefaults(true);
         }
 
     }

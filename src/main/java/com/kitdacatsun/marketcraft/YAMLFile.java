@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class SettingsFile {
+public class YAMLFile {
     private final File file;
     private final FileConfiguration customFile;
 
-    public SettingsFile(String fileName) {
+    public YAMLFile(String fileName) {
         file = new File(MarketCraft.plugin.getDataFolder(), fileName);
 
         if (!file.exists()) {

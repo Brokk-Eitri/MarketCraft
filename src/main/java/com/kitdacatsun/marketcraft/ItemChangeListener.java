@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -111,9 +112,9 @@ public class ItemChangeListener implements Listener {
 
     private void log(ItemChange change) {
         if (change.change > 0) {
-            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
+            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
         } else if (change.change < 0) {
-            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
+            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
         }
     }
 }

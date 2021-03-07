@@ -2,53 +2,51 @@ package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
 public final class MarketCraft extends JavaPlugin {
 
     public static MarketCraft plugin;
     public static Server server;
-    public static World world;
-    public static Logger logger;
 
     private final static Map<String, Integer> itemMap = new HashMap<>();
     private final static Map<String, Integer> priceMap = new HashMap<>();
     public static List<ItemChange> changeBuffer = new ArrayList<>();
 
-    private static final long updateTimeTicks = 60 * 20;
+    private static final long updateTimeTicks = 5 * 60 * 20;
 
-    public static SettingsFile itemCounts;
-    public static SettingsFile balance;
-    public static SettingsFile shopMenus;
-    public static SettingsFile playerShop;
+    public static class files {
+        public static YAMLFile itemCounts;
+        public static YAMLFile balance;
+        public static YAMLFile shopMenus;
+        public static YAMLFile playerShop;
+    }
+
+    public static MarketCraft getPlugin() {
+        return plugin;
+    }
 
     @Override
     public void onLoad() {
-        logger = getLogger();
-
         plugin = this;
         server = plugin.getServer();
     }
 
     @Override
     public void onEnable() {
-        logger.info("Enabled");
+        getLogger().info("Enabled");
 
-        world = server.getWorld("world");
+        files.itemCounts = new YAMLFile("itemCounts.yml");
+        files.balance = new YAMLFile("playerBalances.yml");
+        files.playerShop = new YAMLFile("playerShop.yml");
+        files.shopMenus = new YAMLFile("shop.yml");
 
-        itemCounts = new SettingsFile("itemCounts.yml");
-        balance = new SettingsFile("playerBalances.yml");
-        playerShop = new SettingsFile("playerShop.yml");
-        shopMenus = new SettingsFile("shop.yml");
-
-        for (String key : itemCounts.getKeys(false)) {
-            itemMap.put(key, itemCounts.getInt(key));
+        for (String key : files.itemCounts.getKeys(false)) {
+            itemMap.put(key, files.itemCounts.getInt(key));
         }
 
         BukkitScheduler scheduler = server.getScheduler();
@@ -66,12 +64,12 @@ public final class MarketCraft extends JavaPlugin {
     @Override
     public void onDisable() {
         for (String item : itemMap.keySet()) {
-            itemCounts.set(item, itemMap.get(item));
+            files.itemCounts.set(item, itemMap.get(item));
         }
 
         updatePrices();
 
-        logger.info("Disabled");
+        getLogger().info("Disabled");
     }
 
     private void updatePrices() {
@@ -89,12 +87,12 @@ public final class MarketCraft extends JavaPlugin {
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
 
-        logger.info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+        getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
 
         for (String key: itemMap.keySet()) {
             int value = itemMap.get(key);
 
-            logger.info( ChatColor.BLUE + key + ": \t " + value);
+            getLogger().info( ChatColor.BLUE + key + ": \t " + value);
 
             if (value < lowest) {
                 lowest = value;
@@ -103,21 +101,21 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        double priceConstant = shopMenus.getDouble("PRICE_CONSTANT");
-        double min = shopMenus.getDouble("MIN_PRICE");
-        double max = shopMenus.getDouble("MAX_PRICE");
+        double priceConstant = files.shopMenus.getDouble("PRICE_CONSTANT");
+        double min = files.shopMenus.getDouble("MIN_PRICE");
+        double max = files.shopMenus.getDouble("MAX_PRICE");
 
-        logger.info(ChatColor.BLUE + "---------------< PRICES >---------------");
+        getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 
         for (String key: itemMap.keySet()) {
             double rarity = (itemMap.get(key) - lowest) / (highest - lowest);
             int price = (int)(clamp(priceConstant / rarity, min, max));
             priceMap.put(key, price);
 
-            logger.info( ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
+            getLogger().info( ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
         }
 
-        logger.info(ChatColor.BLUE + "----------------------------------------");
+        getLogger().info(ChatColor.BLUE + "----------------------------------------");
     }
 
     public static double clamp(double value, double min, double max) {

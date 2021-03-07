@@ -1,6 +1,7 @@
 package com.kitdacatsun.marketcraft;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -10,6 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class GUIBuilder {
 
     public static final int TOP_MID = 4;
@@ -18,16 +21,16 @@ public class GUIBuilder {
 
     public Inventory inventory;
 
-    public void createInventory(String title, List<GUIItem> itemPairs) {
-        makeInv(title, itemPairs, 27);
+    public void makeGUI(String title, List<GUIItem> itemPairs) {
+        makeInventory(title, itemPairs, 27);
     }
 
-    public void createInventory(String title, List<GUIItem> itemPairs, int size) {
-        makeInv(title, itemPairs, size);
+    public void makeGUI(String title, List<GUIItem> itemPairs, int size) {
+        makeInventory(title, itemPairs, size);
     }
 
-    private void makeInv(String title, List<GUIItem> itemPairs, int size) {
-        inventory = MarketCraft.server.createInventory(null, size, title);
+    private void makeInventory(String title, List<GUIItem> itemPairs, int size) {
+        inventory = Bukkit.createInventory(null, size, title);
 
         int i = 0;
         for (GUIItem item : itemPairs) {
@@ -38,23 +41,23 @@ public class GUIBuilder {
                 i += 1;
 
                 if (i > size) {
-                    MarketCraft.logger.warning("GUIBuilder given too many items");
+                    getLogger().warning("GUIBuilder given too many items");
                     return;
                 }
             }
         }
     }
 
-    public void showInventory(Player player) {
+    public void showGUI(Player player) {
         player.openInventory(inventory);
     }
 }
 
 class GUIItem {
-    public Material material;
-    public String name;
+    public Material material = null;
+    public String name = null;
     public int amount = 1;
-    public String lore = null;
+    public List<String> lore = new ArrayList<>();
     public ItemMeta meta = null;
     public int count = 1;
 
@@ -62,14 +65,13 @@ class GUIItem {
 
     public GUIItem(int count) {
         this.count = count;
-        this.name = null;
     }
 
     public GUIItem(String name, Material material, int amount, String lore, int count) {
         this.material = material;
         this.name = name;
         this.amount = amount;
-        this.lore = lore;
+        this.lore.add(lore);
         this.count = count;
     }
 
@@ -78,13 +80,8 @@ class GUIItem {
             material = itemStack.getType();
             name = itemStack.getI18NDisplayName();
             amount = itemStack.getAmount();
-            if (itemStack.getLore() != null) {
-                this.lore = itemStack.getLore().get(0);
-            }
+            lore = itemStack.getLore();
             meta = itemStack.getItemMeta();
-        } else {
-            name = null;
-            this.count = count;
         }
 
         this.count = count;
@@ -97,22 +94,15 @@ class GUIItem {
             itemStack.setItemMeta(meta);
         }
 
-        if (lore != null) {
-            ArrayList<String> loreList = new ArrayList<>();
-            loreList.add(lore);
-            itemStack.setLore(loreList);
-        }
-
-        if (name != null) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(name);
-            itemStack.setItemMeta(itemMeta);
+        if (name == null) {
+            itemStack.getItemMeta().displayName(Component.text(itemStack.getType().name()));
         } else {
-            itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.displayName(Component.text(name));
+            itemStack.setItemMeta(itemMeta);
         }
 
-
-
+        itemStack.setLore(lore);
         itemStack.setAmount(amount);
 
         return itemStack;

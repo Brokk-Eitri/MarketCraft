@@ -25,7 +25,7 @@ public class CommandVillager implements CommandExecutor{
 
         Player player = (Player) sender;
 
-        // TODO: Check if this can just be name = String.join("", args);
+        // TODO: Check if this can just be name = String.join(" ", args);
         StringBuilder name = new StringBuilder();
         for (String i : args){
             name.append(i);
@@ -59,7 +59,7 @@ public class CommandVillager implements CommandExecutor{
 
         // Row 2
         items.add(new GUIItem("Sell 64", Material.RED_STAINED_GLASS_PANE, 64, "Sell", 1));
-        items.add(new GUIItem("Sell 10", Material.RED_STAINED_GLASS_PANE, 10, "Sell", 1));
+        items.add(new GUIItem("Sell 16", Material.RED_STAINED_GLASS_PANE, 16, "Sell", 1));
         items.add(new GUIItem("Sell 1", Material.RED_STAINED_GLASS_PANE, 1, "Sell", 1));
 
         items.add(new GUIItem(1));
@@ -68,7 +68,7 @@ public class CommandVillager implements CommandExecutor{
 
 
         items.add(new GUIItem("Buy 1", Material.GREEN_STAINED_GLASS_PANE, 1, "Buy", 1));
-        items.add(new GUIItem("Buy 10", Material.GREEN_STAINED_GLASS_PANE, 10, "Buy", 1));
+        items.add(new GUIItem("Buy 16", Material.GREEN_STAINED_GLASS_PANE, 16, "Buy", 1));
         items.add(new GUIItem("Buy 64", Material.GREEN_STAINED_GLASS_PANE, 64, "Buy", 1));
 
         // Row 3

@@ -28,14 +28,13 @@ public class CommandShopMenu implements CommandExecutor {
     }
 
     public void doMenu(String menu, Player player) {
-        int itemSpace = 36; // How many slots are available for items
+        int itemSpace = 36;
 
-        List<String> children = files.shopMenus.getStringList(menu + ".children");
-        player.sendMessage(menu);
+        List<String> children = files.shop.getStringList(menu + ".children");
 
         if (children.size() == 0) {
             GUIItem item = new GUIItem();
-            item.material = Objects.requireNonNull(Material.getMaterial(files.shopMenus.getString(menu + ".material")));
+            item.material = Objects.requireNonNull(Material.getMaterial(files.shop.getString(menu + ".material")));
             item.name = menu;
             CommandVillager.openShop(player, item.getItemStack());
             return;
@@ -51,7 +50,7 @@ public class CommandShopMenu implements CommandExecutor {
             GUIItem guiItem = new GUIItem();
             if (!item.equals("BLANK")) {
                 guiItem.name = item;
-                guiItem.material = Objects.requireNonNull(Material.getMaterial(files.shopMenus.getString(item + ".material")));
+                guiItem.material = Objects.requireNonNull(Material.getMaterial(files.shop.getString(item + ".material")));
             }
             items.add(guiItem);
         }

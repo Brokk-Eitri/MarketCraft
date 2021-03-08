@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemChangeListener implements Listener {
+public class ListenerItemChange implements Listener {
 
     private List<Material> inventoryMaterials() {
         List<Material> materials = new ArrayList<>();
@@ -65,15 +64,6 @@ public class ItemChangeListener implements Listener {
     @EventHandler
     private void FurnaceSmeltEvent(FurnaceSmeltEvent event) {
         logItemChange(event.getResult().getType(), event.getResult().getAmount());
-    }
-
-    @EventHandler
-    private void InventoryPickupItemEvent(InventoryPickupItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        logItemChange(event.getItem().getName(), event.getItem().getItemStack().getAmount());
     }
 
     @EventHandler

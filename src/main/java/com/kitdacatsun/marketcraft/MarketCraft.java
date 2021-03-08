@@ -2,6 +2,7 @@ package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -22,12 +23,12 @@ public final class MarketCraft extends JavaPlugin {
     public static class files {
         public static YAMLFile itemCounts;
         public static YAMLFile balance;
-        public static YAMLFile shopMenus;
+        public static YAMLFile shop;
         public static YAMLFile playerShop;
     }
 
-    public static MarketCraft getPlugin() {
-        return plugin;
+    public static int getPrice(ItemStack item) {
+        return priceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
     }
 
     @Override
@@ -43,7 +44,7 @@ public final class MarketCraft extends JavaPlugin {
         files.itemCounts = new YAMLFile("itemCounts.yml");
         files.balance = new YAMLFile("playerBalances.yml");
         files.playerShop = new YAMLFile("playerShop.yml");
-        files.shopMenus = new YAMLFile("shop.yml");
+        files.shop = new YAMLFile("shop.yml");
 
         for (String key : files.itemCounts.getKeys(false)) {
             itemMap.put(key, files.itemCounts.getInt(key));
@@ -52,9 +53,13 @@ public final class MarketCraft extends JavaPlugin {
         BukkitScheduler scheduler = server.getScheduler();
         scheduler.scheduleSyncRepeatingTask(plugin, this::updatePrices, 0, updateTimeTicks);
 
-        server.getPluginManager().registerEvents(new ItemChangeListener(), this);
-        server.getPluginManager().registerEvents(new GuiListener(), this);
+        // Register Listeners
+        server.getPluginManager().registerEvents(new ListenerItemChange(), this);
+        server.getPluginManager().registerEvents(new ListenerPlayerShop(), this);
+        server.getPluginManager().registerEvents(new ListenerShop(), this);
+        server.getPluginManager().registerEvents(new ListenerShopMenu(), this);
 
+        // Register Commands
         Objects.requireNonNull(getCommand("villager")).setExecutor(new CommandVillager());
         Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
@@ -101,9 +106,9 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        double priceConstant = files.shopMenus.getDouble("PRICE_CONSTANT");
-        double min = files.shopMenus.getDouble("MIN_PRICE");
-        double max = files.shopMenus.getDouble("MAX_PRICE");
+        double priceConstant = files.shop.getDouble("PRICE_CONSTANT");
+        double min = files.shop.getDouble("MIN_PRICE");
+        double max = files.shop.getDouble("MAX_PRICE");
 
         getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 

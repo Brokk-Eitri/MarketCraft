@@ -1,6 +1,5 @@
 package com.kitdacatsun.marketcraft;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,9 +14,11 @@ import static org.bukkit.Bukkit.getLogger;
 
 public class GUIBuilder {
 
-    public static final int TOP_MID = 4;
-    public static final int MID = 13;
-    public static final int BOT_MID = 22;
+    public class InvPos {
+        public static final int TOP_MID = 4;
+        public static final int MID = 13;
+        public static final int BOT_MID = 22;
+    }
 
     public Inventory inventory;
 
@@ -95,10 +96,10 @@ class GUIItem {
         }
 
         if (name == null) {
-            itemStack.getItemMeta().displayName(Component.text(itemStack.getType().name()));
+            itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getLocalizedName());
         } else {
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(Component.text(name));
+            itemMeta.setDisplayName(name);
             itemStack.setItemMeta(itemMeta);
         }
 

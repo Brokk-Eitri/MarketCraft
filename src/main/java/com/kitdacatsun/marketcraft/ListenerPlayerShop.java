@@ -15,7 +15,7 @@ import java.util.*;
 public class ListenerPlayerShop implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (!event.getView().getTitle().contains("Player Shop") || event.getCurrentItem() == null) {
+        if (!event.getView().getTitle().equals("Player Shop") || event.getCurrentItem() == null) {
             return;
         }
 
@@ -38,7 +38,7 @@ public class ListenerPlayerShop implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         int page;
-        Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(InvPos.TOP_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
+        Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(InvPos.TOP_MID).getItemMeta().getDisplayName())).useDelimiter("[^0-9]+");
         page = in.nextInt();
 
         switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
@@ -50,47 +50,46 @@ public class ListenerPlayerShop implements Listener {
                 playerShopCancelEvent(inventory);
                 break;
             case "Confirm":
-                if (inventory.getItem(49) != null){
-                    ArrayList<String> itemLore = (ArrayList<String>) Objects.requireNonNull(inventory.getItem(49)).getLore();
-                    assert itemLore != null;
-                    int position = Integer.parseInt(itemLore.get(0));
-                    int price = Integer.parseInt(String.valueOf(MarketCraft.files.playerShop.get(position + ".price")));
-                    String seller = String.valueOf(MarketCraft.files.playerShop.get(position + ".seller"));
-
-                    UUID Uuid = player.getUniqueId();
-                    UUID receiverUuid = UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(position + ".uid")));
-                    String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
-                    String receiverBalanceKey = "Players." + receiverUuid.toString() + ".balance";
-
-                    Player receiver = MarketCraft.server.getPlayer(seller);
-
-                    int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
-                    int receiverBalance = (int) MarketCraft.files.balance.get(receiverBalanceKey);
-                    Inventory playersInv = player.getOpenInventory().getBottomInventory();
-
-                    ItemStack selectedItem = playerShopItemEvent(inventory);
-
-                    //checking for room in their inventory
-                    if (!(player.getInventory().firstEmpty() == -1)){
-
-                        //checking if the player has enough money
-                        if (balance >= price) {
-
-                            playerShopSellEvent(inventory, playersInv,selectedItem, balance, receiverBalance, price, playerBalanceKey, receiverBalanceKey, position);
-
-                            assert receiver != null;
-                            receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
-                            player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + price);
-
-                        } else {
-                            player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
-                        }
-                    } else {
-                        player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
-                    }
-                } else {
+                if (inventory.getItem(49) == null){
                     player.sendMessage(ChatColor.RED + " No items selected please select an item");
+                    return;
                 }
+
+
+                int price = Integer.parseInt(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".price")));
+                Player receiver = MarketCraft.server.getPlayer(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".seller")));
+
+                String playerBalanceKey = "players." + player.getUniqueId().toString() + ".balance";
+                String receiverBalanceKey = "players." + UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".uid"))).toString() + ".balance";
+
+                if (!MarketCraft.files.balance.contains(playerBalanceKey)) {
+                    MarketCraft.files.balance.set(playerBalanceKey, 0);
+                }
+                if (!MarketCraft.files.balance.contains(receiverBalanceKey)) {
+                    MarketCraft.files.balance.set(playerBalanceKey, 0);
+                }
+
+                int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
+                int receiverBalance = (int) MarketCraft.files.balance.get(receiverBalanceKey);
+                Inventory playersInv = player.getOpenInventory().getBottomInventory();
+
+                ItemStack selectedItem = playerShopItemEvent(inventory);
+
+
+                if (player.getInventory().firstEmpty() == -1){
+                    player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
+                    return;
+                }
+
+                if (!(balance >= price)){
+                    player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + price + ").");
+                    return;
+                }
+
+                playerShopSellEvent(inventory, playersInv,selectedItem, balance, receiverBalance, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory));
+                assert receiver != null;
+                playerPayEvent(receiver, player, selectedItem, price);
+
                 playerShopCancelEvent(inventory);
                 break;
             default:
@@ -99,6 +98,17 @@ public class ListenerPlayerShop implements Listener {
                     break;
                 }
         }
+    }
+
+    private int getPosition(Inventory inventory) {
+        ArrayList<String> itemLore = (ArrayList<String>) Objects.requireNonNull(inventory.getItem(49)).getLore();
+        assert itemLore != null;
+        return Integer.parseInt(itemLore.get(0));
+    }
+
+    private void playerPayEvent(Player receiver, Player player, ItemStack selectedItem, int price) {
+        receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
+        player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + price);
     }
 
     private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int balance, int receiverBalance, int price, String playerBalanceKey, String receiverBalanceKey, int position) {

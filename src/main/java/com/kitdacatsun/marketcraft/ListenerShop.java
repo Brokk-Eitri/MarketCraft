@@ -38,7 +38,7 @@ public class ListenerShop implements Listener {
         switch (itemLore.get(0)) {
             case "Buy":
             case "Sell":
-                changeOrder(player, clickedItem, topInventory);
+                changeOrder(player, clickedItem, topInventory, botInventory);
                 return;
 
             case "Confirm":
@@ -53,11 +53,17 @@ public class ListenerShop implements Listener {
         }
     }
 
-    private void changeOrder(Player player, ItemStack option, Inventory inventory) {
+    private void changeOrder(Player player, ItemStack option, Inventory inventory, Inventory shopInv) {
+        ItemStack order = inventory.getItem(InvPos.MID);
+        if (order == null) {
+            player.sendMessage("Order is null");
+            return;
+        }
+
         GUIItem item;
 
         item = new GUIItem();
-        item.name = option.getItemMeta().getDisplayName();
+        item.name = option.getItemMeta().getDisplayName() + " For: £" + MarketCraft.getPrice(order) * order.getAmount();
         item.lore.add("Confirm");
         item.amount = 1;
         item.material = Material.LIME_DYE;
@@ -85,7 +91,7 @@ public class ListenerShop implements Listener {
 
         switch (type) {
             case "Sell":
-                if (!playerInv.contains(order)) {
+                if (!playerInv.containsAtLeast(order, order.getAmount())) {
                     player.sendMessage(ChatColor.RED + "Not enough of that item type to sell");
                     return;
                 }
@@ -101,7 +107,7 @@ public class ListenerShop implements Listener {
             case "Buy":
                 if (player.getInventory().firstEmpty() != -1) {
 
-                    if (balance >= cost * order.getAmount()) {
+                    if (balance >= cost) {
 
                         playerInv.addItem(order);
 

@@ -19,7 +19,11 @@ public class CommandBalance implements CommandExecutor {
             Player player = (Player) sender;
 
             UUID Uuid = player.getUniqueId();
-            String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+            String playerBalanceKey = "players." + Uuid.toString() + ".balance";
+
+            if (!files.balance.contains(playerBalanceKey)) {
+                files.balance.set(playerBalanceKey, 0);
+            }
 
             int balance = (int) files.balance.get(playerBalanceKey);
 

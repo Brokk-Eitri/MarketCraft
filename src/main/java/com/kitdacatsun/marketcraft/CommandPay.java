@@ -39,26 +39,25 @@ public class CommandPay implements CommandExecutor {
             int amount = Integer.parseInt(args[1]);
 
             UUID Uuid = player.getUniqueId();
-            String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+            String playerBalanceKey = "players." + Uuid.toString() + ".balance";
+
+            if (!files.balance.contains(playerBalanceKey)) {
+                files.balance.set(playerBalanceKey, 0);
+            }
 
             if ((int) files.balance.get(playerBalanceKey) >= amount){
 
-                if (files.balance.contains(playerBalanceKey)) {
-                    int balance = (int) files.balance.get(playerBalanceKey) - amount;
-                    files.balance.set(playerBalanceKey, balance);
-                } else {
-                    files.balance.set(playerBalanceKey, amount);
-                    files.balance.options().copyDefaults(true);
-                }
+                int balance = (int) files.balance.get(playerBalanceKey) - amount;
+                files.balance.set(playerBalanceKey, balance);
 
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
                 player.sendMessage(ChatColor.GOLD + "You have payed " + receiver.getDisplayName() + " £" + amount);
 
                 Uuid = receiver.getUniqueId();
-                playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+                playerBalanceKey = "players." + Uuid.toString() + ".balance";
 
                 if (files.balance.contains(playerBalanceKey)) {
-                    int balance = (int) files.balance.get(playerBalanceKey) + amount;
+                    balance = (int) files.balance.get(playerBalanceKey) + amount;
                     files.balance.set(playerBalanceKey, balance);
                 } else {
                     files.balance.set(playerBalanceKey, amount);
@@ -89,7 +88,7 @@ public class CommandPay implements CommandExecutor {
         int amount = Integer.parseInt(args[1]);
         receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
 
-        String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+        String playerBalanceKey = "players." + Uuid.toString() + ".balance";
 
         if (files.balance.contains(playerBalanceKey)) {
             int balance = (int) files.balance.get(playerBalanceKey) + amount;

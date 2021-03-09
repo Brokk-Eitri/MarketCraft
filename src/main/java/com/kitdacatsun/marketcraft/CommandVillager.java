@@ -25,14 +25,7 @@ public class CommandVillager implements CommandExecutor{
 
         Player player = (Player) sender;
 
-        // TODO: Check if this can just be name = String.join(" ", args);
-        StringBuilder name = new StringBuilder();
-        for (String i : args){
-            name.append(i);
-            if (!i.equals(args[args.length - 1])) {
-                name.append(" ");
-            }
-        }
+        String name = String.join(" ", args);
 
         Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
         villager.setProfession(Villager.Profession.LIBRARIAN);
@@ -40,7 +33,7 @@ public class CommandVillager implements CommandExecutor{
         villager.setAI(false);
         villager.setCanPickupItems(false);
         villager.setInvulnerable(true);
-        villager.setCustomName(name.toString());
+        villager.setCustomName(name);
         villager.setRecipes(new ArrayList<>());
 
         return true;

@@ -117,7 +117,6 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        double priceConstant = files.shop.getDouble("PRICE_CONSTANT");
         double min = files.shop.getDouble("MIN_PRICE");
         double max = files.shop.getDouble("MAX_PRICE");
 
@@ -126,8 +125,8 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         for (String key: itemMap.keySet()) {
-            double rarity = (itemMap.get(key) - lowest) / (highest - lowest);
-            int price = (int)(clamp(priceConstant / rarity, min, max));
+            double rarity = 1 - ((itemMap.get(key) - lowest) / (highest - lowest));
+            int price = (int)(clamp(lowest / rarity, min, max));
             priceMap.put(key, price);
 
             if (display) {

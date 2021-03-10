@@ -78,11 +78,12 @@ public class CommandPlayerShop implements CommandExecutor {
         itemMap.put("item" , item);
         itemMap.put("price", price);
         itemMap.put("seller", player.getName());
-        itemMap.put("uid", player.getUniqueId());
+        itemMap.put("uid", player.getUniqueId().toString());
 
         for (String key: itemMap.keySet()) {
             files.playerShop.set(uid + "." + key, itemMap.get(key));
         }
+        files.playerShop.save();
     }
 
     public static void openPlayerShop(Player player, int page){

@@ -4,6 +4,11 @@ main: com.kitdacatsun.marketcraft.MarketCraft
 api-version: 1.16
 
 commands:
+  price:
+    description: Gets the prices of all items or a specific item
+    usage: /price <all/item>
+    aliases: [price minectaft:<name> , price all]
+
   shop:
     description: Opens the shop
     usage: /shop

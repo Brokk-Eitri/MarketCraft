@@ -159,13 +159,13 @@ public class ListenerPlayerShop implements Listener {
     }
 
     private void playerShopChooseEvent(ItemStack clickedItem, Player player, int page) {
-        if (Objects.equals(clickedItem.getI18NDisplayName(), "Next page")) {
+        if (Objects.equals(clickedItem.getItemMeta().getDisplayName(), "Next page")) {
             page += 1;
-            CommandPlayerShop.openPlayerShop(player, page);
-        } else if (Objects.equals(clickedItem.getI18NDisplayName(), "Previous page") && page > 0){
+        } else if (Objects.equals(clickedItem.getItemMeta().getDisplayName(), "Previous page") && page > 0){
             page -= 1;
-            CommandPlayerShop.openPlayerShop(player, page);
         }
+        CommandPlayerShop.openPlayerShop(player, page);
+
     }
 
     private void playerShopCancelEvent(Inventory inventory) {

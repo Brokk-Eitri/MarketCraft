@@ -31,6 +31,7 @@ public final class MarketCraft extends JavaPlugin {
         return priceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
     }
 
+
     @Override
     public void onLoad() {
         plugin = this;
@@ -51,7 +52,7 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, this::updatePrices, 0, updateTimeTicks);
+        scheduler.scheduleSyncRepeatingTask(plugin, () -> updatePrices(false), 0, updateTimeTicks);
 
         // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
@@ -66,9 +67,11 @@ public final class MarketCraft extends JavaPlugin {
         Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());
+        Objects.requireNonNull(getCommand("price")).setExecutor(new CommandPrice());
 
 
     }
+
 
     @Override
     public void onDisable() {
@@ -76,12 +79,12 @@ public final class MarketCraft extends JavaPlugin {
             files.itemCounts.set(item, itemMap.get(item));
         }
 
-        updatePrices();
+        updatePrices(false);
 
         getLogger().info("Disabled");
     }
 
-    private void updatePrices() {
+    public static void updatePrices(Boolean display) {
 
         for (int i = 0; i < changeBuffer.size(); i++) {
             ItemChange itemChange = changeBuffer.get(i);
@@ -96,12 +99,16 @@ public final class MarketCraft extends JavaPlugin {
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
 
-        getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+        }
 
         for (String key: itemMap.keySet()) {
             int value = itemMap.get(key);
 
-            getLogger().info( ChatColor.BLUE + key + ": \t " + value);
+            if (display) {
+                server.getLogger().info(ChatColor.BLUE + key + ": \t " + value);
+            }
 
             if (value < lowest) {
                 lowest = value;
@@ -114,17 +121,23 @@ public final class MarketCraft extends JavaPlugin {
         double min = files.shop.getDouble("MIN_PRICE");
         double max = files.shop.getDouble("MAX_PRICE");
 
-        getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
+        }
 
         for (String key: itemMap.keySet()) {
             double rarity = (itemMap.get(key) - lowest) / (highest - lowest);
             int price = (int)(clamp(priceConstant / rarity, min, max));
             priceMap.put(key, price);
 
-            getLogger().info( ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
+            if (display) {
+                server.getLogger().info(ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
+            }
         }
 
-        getLogger().info(ChatColor.BLUE + "----------------------------------------");
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
+        }
     }
 
     public static double clamp(double value, double min, double max) {

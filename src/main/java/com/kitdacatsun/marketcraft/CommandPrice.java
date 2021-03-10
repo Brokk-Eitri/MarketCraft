@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+
 public class CommandPrice implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
@@ -14,10 +16,11 @@ public class CommandPrice implements CommandExecutor {
             return false;
         }
 
-        if (args[0].equals("all")){
-            MarketCraft.updatePrices(true);
-
-
+        if (args[0].equals("all")) {
+            Level startLevel = MarketCraft.server.getLogger().getLevel();
+            MarketCraft.server.getLogger().setLevel(Level.WARNING);
+            MarketCraft.updatePrices();
+            MarketCraft.server.getLogger().setLevel(startLevel);
         } else {
             Material material = Material.getMaterial(args[0]);
             assert material != null;

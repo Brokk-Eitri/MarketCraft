@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,12 +23,14 @@ public class CommandShopMenu implements CommandExecutor {
 
         Player player = (Player)sender;
 
-        doMenu("root", player);
+        doMenu("root", player, "Shop menu");
 
         return true;
     }
 
-    public void doMenu(String menu, Player player) {
+    public void doMenu(String menu, Player player, String title) {
+        title = "Shop menu | " + title;
+
         int itemSpace = 36;
 
         List<String> children = files.shop.getStringList(menu + ".children");
@@ -62,7 +65,13 @@ public class CommandShopMenu implements CommandExecutor {
         items.add(new GUIItem(4));
 
         GUIBuilder guiBuilder = new GUIBuilder();
-        guiBuilder.makeGUI("Shop Menu", items, 54);
+        guiBuilder.makeGUI(title, items, 54);
         guiBuilder.showGUI(player);
+    }
+
+    public void openShop(ItemStack menu, Player player, String title){
+        if (files.shop.contains(menu.getI18NDisplayName())){
+            CommandVillager.openShop(player, menu);
+        }
     }
 }

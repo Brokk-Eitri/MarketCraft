@@ -21,7 +21,7 @@ public class ListenerVillagers implements Listener {
 
         if(name.equals("Shop") && villager.isInvulnerable()) {
             CommandShopMenu commandShopMenu = new CommandShopMenu();
-            commandShopMenu.doMenu("root",player);
+            commandShopMenu.doMenu("root", player, "Shop menu");
 
         } else if (name.equals("Player shop - Add") && villager.isInvulnerable()){
             CommandPlayerShop.addPLayerShop(player, null);

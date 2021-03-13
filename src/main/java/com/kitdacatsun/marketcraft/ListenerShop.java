@@ -46,7 +46,8 @@ public class ListenerShop implements Listener {
                 return;
 
             case "Back":
-                // TODO: Go Back
+            case "Return to Previous Menu":
+                openPrevious(player);
                 return;
 
             default:
@@ -104,6 +105,7 @@ public class ListenerShop implements Listener {
 
                 return;
 
+
             case "Buy":
                 if (player.getInventory().firstEmpty() != -1) {
 
@@ -125,6 +127,18 @@ public class ListenerShop implements Listener {
                 return;
 
             default:
+        }
+    }
+    private void openPrevious(Player player) {
+        if (files.shop.contains(player.getUniqueId().toString())){
+            String name = files.shop.getString(player.getUniqueId().toString());
+            if (name.equals("Shop menu")){
+                name = "root";
+            }
+            new CommandShopMenu().doMenu(name, player, name);
+            files.shop.set(player.getUniqueId().toString(), player.getOpenInventory().getTitle());
+        } else {
+            player.sendMessage(ChatColor.RED + "No menu to go to");
         }
     }
 }

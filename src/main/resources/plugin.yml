@@ -7,7 +7,7 @@ commands:
   price:
     description: Gets the prices of all items or a specific item
     usage: /price <all/item>
-    aliases: [price minectaft:<name> , price all]
+    aliases: price all
 
   shop:
     description: Opens the shop

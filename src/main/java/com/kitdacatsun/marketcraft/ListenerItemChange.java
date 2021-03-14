@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -11,7 +12,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemChangeListener implements Listener {
+public class ListenerItemChange implements Listener {
 
     private List<Material> inventoryMaterials() {
         List<Material> materials = new ArrayList<>();
@@ -67,15 +67,6 @@ public class ItemChangeListener implements Listener {
     }
 
     @EventHandler
-    private void InventoryPickupItemEvent(InventoryPickupItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        logItemChange(event.getItem().getName(), event.getItem().getItemStack().getAmount());
-    }
-
-    @EventHandler
     private void EntityDropItemEvent(EntityDropItemEvent event) {
         if (event.getEntity().getType() == EntityType.PLAYER) {
             return;
@@ -111,9 +102,9 @@ public class ItemChangeListener implements Listener {
 
     private void log(ItemChange change) {
         if (change.change > 0) {
-            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
+            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
         } else if (change.change < 0) {
-            MarketCraft.logger.info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
+            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
         }
     }
 }

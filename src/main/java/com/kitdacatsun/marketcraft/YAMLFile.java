@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,21 +11,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class SettingsFile {
+public class YAMLFile {
     private final File file;
     private final FileConfiguration customFile;
 
-    public SettingsFile(String fileName) {
+    public YAMLFile(String fileName) {
         file = new File(MarketCraft.plugin.getDataFolder(), fileName);
 
         if (!file.exists()) {
             try {
                 if (file.createNewFile()) {
-                    MarketCraft.logger.info("Created new file " + fileName);
+                    Bukkit.getLogger().info("Created new YAML file: " + fileName);
                 }
             } catch (IOException ignored) { }
-        } else {
-            MarketCraft.logger.info("Found file " + fileName);
         }
 
         customFile = YamlConfiguration.loadConfiguration(file);
@@ -34,7 +33,7 @@ public class SettingsFile {
         try {
             customFile.save(file);
         } catch (IOException e) {
-            MarketCraft.logger.warning("Could not save settings file " + customFile.getName());
+            Bukkit.getLogger().warning("Could not save settings file " + customFile.getName());
         }
     }
 

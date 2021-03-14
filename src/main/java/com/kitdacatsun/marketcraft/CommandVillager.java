@@ -8,11 +8,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -24,16 +22,10 @@ public class CommandVillager implements CommandExecutor{
         if (!(sender instanceof Player)) {
             return false;
         }
-        StringBuilder name = new StringBuilder();
+
         Player player = (Player) sender;
 
-        for (String i : args){
-            name.append(i);
-            if (!i.equals(args[args.length - 1])) {
-                name.append(" ");
-            }
-        }
-        ArrayList<MerchantRecipe> trades = new ArrayList<>();
+        String name = String.join(" ", args);
 
         Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
         villager.setProfession(Villager.Profession.LIBRARIAN);
@@ -41,18 +33,14 @@ public class CommandVillager implements CommandExecutor{
         villager.setAI(false);
         villager.setCanPickupItems(false);
         villager.setInvulnerable(true);
-        villager.setCustomName(name.toString());
-        villager.setRecipes(trades);
-
-
+        villager.setCustomName(name);
+        villager.setRecipes(new ArrayList<>());
 
         return true;
     }
 
 
-
-
-    public static void openShop(Player player, ItemStack item) {
+    public static void openShop(Player player, ItemStack item, String title) {
         GUIBuilder shop = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
@@ -64,7 +52,7 @@ public class CommandVillager implements CommandExecutor{
 
         // Row 2
         items.add(new GUIItem("Sell 64", Material.RED_STAINED_GLASS_PANE, 64, "Sell", 1));
-        items.add(new GUIItem("Sell 10", Material.RED_STAINED_GLASS_PANE, 10, "Sell", 1));
+        items.add(new GUIItem("Sell 16", Material.RED_STAINED_GLASS_PANE, 16, "Sell", 1));
         items.add(new GUIItem("Sell 1", Material.RED_STAINED_GLASS_PANE, 1, "Sell", 1));
 
         items.add(new GUIItem(1));
@@ -73,7 +61,7 @@ public class CommandVillager implements CommandExecutor{
 
 
         items.add(new GUIItem("Buy 1", Material.GREEN_STAINED_GLASS_PANE, 1, "Buy", 1));
-        items.add(new GUIItem("Buy 10", Material.GREEN_STAINED_GLASS_PANE, 10, "Buy", 1));
+        items.add(new GUIItem("Buy 16", Material.GREEN_STAINED_GLASS_PANE, 16, "Buy", 1));
         items.add(new GUIItem("Buy 64", Material.GREEN_STAINED_GLASS_PANE, 64, "Buy", 1));
 
         // Row 3
@@ -81,7 +69,7 @@ public class CommandVillager implements CommandExecutor{
         items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, "Confirm", 1));
         items.add(new GUIItem(4));
 
-        shop.createInventory("Shop", items);
-        shop.showInventory(player);
+        shop.makeGUI("Shop | " + title, items);
+        shop.showGUI(player);
     }
 }

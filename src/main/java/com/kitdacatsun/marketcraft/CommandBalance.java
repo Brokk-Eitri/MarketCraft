@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import com.kitdacatsun.marketcraft.MarketCraft.files;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,9 +19,13 @@ public class CommandBalance implements CommandExecutor {
             Player player = (Player) sender;
 
             UUID Uuid = player.getUniqueId();
-            String playerBalanceKey = "Players." + Uuid.toString() + ".balance";
+            String playerBalanceKey = "players." + Uuid.toString() + ".balance";
 
-            int balance = (int) MarketCraft.balance.get(playerBalanceKey);
+            if (!files.balance.contains(playerBalanceKey)) {
+                files.balance.set(playerBalanceKey, 0);
+            }
+
+            int balance = (int) files.balance.get(playerBalanceKey);
 
             sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balance);
 

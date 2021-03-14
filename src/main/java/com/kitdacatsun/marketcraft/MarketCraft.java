@@ -53,7 +53,7 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, () -> updatePrices(), 0, updateTimeTicks);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, 0, updateTimeTicks);
 
         // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);

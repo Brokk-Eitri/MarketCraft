@@ -18,14 +18,14 @@ public class ListenerShop implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals("Shop") || event.getCurrentItem() == null || event.getClickedInventory() == null) {
+        if (!event.getView().getTitle().contains("Shop |") || event.getCurrentItem() == null || event.getClickedInventory() == null) {
             return;
         }
 
         event.setCancelled(true);
 
         if (event.getCurrentItem().getLore() == null) {
-            CommandVillager.openShop((Player) event.getWhoClicked(), event.getCurrentItem());
+            CommandVillager.openShop((Player) event.getWhoClicked(), event.getCurrentItem(), event.getCurrentItem().getItemMeta().getDisplayName());
             return;
         }
 
@@ -132,6 +132,10 @@ public class ListenerShop implements Listener {
     private void openPrevious(Player player) {
         if (files.shop.contains(player.getUniqueId().toString())){
             String name = files.shop.getString(player.getUniqueId().toString());
+            if (name.equals(player.getOpenInventory().getTitle())){
+                return;
+            }
+            name = name.substring(12);
             if (name.equals("Shop menu")){
                 name = "root";
             }

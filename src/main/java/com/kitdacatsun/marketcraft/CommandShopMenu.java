@@ -39,7 +39,7 @@ public class CommandShopMenu implements CommandExecutor {
             GUIItem item = new GUIItem();
             item.material = Objects.requireNonNull(Material.getMaterial(files.shop.getString(menu + ".material")));
             item.name = menu;
-            CommandVillager.openShop(player, item.getItemStack());
+            CommandVillager.openShop(player, item.getItemStack(), item.getItemStack().getItemMeta().getDisplayName());
             return;
         }
 
@@ -71,7 +71,7 @@ public class CommandShopMenu implements CommandExecutor {
 
     public void openShop(ItemStack menu, Player player, String title){
         if (files.shop.contains(menu.getI18NDisplayName())){
-            CommandVillager.openShop(player, menu);
+            CommandVillager.openShop(player, menu, title);
         }
     }
 }

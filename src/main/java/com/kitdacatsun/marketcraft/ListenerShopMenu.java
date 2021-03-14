@@ -44,7 +44,7 @@ public class ListenerShopMenu implements Listener {
     }
 
     private void setPrevious(InventoryClickEvent event, Player player) {
-        String title = player.getOpenInventory().getTitle().substring(12);
+        String title = player.getOpenInventory().getTitle();
         String name = event.getCurrentItem().getItemMeta().getDisplayName();
         if (name.equals("root")){
             name = "Shop menu";
@@ -56,6 +56,10 @@ public class ListenerShopMenu implements Listener {
     private void openPrevious(Player player) {
         if (files.shop.contains(player.getUniqueId().toString())){
             String name = files.shop.getString(player.getUniqueId().toString());
+            if (name.equals(player.getOpenInventory().getTitle())){
+                return;
+            }
+            name = name.substring(12);
             if (name.equals("Shop menu")){
                 name = "root";
             }

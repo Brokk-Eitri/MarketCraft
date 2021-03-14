@@ -40,7 +40,7 @@ public class CommandVillager implements CommandExecutor{
     }
 
 
-    public static void openShop(Player player, ItemStack item) {
+    public static void openShop(Player player, ItemStack item, String title) {
         GUIBuilder shop = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
@@ -69,7 +69,7 @@ public class CommandVillager implements CommandExecutor{
         items.add(new GUIItem("Select an option", Material.GRAY_DYE, 1, "Confirm", 1));
         items.add(new GUIItem(4));
 
-        shop.makeGUI("Shop", items);
+        shop.makeGUI("Shop | " + title, items);
         shop.showGUI(player);
     }
 }

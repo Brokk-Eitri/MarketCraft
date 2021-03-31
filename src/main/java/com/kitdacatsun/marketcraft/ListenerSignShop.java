@@ -1,15 +1,20 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Objects;
@@ -27,44 +32,56 @@ public class ListenerSignShop implements Listener {
         }
 
         WallSign sign = (WallSign) event.getClickedBlock();
-        String[] lines = sign.getLines();
+        String[] lines = ((Sign) sign).getLines();
 
         if (!lines[0].toUpperCase().contains("SHOP")) {
             return;
         }
 
-        int price = Integer.parseInt(lines[1].replaceAll("[^0-9]", ""));
-        int quantity = Integer.parseInt(lines[2].replaceAll("[^0-9]", ""));
-        Player seller = Bukkit.getServer().getPlayer(lines[3]);
+        /*
+SHOP
+£15
+15 Spruce Logs
+KitDaCatsun
+         */
 
+        String notItemName = "\\d|[^a-zA-Z ]|[sS]\\Z";
 
-        Vector vector = null;
+        int price = Integer.parseInt(lines[1].replaceAll("\\D", ""));
+        int amount = Integer.parseInt(lines[2].replaceAll("\\D", ""));
+        Material item = Material.getMaterial(lines[2].replaceAll(notItemName, ""));
+        Player seller = Bukkit.getServer().getPlayer(lines[3].replaceAll("\\W", ""));
+        Player buyer = event.getPlayer();
 
-        switch (sign.getFacing()) {
-            case NORTH:
-                vector = new Vector(0, 0, 1);
-                return;
+        Vector chestDirection = sign.getFacing().getOppositeFace().getDirection();
+        Location chestLocation = ((Block) sign).getLocation().add(chestDirection);
 
-            case SOUTH:
-                vector = new Vector(0, 0, -1);
-                return;
-
-            case EAST:
-                vector = new Vector(-1, 0, 1);
-                return;
-
-            case WEST:
-                vector = new Vector(1, 0, 1);
-                return;
-
-            default:
+        if (seller == null) {
+            Bukkit.getLogger().warning("Could not find player " + lines[3] + " for chest shop at " + chestLocation);
+            return;
         }
 
-        Vector a = vector;
-        Location chestLocation = ((Block) sign).getLocation().add(vector);
-        Chest chest;
+        if (!(chestLocation.getBlock() instanceof Chest)) {
+            return;
+        }
 
+        Inventory chest = ((Chest) chestLocation.getBlock()).getBlockInventory();
 
+        if (chest.getContents().length < 1) {
+            seller.sendMessage(ChatColor.YELLOW + "Your chest shop at " + chestLocation + " does not contain any items");
+            buyer.sendMessage(ChatColor.YELLOW + "There are no items in this chest");
+        }
+
+        ItemStack itemStack = new ItemStack(chest.getContents()[0]);
+        itemStack.setAmount(amount);
+
+        if (!chest.containsAtLeast(itemStack, amount)) {
+            seller.sendMessage(ChatColor.YELLOW + "Your chest shop at " + chestLocation + " does not contain enough items");
+            buyer.sendMessage(ChatColor.YELLOW + "This chest does not contain enough items");
+        }
+
+        seller.sendMessage(ChatColor.RED + "Items bought from chest shop at " + chestLocation);
+        buyer.sendMessage(ChatColor.GREEN + "You have bought " + amount + " " + )
         CommandPay.pay(event.getPlayer(), seller, price);
     }
 }

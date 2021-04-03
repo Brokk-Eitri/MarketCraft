@@ -18,7 +18,7 @@ commands:
     usage: /pay <player> <amount>
 
   balance:
-    description: A commmand to cheak player balance
+    description: A commmand to check player balance
     useage: /balance
     aliases: bal
     permission: balance
@@ -33,6 +33,6 @@ commands:
 
 permissions:
   balance:
-    description: Allows all players to cheak their balance
+    description: Allows all players to check their balance
     default: true
 

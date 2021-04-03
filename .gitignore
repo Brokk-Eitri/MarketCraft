@@ -1,12 +1,11 @@
 # User-specific stuff
 .idea/
+.settings/
+out/
 
 *.iml
 *.ipr
 *.iws
-
-# IntelliJ
-out/
 
 # Compiled class file
 *.class
@@ -111,3 +110,4 @@ buildNumber.properties
 
 # Common working directory
 run/
+

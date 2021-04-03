@@ -3,6 +3,9 @@
 .settings/
 out/
 
+.project
+.classpath
+
 *.iml
 *.ipr
 *.iws

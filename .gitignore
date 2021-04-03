@@ -1,10 +1,8 @@
 # User-specific stuff
 .idea/
 .settings/
+.vscode/
 out/
-
-.project
-.classpath
 
 *.iml
 *.ipr

@@ -47,7 +47,6 @@ public final class MarketCraft extends JavaPlugin {
         files.balance = new YAMLFile("playerBalances.yml");
         files.playerShop = new YAMLFile("playerShop.yml");
         files.shop = new YAMLFile("shop.yml");
-        files.itemChange = new YAMLFile("itemChange.yml");
 
         for (String key : files.itemCounts.getKeys(false)) {
             itemMap.put(key, files.itemCounts.getInt(key));

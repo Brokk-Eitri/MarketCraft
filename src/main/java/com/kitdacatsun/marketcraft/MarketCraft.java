@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
-import java.util.logging.Level;
 
 
 public final class MarketCraft extends JavaPlugin {
@@ -26,6 +25,7 @@ public final class MarketCraft extends JavaPlugin {
         public static YAMLFile balance;
         public static YAMLFile shop;
         public static YAMLFile playerShop;
+        public static YAMLFile itemChange;
     }
 
     public static int getPrice(ItemStack item) {
@@ -47,13 +47,14 @@ public final class MarketCraft extends JavaPlugin {
         files.balance = new YAMLFile("playerBalances.yml");
         files.playerShop = new YAMLFile("playerShop.yml");
         files.shop = new YAMLFile("shop.yml");
+        files.itemChange = new YAMLFile("itemChange.yml");
 
         for (String key : files.itemCounts.getKeys(false)) {
             itemMap.put(key, files.itemCounts.getInt(key));
         }
 
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, () -> updatePrices(), 0, updateTimeTicks);
+        scheduler.scheduleSyncRepeatingTask(plugin, () -> updatePrices(false), 0, updateTimeTicks);
 
         // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
@@ -78,15 +79,12 @@ public final class MarketCraft extends JavaPlugin {
             files.itemCounts.set(item, itemMap.get(item));
         }
 
-        Level startLevel = MarketCraft.server.getLogger().getLevel();
-        MarketCraft.server.getLogger().setLevel(Level.WARNING);
-        MarketCraft.updatePrices();
-        MarketCraft.server.getLogger().setLevel(startLevel);
+        MarketCraft.updatePrices(true);
 
         getLogger().info("Disabled");
     }
 
-    public static void updatePrices() {
+    public static void updatePrices(boolean display) {
         for (int i = 0; i < changeBuffer.size(); i++) {
             ItemChange itemChange = changeBuffer.get(i);
             itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
@@ -99,12 +97,15 @@ public final class MarketCraft extends JavaPlugin {
 
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
-
-        server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+        }
 
         for (String key: itemMap.keySet()) {
             int value = itemMap.get(key);
-            server.getLogger().info(ChatColor.BLUE + key + ": \t " + value);
+            if (display) {
+                server.getLogger().info(ChatColor.BLUE + key + ": \t " + value);
+            }
             if (value < lowest) {
                 lowest = value;
             } else if (value > highest) {
@@ -115,21 +116,23 @@ public final class MarketCraft extends JavaPlugin {
         double min = files.shop.getDouble("MIN_PRICE");
         double max = files.shop.getDouble("MAX_PRICE");
 
-        server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
-
-        for (String key: itemMap.keySet()) {
-            double rarity = 1 - ((itemMap.get(key) - lowest) / (highest - lowest));
-            int price = (int)(clamp(lowest / rarity * max, min, max));
-            priceMap.put(key, price);
-
-            server.getLogger().info(ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
         }
 
-        server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
-    }
+        for (String key: itemMap.keySet()) {
+            double rarity = (1 - ((itemMap.get(key) - lowest) / (highest - lowest))) * 10;
+            int price = (int)(min + (((max - min) / 10) * rarity));
+            priceMap.put(key, price);
 
-    public static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
+            if (display) {
+                server.getLogger().info(ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
+            }
+        }
+
+        if (display) {
+            server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
+        }
     }
 }
 

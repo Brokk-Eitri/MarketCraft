@@ -1,7 +1,5 @@
 package com.kitdacatsun.marketcraft;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -87,8 +85,6 @@ public class ListenerItemChange implements Listener {
         itemChange.name = name.toUpperCase().replace(" ", "_");
         itemChange.change = change;
         MarketCraft.changeBuffer.add(itemChange);
-
-        log(itemChange);
     }
 
     private void logItemChange(Material material, int change) {
@@ -96,15 +92,6 @@ public class ListenerItemChange implements Listener {
         itemChange.name = material.name();
         itemChange.change = change;
         MarketCraft.changeBuffer.add(itemChange);
-
-        log(itemChange);
     }
 
-    private void log(ItemChange change) {
-        if (change.change > 0) {
-            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] +" + change.change + " " + change.name);
-        } else if (change.change < 0) {
-            Bukkit.getLogger().info(ChatColor.GREEN + "[ITEM CHANGE] " + change.change + " " + change.name);
-        }
-    }
 }

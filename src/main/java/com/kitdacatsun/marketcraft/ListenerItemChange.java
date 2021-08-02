@@ -66,33 +66,29 @@ public class ListenerItemChange implements Listener {
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     @EventHandler
     private void CraftItemEvent(CraftItemEvent event) {
-        ItemStack craftedItem = event.getInventory().getResult();
-        Inventory inventory = event.getInventory();
-        ClickType clickType = event.getClick();
-        int outputAmount;
-        int lowerAmount = 1;
-
-        if (clickType.isShiftClick()) {
-            lowerAmount = 64;
-            for (ItemStack itemStack : inventory.getContents()) {
-                if (!itemStack.getType().isAir() && lowerAmount > itemStack.getAmount() && !itemStack.getType().equals(craftedItem.getType())) {
-                    lowerAmount = itemStack.getAmount();
+        ItemStack product = event.getInventory().getResult();
+        assert product != null;
+        int crafted = 1;
+        if (event.getClick().isShiftClick()) {
+            crafted = 64;
+            for (ItemStack reagent : event.getInventory().getMatrix()) {
+                if (reagent != null) {
+                    if (reagent.getAmount() < crafted) {
+                        crafted = reagent.getAmount();
+                    }
                 }
             }
         }
 
-        outputAmount = lowerAmount * Objects.requireNonNull(craftedItem).getAmount();
-        int inputAmount = outputAmount / craftedItem.getAmount();
-        logItemChange(craftedItem, outputAmount);
-
+        logItemChange(product, crafted * product.getAmount());
         for (ItemStack itemStack : event.getInventory().getMatrix()) {
             if (itemStack != null) {
-                logItemChange(itemStack.getType(), -1 * inputAmount);
+                logItemChange(itemStack.getType(), -product.getAmount());
             }
         }
-
     }
 
 

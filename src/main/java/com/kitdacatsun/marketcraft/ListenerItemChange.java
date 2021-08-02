@@ -72,16 +72,19 @@ public class ListenerItemChange implements Listener {
         Inventory inventory = event.getInventory();
         ClickType clickType = event.getClick();
         int outputAmount;
-        int lowerAmount;
-        if (clickType.isShiftClick()) {
-            lowerAmount = craftedItem.getMaxStackSize() + 1000;
-            for (ItemStack itemStack : inventory.getContents())
-                if (!itemStack.getType().isAir() && lowerAmount > itemStack.getAmount() && !itemStack.getType().equals(craftedItem.getType()))
-                    lowerAmount = itemStack.getAmount();
-        }else lowerAmount = 1;
+        int lowerAmount = 1;
 
-        outputAmount = lowerAmount * craftedItem.getAmount();
-        int inputAmount = outputAmount / event.getRecipe().getResult().getAmount();
+        if (clickType.isShiftClick()) {
+            lowerAmount = 64;
+            for (ItemStack itemStack : inventory.getContents()) {
+                if (!itemStack.getType().isAir() && lowerAmount > itemStack.getAmount() && !itemStack.getType().equals(craftedItem.getType())) {
+                    lowerAmount = itemStack.getAmount();
+                }
+            }
+        }
+
+        outputAmount = lowerAmount * Objects.requireNonNull(craftedItem).getAmount();
+        int inputAmount = outputAmount / craftedItem.getAmount();
         logItemChange(craftedItem, outputAmount);
 
         for (ItemStack itemStack : event.getInventory().getMatrix()) {

@@ -7,6 +7,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ListenerItemChange implements Listener {
@@ -58,11 +60,19 @@ public class ListenerItemChange implements Listener {
 
     @EventHandler
     private void CraftItemEvent(CraftItemEvent event) {
-        logItemChange(event.getRecipe().getResult().getType(), event.getRecipe().getResult().getAmount());
+        for (ItemStack itemStack : event.getInventory().getMatrix()) {
+            //noinspection ConstantConditions
+            if (itemStack != null) {
+                logItemChange(itemStack.getType(), -1);
+            }
+        }
+
+        logItemChange(Objects.requireNonNull(event.getInventory().getResult()).getType(), event.getInventory().getResult().getAmount());
     }
 
     @EventHandler
     private void FurnaceSmeltEvent(FurnaceSmeltEvent event) {
+        logItemChange(Objects.requireNonNull(event.getRecipe()).getInput().getType(), -event.getRecipe().getInput().getAmount());
         logItemChange(event.getResult().getType(), event.getResult().getAmount());
     }
 
@@ -82,13 +92,18 @@ public class ListenerItemChange implements Listener {
         }
     }
 
-    private void logItemChange(String name, int change) {
-        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "-") + change + " " + name);
+    @EventHandler
+    private void BlockPlaceEvent(BlockPlaceEvent event) {
+        logItemChange(event.getBlock().getType(), -1);
+    }
 
+    private void logItemChange(String name, int change) {
         ItemChange itemChange = new ItemChange();
         itemChange.name = name.toUpperCase().replace(" ", "_");
         itemChange.change = change;
         MarketCraft.changeBuffer.add(itemChange);
+
+        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "") + change + " " + itemChange.name);
     }
 
     private void logItemChange(Material material, int change) {

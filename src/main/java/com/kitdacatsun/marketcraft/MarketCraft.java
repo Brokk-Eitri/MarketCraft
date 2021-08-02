@@ -88,7 +88,7 @@ public final class MarketCraft extends JavaPlugin {
 
     public static void updatePrices() {
         for (ItemChange itemChange : changeBuffer) {
-            itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
+            itemMap.put(itemChange.name, Math.max(itemMap.getOrDefault(itemChange.name, 0) + itemChange.change, 0));
         }
 
         changeBuffer.clear();

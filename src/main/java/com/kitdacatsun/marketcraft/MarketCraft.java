@@ -122,16 +122,11 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public static void displayPrices() {
-        server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
-
-        for (String key : itemMap.keySet()) {
-            server.getLogger().info(ChatColor.BLUE + key + ":" + " ".repeat(20 - key.length()) + " +" + itemMap.get(key));
-        }
-
         server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 
-        for (String key: itemMap.keySet()) {
-            server.getLogger().info(ChatColor.BLUE + key + ":" + " ".repeat(20 - key.length()) + " £" + getPrice(new ItemStack(Material.valueOf(key))));
+        for (String key : itemMap.keySet()) {
+            server.getLogger().info(ChatColor.BLUE + key + ": " + " ".repeat(20 - key.length()) +
+                    " £" + getPrice(new ItemStack(Material.valueOf(key))) + "\t(" + itemMap.get(key) + ")");
         }
 
         server.getLogger().info(ChatColor.BLUE + "----------------------------------------");

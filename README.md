@@ -12,3 +12,11 @@ price = min + (max - min) * rarity
 `count`: The number of this item that have been collected. <br>
 `lowest`, `highest`: The counts of the most and least common items. <br>
 `min`, `max`, the minimum and maximum price an item can have. <br>
+
+Count is affected by:
+* Breaking blocks
+* Placing blocks
+* Crafting items
+* Smelting items
+* Mob drops
+* Harvesting crops

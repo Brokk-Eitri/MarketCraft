@@ -42,12 +42,13 @@ public class ListenerItemChange implements Listener {
         Item lastItem = event.getItems().get(event.getItems().size() - 1);
 
         if (inventoryMaterials().contains(lastItem.getItemStack().getType())) {
-            logItemChange(lastItem.getName(), lastItem.getItemStack().getAmount());
+            logItemChange(lastItem.getItemStack());
+
             return;
         }
 
         for (Item item: event.getItems()) {
-            logItemChange(item.getName(), item.getItemStack().getAmount());
+            logItemChange(item.getItemStack());
         }
     }
 
@@ -67,7 +68,7 @@ public class ListenerItemChange implements Listener {
             }
         }
 
-        logItemChange(Objects.requireNonNull(event.getInventory().getResult()).getType(), event.getInventory().getResult().getAmount());
+        logItemChange(Objects.requireNonNull(event.getInventory().getResult()));
     }
 
     @EventHandler
@@ -82,7 +83,7 @@ public class ListenerItemChange implements Listener {
             return;
         }
 
-        logItemChange(event.getItemDrop().getName(), event.getItemDrop().getItemStack().getAmount());
+        logItemChange(event.getItemDrop().getItemStack());
     }
 
     @EventHandler
@@ -94,20 +95,23 @@ public class ListenerItemChange implements Listener {
 
     @EventHandler
     private void BlockPlaceEvent(BlockPlaceEvent event) {
-        logItemChange(event.getBlock().getType(), -1);
+        logItemChange(event.getItemInHand(), -1);
     }
 
-    private void logItemChange(String name, int change) {
-        ItemChange itemChange = new ItemChange();
-        itemChange.name = name.toUpperCase().replace(" ", "_");
-        itemChange.change = change;
-        MarketCraft.changeBuffer.add(itemChange);
+    private void logItemChange(ItemStack itemStack) {
+        logItemChange(itemStack.getType(), itemStack.getAmount());
+    }
 
-        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "") + change + " " + itemChange.name);
+    private void logItemChange(ItemStack itemStack, int change) {
+        logItemChange(itemStack.getType(), change);
     }
 
     private void logItemChange(Material material, int change) {
-        logItemChange(material.name(), change);
-    }
+        ItemChange itemChange = new ItemChange();
+        itemChange.name = material.name();
+        itemChange.change = change;
+        MarketCraft.changeBuffer.add(itemChange);
 
+        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "") + change + " " + material.name());
+    }
 }

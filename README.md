@@ -1,4 +1,4 @@
 # MarketCraft
 ## About
 An economy-simulation plugin for MineCraft <br>
-Using interactable NPC's to buy or sell items and earning in game money based of the supply and demand of items
+Item prices are calculated based on their rarity, and can then be bought and sold at the GUI shop using in-game money.

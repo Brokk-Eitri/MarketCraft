@@ -1,6 +1,7 @@
 package com.kitdacatsun.marketcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,20 +19,18 @@ public final class MarketCraft extends JavaPlugin {
     private final static Map<String, Integer> priceMap = new HashMap<>();
     public static List<ItemChange> changeBuffer = new ArrayList<>();
 
-    private static final long updateTimeTicks = 5 * 60 * 20;
+    private static final long updateTimeTicks = 20 * 60;
 
     public static class files {
         public static YAMLFile itemCounts;
         public static YAMLFile balance;
         public static YAMLFile shop;
         public static YAMLFile playerShop;
-        public static YAMLFile itemChange;
     }
 
     public static int getPrice(ItemStack item) {
         return priceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
     }
-
 
     @Override
     public void onLoad() {
@@ -52,8 +51,11 @@ public final class MarketCraft extends JavaPlugin {
             itemMap.put(key, files.itemCounts.getInt(key));
         }
 
+        updatePrices();
+        displayPrices();
+
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, () -> updatePrices(false), 0, updateTimeTicks);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, 0, updateTimeTicks);
 
         // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
@@ -78,17 +80,18 @@ public final class MarketCraft extends JavaPlugin {
             files.itemCounts.set(item, itemMap.get(item));
         }
 
-        MarketCraft.updatePrices(true);
+        updatePrices();
+        displayPrices();
 
         getLogger().info("Disabled");
     }
 
-    public static void updatePrices(boolean display) {
-        for (int i = 0; i < changeBuffer.size(); i++) {
-            ItemChange itemChange = changeBuffer.get(i);
+    public static void updatePrices() {
+        for (ItemChange itemChange : changeBuffer) {
             itemMap.put(itemChange.name, itemMap.getOrDefault(itemChange.name, 0) + itemChange.change);
-            changeBuffer.remove(itemChange);
         }
+
+        changeBuffer.clear();
 
         if (itemMap.size() == 0) {
             return;
@@ -96,15 +99,9 @@ public final class MarketCraft extends JavaPlugin {
 
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
-        if (display) {
-            server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
-        }
 
-        for (String key: itemMap.keySet()) {
+        for (String key : itemMap.keySet()) {
             int value = itemMap.get(key);
-            if (display) {
-                server.getLogger().info(ChatColor.BLUE + key + ": \t " + value);
-            }
             if (value < lowest) {
                 lowest = value;
             } else if (value > highest) {
@@ -115,23 +112,29 @@ public final class MarketCraft extends JavaPlugin {
         double min = files.shop.getDouble("MIN_PRICE");
         double max = files.shop.getDouble("MAX_PRICE");
 
-        if (display) {
-            server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
+        for (String key: itemMap.keySet()) {
+            double rarity = (1 - ((itemMap.get(key) - lowest) / (highest - lowest)));
+            int price = (int)(min + ((max - min) * rarity));
+            priceMap.put(key, price);
         }
+
+        server.getLogger().info(ChatColor.BLUE + "Prices Updated");
+    }
+
+    public static void displayPrices() {
+        server.getLogger().info(ChatColor.BLUE + "---------------< COUNTS >---------------");
+
+        for (String key : itemMap.keySet()) {
+            server.getLogger().info(ChatColor.BLUE + key + ":" + " ".repeat(20 - key.length()) + " +" + itemMap.get(key));
+        }
+
+        server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 
         for (String key: itemMap.keySet()) {
-            double rarity = (1 - ((itemMap.get(key) - lowest) / (highest - lowest))) * 10;
-            int price = (int)(min + (((max - min) / 10) * rarity));
-            priceMap.put(key, price);
-
-            if (display) {
-                server.getLogger().info(ChatColor.BLUE + key + ": \t£" + priceMap.get(key));
-            }
+            server.getLogger().info(ChatColor.BLUE + key + ":" + " ".repeat(20 - key.length()) + " £" + getPrice(new ItemStack(Material.valueOf(key))));
         }
 
-        if (display) {
-            server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
-        }
+        server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
     }
 }
 

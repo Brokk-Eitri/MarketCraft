@@ -16,7 +16,7 @@ public class CommandPrice implements CommandExecutor {
         }
 
         if (args[0].equals("all")) {
-            MarketCraft.updatePrices(true);
+            MarketCraft.displayPrices();
         } else {
             Material material = Material.getMaterial(args[0]);
             assert material != null;
@@ -24,6 +24,7 @@ public class CommandPrice implements CommandExecutor {
             sender.sendMessage(ChatColor.AQUA + "Price of " + item.getI18NDisplayName() + " is: " + MarketCraft.getPrice(item));
             MarketCraft.server.getLogger().info(ChatColor.AQUA + "Price of " + item.getI18NDisplayName() + " is: " + MarketCraft.getPrice(item));
         }
+
         return true;
     }
 }

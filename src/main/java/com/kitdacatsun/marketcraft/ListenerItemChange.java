@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -26,6 +27,7 @@ public class ListenerItemChange implements Listener {
         materials.add(Material.HOPPER);
         materials.add(Material.HOPPER_MINECART);
         materials.add(Material.BREWING_STAND);
+
         return materials;
     }
 
@@ -81,6 +83,8 @@ public class ListenerItemChange implements Listener {
     }
 
     private void logItemChange(String name, int change) {
+        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "-") + change + " " + name);
+
         ItemChange itemChange = new ItemChange();
         itemChange.name = name.toUpperCase().replace(" ", "_");
         itemChange.change = change;
@@ -88,10 +92,7 @@ public class ListenerItemChange implements Listener {
     }
 
     private void logItemChange(Material material, int change) {
-        ItemChange itemChange = new ItemChange();
-        itemChange.name = material.name();
-        itemChange.change = change;
-        MarketCraft.changeBuffer.add(itemChange);
+        logItemChange(material.name(), change);
     }
 
 }

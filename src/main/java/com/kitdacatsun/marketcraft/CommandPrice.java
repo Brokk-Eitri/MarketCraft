@@ -22,7 +22,6 @@ public class CommandPrice implements CommandExecutor {
             assert material != null;
             ItemStack item = new ItemStack(material, 1);
             sender.sendMessage(ChatColor.AQUA + "Price of " + item.getI18NDisplayName() + " is: " + MarketCraft.getPrice(item));
-            MarketCraft.server.getLogger().info(ChatColor.AQUA + "Price of " + item.getI18NDisplayName() + " is: " + MarketCraft.getPrice(item));
         }
 
         return true;

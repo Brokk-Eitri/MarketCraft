@@ -36,11 +36,14 @@ public class ListenerShop implements Listener {
         Inventory topInventory = player.getOpenInventory().getTopInventory();
         Inventory botInventory = player.getOpenInventory().getBottomInventory();
         List<String> itemLore = Objects.requireNonNull(clickedItem.getItemMeta().getLore());
+        int cost = MarketCraft.getPrice(Objects.requireNonNull(topInventory.getItem(InvPos.MID)));
 
         switch (itemLore.get(0)) {
             case "Buy":
+                cost = (int) Math.ceil(cost * 1.05);
+                changeOrder(player, clickedItem, topInventory, cost);
             case "Sell":
-                changeOrder(player, clickedItem, topInventory);
+                changeOrder(player, clickedItem, topInventory, cost);
                 return;
 
             case "Confirm":
@@ -56,7 +59,7 @@ public class ListenerShop implements Listener {
         }
     }
 
-    private void changeOrder(Player player, ItemStack option, Inventory inventory) {
+    private void changeOrder(Player player, ItemStack option, Inventory inventory, int cost) {
         ItemStack order = inventory.getItem(InvPos.MID);
         if (order == null) {
             player.sendMessage("Order is null");
@@ -66,7 +69,7 @@ public class ListenerShop implements Listener {
         GUIItem item;
 
         item = new GUIItem();
-        item.name = option.getItemMeta().getDisplayName() + " for £" + MarketCraft.getPrice(order) * option.getAmount();
+        item.name = option.getItemMeta().getDisplayName() + " for £" + cost * option.getAmount();
         item.lore.add(Component.text("Confirm"));
         item.amount = 1;
         item.material = Material.LIME_DYE;
@@ -81,7 +84,9 @@ public class ListenerShop implements Listener {
     }
 
     private void doOrder(Player player, Inventory shopInv, Inventory playerInv, String type) {
-        ItemStack order = shopInv.getItem(InvPos.MID);
+        Material orderMaterial = shopInv.getItem(InvPos.MID).getType();
+        int orderAmount = shopInv.getItem(InvPos.MID).getAmount();
+        ItemStack order = new ItemStack(orderMaterial, orderAmount);
         if (order == null) {
             player.sendMessage("Order is null");
             return;
@@ -89,7 +94,6 @@ public class ListenerShop implements Listener {
 
         String balanceKey = "players." + player.getUniqueId() + ".balance";
         int balance = files.balance.getInt(balanceKey);
-
         int cost = MarketCraft.getPrice(order) * order.getAmount();
 
         switch (type) {
@@ -109,6 +113,7 @@ public class ListenerShop implements Listener {
 
 
             case "Buy":
+                cost = (int) Math.ceil(cost * 1.05);
                 if (player.getInventory().firstEmpty() != -1) {
 
                     if (balance >= cost) {

@@ -57,6 +57,7 @@ public class ListenerPlayerShop implements Listener {
 
 
                 int price = Integer.parseInt(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".price")));
+                int cost = (int) Math.ceil(price * 1.05);
                 Player receiver = MarketCraft.server.getPlayer(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".seller")));
 
                 String playerBalanceKey = "players." + player.getUniqueId().toString() + ".balance";
@@ -81,14 +82,14 @@ public class ListenerPlayerShop implements Listener {
                     return;
                 }
 
-                if (!(balance >= price)){
-                    player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + price + ").");
+                if (!(balance >= cost)){
+                    player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
                     return;
                 }
 
-                playerShopSellEvent(inventory, playersInv,selectedItem, balance, receiverBalance, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory));
+                playerShopSellEvent(inventory, playersInv,selectedItem, balance, receiverBalance, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory), cost);
                 assert receiver != null;
-                playerPayEvent(receiver, player, selectedItem, price);
+                playerPayEvent(receiver, player, selectedItem, price, cost);
 
                 playerShopCancelEvent(inventory);
                 break;
@@ -106,15 +107,15 @@ public class ListenerPlayerShop implements Listener {
         return Integer.parseInt(itemLore.get(0));
     }
 
-    private void playerPayEvent(Player receiver, Player player, ItemStack selectedItem, int price) {
+    private void playerPayEvent(Player receiver, Player player, ItemStack selectedItem, int price, int cost) {
         receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
-        player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + price);
+        player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + cost);
     }
 
-    private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int balance, int receiverBalance, int price, String playerBalanceKey, String receiverBalanceKey, int position) {
+    private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int balance, int receiverBalance, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {
         playersInv.addItem(selectedItem);
 
-        balance -= price;
+        balance -= cost;
         receiverBalance += price;
         MarketCraft.files.balance.set(playerBalanceKey, balance);
         MarketCraft.files.balance.set(receiverBalanceKey, receiverBalance);

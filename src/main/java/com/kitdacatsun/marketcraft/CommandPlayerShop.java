@@ -100,11 +100,13 @@ public class CommandPlayerShop implements CommandExecutor {
         int addedAmount = 0;
         for (Object i : uids){
             if (page * 36 <= counter && counter < (page + 1) * 36){
-                String price = String.valueOf(files.playerShop.get(i + ".price"));
+                int price = (int) files.playerShop.get(i + ".price");
+                int cost = (int) Math.ceil(price * 1.05);
+                int tax = cost - price;
                 String seller = String.valueOf(files.playerShop.get(i + ".seller"));
                 ItemStack item = (ItemStack) files.playerShop.get(i + ".item");
                 ArrayList<String> loreList = new ArrayList<>();
-                loreList.add("Price: £" + price + ", Seller: " + seller);
+                loreList.add("Price: £" + price + " Tax: £" + tax + " Total: £" + cost + ", Seller: " + seller);
                 item.setLore(loreList);
                 items.add(new GUIItem(item, 1));
                 addedAmount += 1;

@@ -26,11 +26,6 @@ public class ListenerShop implements Listener {
 
         event.setCancelled(true);
 
-        if (event.getCurrentItem().getLore() == null) {
-            CommandVillager.openShop((Player) event.getWhoClicked(), event.getCurrentItem(), event.getCurrentItem().getItemMeta().getDisplayName());
-            return;
-        }
-
         ItemStack clickedItem = event.getCurrentItem();
         Player player = (Player) event.getWhoClicked();
         Inventory topInventory = player.getOpenInventory().getTopInventory();
@@ -62,7 +57,7 @@ public class ListenerShop implements Listener {
     private void changeOrder(Player player, ItemStack option, Inventory inventory, int cost) {
         ItemStack order = inventory.getItem(InvPos.MID);
         if (order == null) {
-            player.sendMessage("Order is null");
+            player.sendMessage(ChatColor.RED + "Order is null select an order to continue");
             return;
         }
 
@@ -134,7 +129,7 @@ public class ListenerShop implements Listener {
                 return;
 
             default:
-                player.sendMessage("Something went wrong: " + type);
+                player.sendMessage(ChatColor.RED + "Something went wrong: " + type + " please try again");
         }
     }
     private void openPrevious(Player player) {

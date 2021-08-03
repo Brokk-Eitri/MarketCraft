@@ -71,7 +71,6 @@ public class ListenerPlayerShop implements Listener {
                 }
 
                 int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
-                int receiverBalance = (int) MarketCraft.files.balance.get(receiverBalanceKey);
                 Inventory playersInv = player.getOpenInventory().getBottomInventory();
 
                 ItemStack selectedItem = playerShopItemEvent(inventory);
@@ -87,7 +86,7 @@ public class ListenerPlayerShop implements Listener {
                     return;
                 }
 
-                playerShopSellEvent(inventory, playersInv,selectedItem, balance, receiverBalance, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory), cost);
+                playerShopSellEvent(inventory, playersInv,selectedItem, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory), cost);
                 assert receiver != null;
                 playerPayEvent(receiver, player, selectedItem, price, cost);
 
@@ -112,13 +111,17 @@ public class ListenerPlayerShop implements Listener {
         player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + cost);
     }
 
-    private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int balance, int receiverBalance, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {
+    private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {
         playersInv.addItem(selectedItem);
 
+        int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
         balance -= cost;
-        receiverBalance += price;
         MarketCraft.files.balance.set(playerBalanceKey, balance);
+
+        int receiverBalance = (int) MarketCraft.files.balance.get(receiverBalanceKey);
+        receiverBalance += price;
         MarketCraft.files.balance.set(receiverBalanceKey, receiverBalance);
+
         inventory.clear(position + 9);
 
         List<String> uids = MarketCraft.files.playerShop.getStringList("uid");

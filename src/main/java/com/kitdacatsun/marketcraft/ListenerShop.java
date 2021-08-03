@@ -2,6 +2,8 @@ package com.kitdacatsun.marketcraft;
 
 import com.kitdacatsun.marketcraft.GUIBuilder.InvPos;
 import com.kitdacatsun.marketcraft.MarketCraft.files;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,11 +40,11 @@ public class ListenerShop implements Listener {
         switch (itemLore.get(0)) {
             case "Buy":
             case "Sell":
-                changeOrder(player, clickedItem, topInventory, botInventory);
+                changeOrder(player, clickedItem, topInventory);
                 return;
 
             case "Confirm":
-                doOrder(player, topInventory, botInventory, clickedItem.getItemMeta().getDisplayName().split(" ")[0]);
+                doOrder(player, topInventory, botInventory, ((TextComponent)(clickedItem.getItemMeta().displayName())).content().split(" ")[0]);
                 return;
 
             case "Back":
@@ -54,7 +56,7 @@ public class ListenerShop implements Listener {
         }
     }
 
-    private void changeOrder(Player player, ItemStack option, Inventory inventory, Inventory shopInv) {
+    private void changeOrder(Player player, ItemStack option, Inventory inventory) {
         ItemStack order = inventory.getItem(InvPos.MID);
         if (order == null) {
             player.sendMessage("Order is null");
@@ -64,8 +66,8 @@ public class ListenerShop implements Listener {
         GUIItem item;
 
         item = new GUIItem();
-        item.name = option.getItemMeta().getDisplayName() + " For: £" + MarketCraft.getPrice(order) * order.getAmount();
-        item.lore.add("Confirm");
+        item.name = option.getItemMeta().getDisplayName() + " for £" + MarketCraft.getPrice(order) * option.getAmount();
+        item.lore.add(Component.text("Confirm"));
         item.amount = 1;
         item.material = Material.LIME_DYE;
         inventory.setItem(InvPos.BOT_MID, item.getItemStack());
@@ -127,6 +129,7 @@ public class ListenerShop implements Listener {
                 return;
 
             default:
+                player.sendMessage("Something went wrong: " + type);
         }
     }
     private void openPrevious(Player player) {

@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +9,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class ListenerPlayerShopAdd implements Listener {
     @EventHandler
@@ -71,7 +73,7 @@ public class ListenerPlayerShopAdd implements Listener {
         GUIItem item;
         item = new GUIItem();
         item.name = "Add to shop for £" + price;
-        item.lore.add("Confirm");
+        item.lore.add(Component.text("Confirm"));
         item.amount = 1;
         item.material = Material.LIME_DYE;
         inventory.setItem(GUIBuilder.InvPos.BOT_MID, item.getItemStack());

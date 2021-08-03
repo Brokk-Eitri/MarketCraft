@@ -113,7 +113,7 @@ public final class MarketCraft extends JavaPlugin {
         double max = files.shop.getDouble("MAX_PRICE");
 
         for (String key: itemMap.keySet()) {
-            double rarity = (1 - ((itemMap.get(key) - lowest) / (highest - lowest)));
+            double rarity = 1 - ((itemMap.get(key) - lowest) / (highest - lowest));
             int price = (int)(min + ((max - min) * rarity));
             priceMap.put(key, price);
         }

@@ -1,12 +1,12 @@
 package com.kitdacatsun.marketcraft;
 
+import com.kitdacatsun.marketcraft.MarketCraft.files;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import com.kitdacatsun.marketcraft.MarketCraft.files;
 
 import java.util.Objects;
 
@@ -20,11 +20,11 @@ public class ListenerShopMenu implements Listener {
         event.setCancelled(true);
         Player player = (Player) event.getWhoClicked();
 
-        if (event.getCurrentItem().getLore() == null && Objects.equals(event.getClickedInventory(), player.getOpenInventory().getTopInventory())) {
+        if (event.getCurrentItem().lore() == null && Objects.equals(event.getClickedInventory(), player.getOpenInventory().getTopInventory())) {
             setPrevious(event, player);
 
-        } else if (event.getCurrentItem().getLore() != null){
-            switch (Objects.requireNonNull(event.getCurrentItem().getItemMeta().getLore()).get(0)) {
+        } else if (event.getCurrentItem().lore() != null){
+            switch (event.getCurrentItem().getItemMeta().lore().get(0).toString()) {
 
                 case "Return to Previous Menu":
                     openPrevious(player);

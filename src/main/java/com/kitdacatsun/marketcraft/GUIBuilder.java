@@ -1,5 +1,6 @@
 package com.kitdacatsun.marketcraft;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import static org.bukkit.Bukkit.getLogger;
 
 public class GUIBuilder {
 
-    public class InvPos {
+    public static class InvPos {
         public static final int TOP_MID = 4;
         public static final int MID = 13;
         public static final int BOT_MID = 22;
@@ -31,7 +32,7 @@ public class GUIBuilder {
     }
 
     private void makeInventory(String title, List<GUIItem> itemPairs, int size) {
-        inventory = Bukkit.createInventory(null, size, title);
+        inventory = Bukkit.createInventory(null, size, Component.text(title));
 
         int i = 0;
         for (GUIItem item : itemPairs) {
@@ -58,7 +59,7 @@ class GUIItem {
     public Material material = null;
     public String name = null;
     public int amount = 1;
-    public List<String> lore = new ArrayList<>();
+    public List<Component> lore = new ArrayList<>();
     public ItemMeta meta = null;
     public int count = 1;
 
@@ -72,7 +73,7 @@ class GUIItem {
         this.material = material;
         this.name = name;
         this.amount = amount;
-        this.lore.add(lore);
+        this.lore.add(Component.text(lore));
         this.count = count;
     }
 
@@ -81,7 +82,7 @@ class GUIItem {
             material = itemStack.getType();
             name = itemStack.getI18NDisplayName();
             amount = itemStack.getAmount();
-            lore = itemStack.getLore();
+            lore = itemStack.lore();
             meta = itemStack.getItemMeta();
         }
 
@@ -96,14 +97,14 @@ class GUIItem {
         }
 
         if (name == null) {
-            itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getLocalizedName());
+            itemStack.getItemMeta().displayName(Component.text(itemStack.getItemMeta().getLocalizedName()));
         } else {
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(name);
+            itemMeta.displayName(Component.text(name));
             itemStack.setItemMeta(itemMeta);
         }
 
-        itemStack.setLore(lore);
+        itemStack.lore(lore);
         itemStack.setAmount(amount);
 
         return itemStack;

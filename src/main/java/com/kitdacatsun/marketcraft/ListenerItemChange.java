@@ -66,14 +66,10 @@ public class ListenerItemChange implements Listener {
         assert product != null;
         int crafted = 1;
         if (event.getClick().isShiftClick()) {
-            crafted = 64;
-            for (ItemStack reagent : event.getInventory().getMatrix()) {
-                if (reagent != null) {
-                    if (reagent.getAmount() < crafted) {
-                        crafted = reagent.getAmount();
-                    }
-                }
-            }
+            crafted = Arrays.stream(event.getInventory().getMatrix()).min((a, b) ->
+                    Math.min(a == null ? 64 : a.getAmount(),
+                            b == null ? 64 : b.getAmount())).orElseThrow().getAmount();
+
         }
 
         logItemChange(product, crafted * product.getAmount());

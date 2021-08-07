@@ -69,9 +69,9 @@ public class ListenerItemChange implements Listener {
         if (event.getClick().isShiftClick()) {
             crafted = 64;
             for (ItemStack itemStack : event.getInventory().getMatrix()) {
-                if (crafted > itemStack.getAmount() && itemStack != null) {
-                    crafted = itemStack.getAmount();
-                }
+                try {
+                    crafted = Math.min(itemStack.getAmount(), crafted);
+                } catch (NullPointerException ignored) { }
             }
         }
 

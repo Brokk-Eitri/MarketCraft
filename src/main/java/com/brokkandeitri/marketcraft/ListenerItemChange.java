@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,12 +63,16 @@ public class ListenerItemChange implements Listener {
     private void CraftItemEvent(CraftItemEvent event) {
         ItemStack product = event.getInventory().getResult();
         assert product != null;
-        int crafted = 1;
-        if (event.getClick().isShiftClick()) {
-            crafted = Arrays.stream(event.getInventory().getMatrix()).min((a, b) ->
-                    Math.min(a == null ? 64 : a.getAmount(),
-                            b == null ? 64 : b.getAmount())).orElseThrow().getAmount();
 
+        int crafted = 1;
+
+        if (event.getClick().isShiftClick()) {
+            crafted = 64;
+            for (ItemStack itemStack : event.getInventory().getMatrix()) {
+                if (crafted > itemStack.getAmount() && itemStack != null) {
+                    crafted = itemStack.getAmount();
+                }
+            }
         }
 
         logItemChange(product, crafted * product.getAmount());

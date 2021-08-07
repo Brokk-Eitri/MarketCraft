@@ -1,4 +1,4 @@
-package com.kitdacatsun.marketcraft;
+package com.brokkandeitri.marketcraft;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

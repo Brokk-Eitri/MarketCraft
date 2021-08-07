@@ -1,7 +1,7 @@
-package com.kitdacatsun.marketcraft;
+package com.brokkandeitri.marketcraft;
 
-import com.kitdacatsun.marketcraft.GUIBuilder.InvPos;
-import com.kitdacatsun.marketcraft.MarketCraft.files;
+import com.brokkandeitri.marketcraft.GUIBuilder.InvPos;
+import com.brokkandeitri.marketcraft.MarketCraft.files;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;

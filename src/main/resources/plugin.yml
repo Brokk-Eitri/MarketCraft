@@ -1,6 +1,6 @@
 name: Marketcraft
 version: ${project.version}
-main: com.kitdacatsun.marketcraft.MarketCraft
+main: com.brokkandeitri.marketcraft.MarketCraft
 api-version: 1.17
 
 commands:

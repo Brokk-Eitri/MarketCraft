@@ -1,6 +1,6 @@
-package com.kitdacatsun.marketcraft;
+package com.brokkandeitri.marketcraft;
 
-import com.kitdacatsun.marketcraft.MarketCraft.files;
+import com.brokkandeitri.marketcraft.MarketCraft.files;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

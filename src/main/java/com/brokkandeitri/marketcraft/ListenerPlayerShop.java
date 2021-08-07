@@ -1,6 +1,6 @@
-package com.kitdacatsun.marketcraft;
+package com.brokkandeitri.marketcraft;
 
-import com.kitdacatsun.marketcraft.GUIBuilder.InvPos;
+import com.brokkandeitri.marketcraft.GUIBuilder.InvPos;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

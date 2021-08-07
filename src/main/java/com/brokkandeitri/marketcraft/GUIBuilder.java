@@ -1,4 +1,4 @@
-package com.kitdacatsun.marketcraft;
+package com.brokkandeitri.marketcraft;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

@@ -62,7 +62,6 @@ public class ListenerItemChange implements Listener {
     @EventHandler
     private void CraftItemEvent(CraftItemEvent event) {
         ItemStack product = event.getInventory().getResult();
-        assert product != null;
 
         int crafted = 1;
 

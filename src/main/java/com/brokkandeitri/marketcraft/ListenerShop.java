@@ -36,7 +36,6 @@ public class ListenerShop implements Listener {
         switch (itemLore.get(0)) {
             case "Buy":
                 cost = (int) Math.ceil(cost * 1.05);
-                changeOrder(player, clickedItem, topInventory, cost);
             case "Sell":
                 changeOrder(player, clickedItem, topInventory, cost);
                 return;

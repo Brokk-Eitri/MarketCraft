@@ -60,7 +60,7 @@ public class ListenerShopMenu implements Listener {
                 return;
             }
             name = name.substring(12);
-            if (name.equals("Shop menu")){
+            if (name.equals("Shop menu")) {
                 name = "root";
             }
             new CommandShopMenu().doMenu(name, player, name);

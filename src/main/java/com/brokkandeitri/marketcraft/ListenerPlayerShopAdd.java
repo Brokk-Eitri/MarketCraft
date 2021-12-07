@@ -103,6 +103,8 @@ public class ListenerPlayerShopAdd implements Listener {
         ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID));
         playerInventory.removeItemAnySlot(selected);
 
+        inventory.setItem(GUIBuilder.InvPos.MID, null);
+
         CommandPlayerShop.addItem(player, selected, price);
     }
 }

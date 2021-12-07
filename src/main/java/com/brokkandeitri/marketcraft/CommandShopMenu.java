@@ -72,6 +72,8 @@ public class CommandShopMenu implements CommandExecutor {
     public void openShop(ItemStack menu, Player player, String title){
         if (files.shop.contains(menu.getI18NDisplayName())){
             CommandVillager.openShop(player, menu, title);
+        } else {
+            CommandVillager.openSellShop(player, menu, title);
         }
     }
 }

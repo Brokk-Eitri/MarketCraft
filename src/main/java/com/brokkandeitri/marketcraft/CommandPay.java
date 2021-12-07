@@ -38,6 +38,11 @@ public class CommandPay implements CommandExecutor {
 
             int amount = Integer.parseInt(args[1]);
 
+            if (amount < 0) {
+                sender.sendMessage(ChatColor.RED + "Amount Must be more than £0");
+                return true;
+            }
+
             UUID Uuid = player.getUniqueId();
             String playerBalanceKey = "players." + Uuid.toString() + ".balance";
 

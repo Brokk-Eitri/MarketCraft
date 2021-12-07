@@ -24,8 +24,7 @@ public class ListenerShopMenu implements Listener {
             setPrevious(event, player);
 
         } else if (event.getCurrentItem().lore() != null){
-            switch (event.getCurrentItem().getItemMeta().lore().get(0).toString()) {
-
+            switch (Objects.requireNonNull(event.getCurrentItem().getItemMeta().getLore()).get(0)) {
                 case "Return to Previous Menu":
                     openPrevious(player);
                     return;
@@ -46,9 +45,6 @@ public class ListenerShopMenu implements Listener {
     private void setPrevious(InventoryClickEvent event, Player player) {
         String title = player.getOpenInventory().getTitle();
         String name = event.getCurrentItem().getItemMeta().getDisplayName();
-        if (name.equals("root")){
-            name = "Shop menu";
-        }
         files.shop.set(player.getUniqueId().toString(), title);
         new CommandShopMenu().doMenu(name, player, name);
     }

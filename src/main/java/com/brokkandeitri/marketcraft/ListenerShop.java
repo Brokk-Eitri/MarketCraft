@@ -30,6 +30,13 @@ public class ListenerShop implements Listener {
         Player player = (Player) event.getWhoClicked();
         Inventory topInventory = player.getOpenInventory().getTopInventory();
         Inventory botInventory = player.getOpenInventory().getBottomInventory();
+
+        if (event.getClickedInventory().equals(botInventory)) {
+            ItemStack item = event.getCurrentItem();
+            new CommandShopMenu().openShop(item, player, item.getI18NDisplayName());
+            return;
+        }
+
         List<String> itemLore = Objects.requireNonNull(clickedItem.getItemMeta().getLore());
         int cost = MarketCraft.getPrice(Objects.requireNonNull(topInventory.getItem(InvPos.MID)));
 

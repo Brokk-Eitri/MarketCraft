@@ -3,6 +3,7 @@ package com.brokkandeitri.marketcraft;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -46,6 +47,8 @@ public final class MarketCraft extends JavaPlugin {
         files.balance = new YAMLFile("playerBalances.yml");
         files.playerShop = new YAMLFile("playerShop.yml");
         files.shop = new YAMLFile("shop.yml");
+
+        SpawnVillagers();
 
         for (String key : files.itemCounts.getKeys(false)) {
             itemMap.put(key, files.itemCounts.getInt(key));
@@ -130,6 +133,19 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
+    }
+
+    public void SpawnVillagers(){
+        if (files.shop.contains("Villagers")) {
+            List<String> villagers = files.shop.getStringList("Villagers");
+            for (String item: villagers) {
+                UUID uid = UUID.fromString(files.shop.getString(item));
+                Entity villager = server.getEntity(uid);
+                assert villager != null;
+                villager.remove();
+                new CommandVillager().SummonVillager(villager.getLocation(), villager.getWorld(),villager.getCustomName());
+            }
+        }
     }
 }
 

@@ -19,11 +19,15 @@ public class ListenerPlayerShop implements Listener {
             return;
         }
 
+        event.setCancelled(true);
+
         if (event.getCurrentItem().getLore() == null) {
+            ItemStack item = event.getCurrentItem();
+            String name = item.getI18NDisplayName();
+            Player player = (Player) event.getWhoClicked();
+            player.sendMessage(ChatColor.RED + "Cannot add " + name + " to the Player shop via this menu.");
             return;
         }
-
-        event.setCancelled(true);
 
         playerShopEvent(event);
     }

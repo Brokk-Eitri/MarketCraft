@@ -28,6 +28,8 @@ public class ListenerVillagers implements Listener {
 
         } else if (name.equals("Player shop") && villager.isInvulnerable()) {
             CommandPlayerShop.openPlayerShop(player, 0);
+            } else if (name.equals("Price Trends") && villager.isInvulnerable()){
+            CommandPrice.OpenPriceHistory(player, null);
         }
 
     }

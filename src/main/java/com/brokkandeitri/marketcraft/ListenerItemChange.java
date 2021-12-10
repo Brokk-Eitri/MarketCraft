@@ -1,6 +1,7 @@
 package com.brokkandeitri.marketcraft;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -104,7 +105,9 @@ public class ListenerItemChange implements Listener {
 
     @EventHandler
     private void BlockPlaceEvent(BlockPlaceEvent event) {
-        logItemChange(event.getItemInHand(), -1);
+        if (event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+            logItemChange(event.getItemInHand(), -1);
+        }
     }
 
     private void logItemChange(ItemStack itemStack) {

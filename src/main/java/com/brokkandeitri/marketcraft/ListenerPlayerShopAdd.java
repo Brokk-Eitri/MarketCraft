@@ -10,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
-import java.util.Scanner;
 
 public class ListenerPlayerShopAdd implements Listener {
     @EventHandler
@@ -80,12 +79,9 @@ public class ListenerPlayerShopAdd implements Listener {
     }
 
     private int playerShopPriceEvent(Inventory inventory) {
-        int price;
-        if (Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")) {
-            price = 0;
-        } else {
-            Scanner in = new Scanner(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName()).useDelimiter("[^0-9]+");
-            price = in.nextInt();
+        int price = 0;
+        if (!Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")) {
+            price = Integer.parseInt(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().replaceAll("[^\\d.]", ""));
         }
         return price;
     }

@@ -60,11 +60,11 @@ public final class MarketCraft extends JavaPlugin {
 
         updatePrices();
         displayPrices();
-        savePrices();
+        updatePriceHistory();
 
         BukkitScheduler scheduler = server.getScheduler();
         scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, 0, updateTimeTicks);
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::savePrices, 0, priceHistorySaveTicks);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, 0, priceHistorySaveTicks);
 
         // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
@@ -92,12 +92,12 @@ public final class MarketCraft extends JavaPlugin {
 
         updatePrices();
         displayPrices();
-        savePrices();
+        updatePriceHistory();
 
         getLogger().info("Disabled");
     }
 
-    public static void savePrices() {
+    public static void updatePriceHistory() {
         for (String key: itemMap.keySet()){
             if (!files.priceHistory.contains(key)){
                 files.priceHistory.set(key, "");

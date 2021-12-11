@@ -98,6 +98,10 @@ public class ListenerItemChange implements Listener {
 
     @EventHandler
     private void EntityDeathEvent(EntityDeathEvent event) {
+        if (event.getEntity().getType() == EntityType.PLAYER) {
+            return;
+        }
+
         for (ItemStack item: event.getDrops()) {
             logItemChange(item.getType(), item.getAmount());
         }

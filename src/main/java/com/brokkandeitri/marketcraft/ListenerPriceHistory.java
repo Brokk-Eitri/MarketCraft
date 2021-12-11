@@ -54,7 +54,6 @@ public class ListenerPriceHistory implements Listener{
 
     private void PriceHistoryConfirmEvent(InventoryClickEvent event, Player player) {
         Inventory inventory = event.getClickedInventory();
-        Inventory playerInventory = event.getView().getBottomInventory();
         assert inventory != null;
 
         int time = PriceHistoryPriceEvent(inventory);
@@ -63,7 +62,6 @@ public class ListenerPriceHistory implements Listener{
             return;
         }
         ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID));
-        playerInventory.removeItemAnySlot(selected);
 
         inventory.setItem(GUIBuilder.InvPos.MID, null);
 

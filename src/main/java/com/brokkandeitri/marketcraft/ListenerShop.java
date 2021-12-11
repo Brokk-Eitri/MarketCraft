@@ -66,7 +66,7 @@ public class ListenerShop implements Listener {
     private void changeOrder(Player player, ItemStack option, Inventory inventory, int cost) {
         ItemStack order = inventory.getItem(InvPos.MID);
         if (order == null) {
-            player.sendActionBar(ChatColor.RED + "Order is null select an order to continue");
+            player.sendMessage(ChatColor.RED + "Order is null select an order to continue");
             return;
         }
 
@@ -103,7 +103,7 @@ public class ListenerShop implements Listener {
         switch (type) {
             case "Sell":
                 if (!playerInv.containsAtLeast(order, order.getAmount())) {
-                    player.sendActionBar(ChatColor.RED + "Not enough of that item type to sell");
+                    player.sendMessage(ChatColor.RED + "Not enough of that item type to sell");
                     return;
                 }
 
@@ -111,7 +111,7 @@ public class ListenerShop implements Listener {
 
                 files.balance.set(balanceKey, balance + cost);
 
-                player.sendActionBar(ChatColor.GOLD + "You have sold " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
+                player.sendMessage(ChatColor.GOLD + "You have sold " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
 
                 return;
 
@@ -126,19 +126,19 @@ public class ListenerShop implements Listener {
 
                         files.balance.set(balanceKey, balance - cost);
 
-                        player.sendActionBar(ChatColor.GOLD + "You have bought " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
+                        player.sendMessage(ChatColor.GOLD + "You have bought " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
 
                     } else {
-                        player.sendActionBar(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
+                        player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
                     }
                 } else {
-                    player.sendActionBar(ChatColor.RED + "Not enough inventory room for this item.");
+                    player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
                 }
 
                 return;
 
             default:
-                player.sendActionBar(ChatColor.RED + "Something went wrong: " + type + " please try again");
+                player.sendMessage(ChatColor.RED + "Something went wrong: " + type + " please try again");
         }
     }
     private void openPrevious(Player player) {
@@ -154,7 +154,7 @@ public class ListenerShop implements Listener {
             new CommandShopMenu().doMenu(name, player, name);
             files.shop.set(player.getUniqueId().toString(), player.getOpenInventory().getTitle());
         } else {
-            player.sendActionBar(ChatColor.RED + "No menu to go to");
+            player.sendMessage(ChatColor.RED + "No menu to go to");
         }
     }
 }

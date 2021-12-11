@@ -62,7 +62,7 @@ public class ListenerShopMenu implements Listener {
             new CommandShopMenu().doMenu(name, player, name);
             files.shop.set(player.getUniqueId().toString(), player.getOpenInventory().getTitle());
         } else {
-            player.sendActionBar(ChatColor.RED + "No menu to go to");
+            player.sendMessage(ChatColor.RED + "No menu to go to");
         }
     }
 

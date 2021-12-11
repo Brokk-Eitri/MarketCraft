@@ -25,7 +25,7 @@ public class ListenerPlayerShop implements Listener {
             ItemStack item = event.getCurrentItem();
             String name = item.getI18NDisplayName();
             Player player = (Player) event.getWhoClicked();
-            player.sendActionBar(ChatColor.RED + "Cannot add " + name + " to the Player shop via this menu.");
+            player.sendMessage(ChatColor.RED + "Cannot add " + name + " to the Player shop via this menu.");
             return;
         }
 
@@ -55,7 +55,7 @@ public class ListenerPlayerShop implements Listener {
                 break;
             case "Confirm":
                 if (inventory.getItem(49) == null){
-                    player.sendActionBar(ChatColor.RED + " No items selected please select an item");
+                    player.sendMessage(ChatColor.RED + " No items selected please select an item");
                     return;
                 }
 
@@ -81,12 +81,12 @@ public class ListenerPlayerShop implements Listener {
 
 
                 if (player.getInventory().firstEmpty() == -1){
-                    player.sendActionBar(ChatColor.RED + "Not enough inventory room for this item.");
+                    player.sendMessage(ChatColor.RED + "Not enough inventory room for this item.");
                     return;
                 }
 
                 if (!(balance >= cost)){
-                    player.sendActionBar(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
+                    player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
                     return;
                 }
 
@@ -111,8 +111,8 @@ public class ListenerPlayerShop implements Listener {
     }
 
     private void playerPayEvent(Player receiver, Player player, ItemStack selectedItem, int price, int cost) {
-        receiver.sendActionBar(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
-        player.sendActionBar(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + cost);
+        receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
+        player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + cost);
     }
 
     private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {

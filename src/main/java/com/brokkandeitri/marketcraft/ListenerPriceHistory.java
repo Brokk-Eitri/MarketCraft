@@ -136,7 +136,7 @@ public class ListenerPriceHistory implements Listener{
         player.sendMessage(String.valueOf(sample.size()));
         player.sendMessage(String.valueOf(time));
         if (sample.size() < time){
-            player.sendActionBar(ChatColor.RED + "Sample size of " + time + " cannot be used as there isn't enough data using " + sample.size() + " instead");
+            player.sendMessage(ChatColor.RED + "Sample size of " + time + " cannot be used as there isn't enough data using " + sample.size() + " instead");
             time = sample.size();
         }
 

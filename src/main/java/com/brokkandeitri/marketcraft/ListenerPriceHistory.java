@@ -82,25 +82,18 @@ public class ListenerPriceHistory implements Listener{
 
     private int PriceHistoryMin(List<Integer> sample) {
         int minPrice = sample.get(0);
-        for (int i = 0; i < sample.size() - 1; i++) {
-            int sampleInt = sample.get(i);
-            if (sampleInt < minPrice){
-                minPrice = sampleInt;
-            }
-        }
 
+        for (int point : sample) {
+            minPrice = Math.min(minPrice, point);
+        }
         return minPrice;
     }
 
     private int PriceHistoryMax(List<Integer> sample) {
         int maxPrice = 0;
-        for (int i = 0; i < sample.size() - 1; i++) {
-            int sampleInt = sample.get(i);
-            if (sampleInt > maxPrice){
-                maxPrice = sampleInt;
-            }
+        for (int point : sample) {
+            maxPrice = Math.max(maxPrice, point);
         }
-
         return maxPrice;
     }
 

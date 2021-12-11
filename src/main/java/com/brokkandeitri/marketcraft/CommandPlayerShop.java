@@ -62,7 +62,7 @@ public class CommandPlayerShop implements CommandExecutor {
         items.add(new GUIItem(4));
 
 
-        playerShopMenu.makeGUI("Player Shop - Add", items);
+        playerShopMenu.makeGUI("Auction - Sell", items);
         playerShopMenu.showGUI(player);
 
     }
@@ -124,7 +124,7 @@ public class CommandPlayerShop implements CommandExecutor {
         items.add(new GUIItem(3));
 
         GUIBuilder playerShop = new GUIBuilder();
-        playerShop.makeGUI("Player Shop", items, 54);
+        playerShop.makeGUI("Auction - Buy", items, 54);
         playerShop.showGUI(player);
     }
 }

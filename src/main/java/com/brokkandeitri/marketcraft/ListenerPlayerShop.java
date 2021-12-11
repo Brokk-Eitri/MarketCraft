@@ -15,7 +15,7 @@ import java.util.*;
 public class ListenerPlayerShop implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals("Player Shop") || event.getCurrentItem() == null) {
+        if (!event.getView().getTitle().equals("Auction - Buy") || event.getCurrentItem() == null) {
             return;
         }
 
@@ -25,7 +25,7 @@ public class ListenerPlayerShop implements Listener {
             ItemStack item = event.getCurrentItem();
             String name = item.getI18NDisplayName();
             Player player = (Player) event.getWhoClicked();
-            player.sendMessage(ChatColor.RED + "Cannot add " + name + " to the Player shop via this menu.");
+            player.sendMessage(ChatColor.RED + "Cannot add " + name + " to the Auction via this menu.");
             return;
         }
 

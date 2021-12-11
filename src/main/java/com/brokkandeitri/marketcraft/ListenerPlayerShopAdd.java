@@ -14,7 +14,7 @@ import java.util.Objects;
 public class ListenerPlayerShopAdd implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (!event.getView().getTitle().contains("Player Shop - Add") || event.getCurrentItem() == null) {
+        if (!event.getView().getTitle().contains("Auction - Sell") || event.getCurrentItem() == null) {
             return;
         }
         addPlayerShopEvent(event);

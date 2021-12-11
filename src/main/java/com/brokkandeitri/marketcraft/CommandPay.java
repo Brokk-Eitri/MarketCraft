@@ -44,29 +44,29 @@ public class CommandPay implements CommandExecutor {
             }
 
             UUID Uuid = player.getUniqueId();
-            String playerBalanceKey = "players." + Uuid.toString() + ".balance";
+            String playerBalanceKey = "players." + Uuid.toString() + ".balances";
 
-            if (!files.balance.contains(playerBalanceKey)) {
-                files.balance.set(playerBalanceKey, 0);
+            if (!files.balances.contains(playerBalanceKey)) {
+                files.balances.set(playerBalanceKey, 0);
             }
 
-            if ((int) files.balance.get(playerBalanceKey) >= amount){
+            if ((int) files.balances.get(playerBalanceKey) >= amount){
 
-                int balance = (int) files.balance.get(playerBalanceKey) - amount;
-                files.balance.set(playerBalanceKey, balance);
+                int balances = (int) files.balances.get(playerBalanceKey) - amount;
+                files.balances.set(playerBalanceKey, balances);
 
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
                 player.sendMessage(ChatColor.GOLD + "You have payed " + receiver.getDisplayName() + " £" + amount);
 
                 Uuid = receiver.getUniqueId();
-                playerBalanceKey = "players." + Uuid.toString() + ".balance";
+                playerBalanceKey = "players." + Uuid.toString() + ".balances";
 
-                if (files.balance.contains(playerBalanceKey)) {
-                    balance = (int) files.balance.get(playerBalanceKey) + amount;
-                    files.balance.set(playerBalanceKey, balance);
+                if (files.balances.contains(playerBalanceKey)) {
+                    balances = (int) files.balances.get(playerBalanceKey) + amount;
+                    files.balances.set(playerBalanceKey, balances);
                 } else {
-                    files.balance.set(playerBalanceKey, amount);
-                    files.balance.options().copyDefaults(true);
+                    files.balances.set(playerBalanceKey, amount);
+                    files.balances.options().copyDefaults(true);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have enough money to pay the specified player");
@@ -88,19 +88,19 @@ public class CommandPay implements CommandExecutor {
             return;
         }
 
-        UUID Uuid = receiver.getUniqueId();
+        UUID uUID = receiver.getUniqueId();
 
         int amount = Integer.parseInt(args[1]);
         receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
 
-        String playerBalanceKey = "players." + Uuid.toString() + ".balance";
+        String playerBalanceKey = "players." + uUID.toString() + ".balances";
 
-        if (files.balance.contains(playerBalanceKey)) {
-            int balance = (int) files.balance.get(playerBalanceKey) + amount;
-            files.balance.set(playerBalanceKey, balance);
+        if (files.balances.contains(playerBalanceKey)) {
+            int balances = (int) files.balances.get(playerBalanceKey) + amount;
+            files.balances.set(playerBalanceKey, balances);
         } else {
-            files.balance.set(playerBalanceKey, amount);
-            files.balance.options().copyDefaults(true);
+            files.balances.set(playerBalanceKey, amount);
+            files.balances.options().copyDefaults(true);
         }
 
     }

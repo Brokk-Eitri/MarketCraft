@@ -91,13 +91,9 @@ public class ListenerShop implements Listener {
         Material orderMaterial = shopInv.getItem(InvPos.MID).getType();
         int orderAmount = shopInv.getItem(InvPos.MID).getAmount();
         ItemStack order = new ItemStack(orderMaterial, orderAmount);
-        if (order == null) {
-            player.sendMessage("Order is null");
-            return;
-        }
 
-        String balanceKey = "players." + player.getUniqueId() + ".balance";
-        int balance = files.balance.getInt(balanceKey);
+        String balanceKey = "players." + player.getUniqueId() + ".balances";
+        int balances = files.balances.getInt(balanceKey);
         int cost = MarketCraft.getPrice(order) * order.getAmount();
 
         switch (type) {
@@ -109,7 +105,7 @@ public class ListenerShop implements Listener {
 
                 playerInv.removeItemAnySlot(order);
 
-                files.balance.set(balanceKey, balance + cost);
+                files.balances.set(balanceKey, balances + cost);
 
                 player.sendMessage(ChatColor.GOLD + "You have sold " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
 
@@ -120,11 +116,11 @@ public class ListenerShop implements Listener {
                 cost = (int) Math.ceil(cost * 1.05);
                 if (player.getInventory().firstEmpty() != -1) {
 
-                    if (balance >= cost) {
+                    if (balances >= cost) {
 
                         playerInv.addItem(order);
 
-                        files.balance.set(balanceKey, balance - cost);
+                        files.balances.set(balanceKey, balances - cost);
 
                         player.sendMessage(ChatColor.GOLD + "You have bought " + order.getAmount() + " of " + order.getI18NDisplayName() + " for: £" + cost);
 

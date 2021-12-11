@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -17,23 +18,23 @@ public final class MarketCraft extends JavaPlugin {
     public static MarketCraft plugin;
     public static Server server;
 
-    private final static Map<String, Integer> itemMap = new HashMap<>();
-    private final static Map<String, Integer> priceMap = new HashMap<>();
+    private final static Map<String, Integer> itemCountMap = new HashMap<>();
+    private final static Map<String, Integer> itemPriceMap = new HashMap<>();
     public static List<ItemChange> changeBuffer = new ArrayList<>();
 
-    private static final long updateTimeTicks = 20 * 60;
-    private static final long priceHistorySaveTicks = 20 * 60 * 60 * 12;
+    private static final long priceHistorySaveDelay = 20 * 60 * 60 * 12;
 
     public static class files {
-        public static YAMLFile itemCounts;
-        public static YAMLFile balance;
-        public static YAMLFile shop;
-        public static YAMLFile playerShop;
-        public static YAMLFile priceHistory;
+        public static YAMLFile itemCounts = new YAMLFile("itemCounts.yml");
+        public static YAMLFile changeBuffer = new YAMLFile("changeBuffer.yml");
+        public static YAMLFile balances = new YAMLFile("playerBalances.yml");
+        public static YAMLFile shop = new YAMLFile("playerShop.yml");
+        public static YAMLFile playerShop = new YAMLFile("shop.yml");
+        public static YAMLFile priceHistory = new YAMLFile("priceHistory.yml");
     }
 
     public static int getPrice(ItemStack item) {
-        return priceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
+        return itemPriceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
     }
 
     @Override
@@ -46,27 +47,29 @@ public final class MarketCraft extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Enabled");
 
-        files.itemCounts = new YAMLFile("itemCounts.yml");
-        files.balance = new YAMLFile("playerBalances.yml");
-        files.playerShop = new YAMLFile("playerShop.yml");
-        files.shop = new YAMLFile("shop.yml");
-        files.priceHistory = new YAMLFile("priceHistory.yml");
-
         SpawnVillagers();
 
         for (String key : files.itemCounts.getKeys(false)) {
-            itemMap.put(key, files.itemCounts.getInt(key));
+            int count = files.itemCounts.getInt(key);
+            if (count > 0) {
+                itemCountMap.put(key, count);
+            }
         }
 
-        updatePrices();
+        for (String key : files.changeBuffer.getKeys(false)) {
+            ItemChange itemChange = new ItemChange();
+            itemChange.name = key;
+            itemChange.change = files.changeBuffer.getInt(key);
+            changeBuffer.add(itemChange);
+        }
+
         displayPrices();
-        updatePriceHistory();
 
         BukkitScheduler scheduler = server.getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, 0, updateTimeTicks);
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, 0, priceHistorySaveTicks);
+        int delayStart = 61 - LocalDateTime.now().getSecond();
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 60);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, 0, priceHistorySaveDelay);
 
-        // Register Listeners
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
         server.getPluginManager().registerEvents(new ListenerPlayerShop(), this);
         server.getPluginManager().registerEvents(new ListenerShop(), this);
@@ -75,9 +78,8 @@ public final class MarketCraft extends JavaPlugin {
         server.getPluginManager().registerEvents(new ListenerVillagers(), this);
         server.getPluginManager().registerEvents(new ListenerPriceHistory(), this);
 
-        // Register Commands
         Objects.requireNonNull(getCommand("villager")).setExecutor(new CommandVillager());
-        Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
+        Objects.requireNonNull(getCommand("balances")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());
         Objects.requireNonNull(getCommand("price")).setExecutor(new CommandPrice());
@@ -86,11 +88,14 @@ public final class MarketCraft extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (String item : itemMap.keySet()) {
-            files.itemCounts.set(item, itemMap.get(item));
+        for (String item : itemCountMap.keySet()) {
+            files.itemCounts.set(item, itemCountMap.get(item));
         }
 
-        updatePrices();
+        for (ItemChange itemChange : changeBuffer.toArray(new ItemChange[0])) {
+            files.changeBuffer.set(itemChange.name, itemChange.change);
+        }
+
         displayPrices();
         updatePriceHistory();
 
@@ -98,7 +103,7 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public static void updatePriceHistory() {
-        for (String key: itemMap.keySet()){
+        for (String key: itemPriceMap.keySet()){
             if (!files.priceHistory.contains(key)){
                 files.priceHistory.set(key, "");
             }
@@ -117,20 +122,20 @@ public final class MarketCraft extends JavaPlugin {
 
     public static void updatePrices() {
         for (ItemChange itemChange : changeBuffer) {
-            itemMap.put(itemChange.name, Math.max(itemMap.getOrDefault(itemChange.name, 0) + itemChange.change, 0));
+            itemCountMap.put(itemChange.name, Math.max(itemCountMap.getOrDefault(itemChange.name, 0) + itemChange.change, 0));
         }
 
         changeBuffer.clear();
 
-        if (itemMap.size() == 0) {
+        if (itemCountMap.size() == 0) {
             return;
         }
 
         double lowest = Integer.MAX_VALUE;
         double highest = Integer.MIN_VALUE;
 
-        for (String key : itemMap.keySet()) {
-            int value = itemMap.get(key);
+        for (String key : itemCountMap.keySet()) {
+            int value = itemCountMap.get(key);
             if (value < lowest) {
                 lowest = value;
             } else if (value > highest) {
@@ -141,10 +146,10 @@ public final class MarketCraft extends JavaPlugin {
         double min = files.shop.getDouble("MIN_PRICE");
         double max = files.shop.getDouble("MAX_PRICE");
 
-        for (String key: itemMap.keySet()) {
-            double rarity = 1 - ((itemMap.get(key) - lowest) / (highest - lowest));
+        for (String key: itemCountMap.keySet()) {
+            double rarity = 1 - ((itemCountMap.get(key) - lowest) / (highest - lowest));
             int price = (int)(min + ((max - min) * rarity));
-            priceMap.put(key, price);
+            itemPriceMap.put(key, price);
         }
 
         server.getLogger().info(ChatColor.BLUE + "Prices Updated");
@@ -153,9 +158,9 @@ public final class MarketCraft extends JavaPlugin {
     public static void displayPrices() {
         server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 
-        for (String key : itemMap.keySet()) {
+        for (String key : itemCountMap.keySet()) {
             server.getLogger().info(ChatColor.BLUE + key + ": " + " ".repeat(20 - key.length()) +
-                    " £" + getPrice(new ItemStack(Material.valueOf(key))) + "\t(" + itemMap.get(key) + ")");
+                    " £" + getPrice(new ItemStack(Material.valueOf(key))) + "\t(" + itemCountMap.get(key) + ")");
         }
 
         server.getLogger().info(ChatColor.BLUE + "----------------------------------------");

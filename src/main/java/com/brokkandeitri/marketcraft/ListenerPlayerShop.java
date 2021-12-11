@@ -64,17 +64,17 @@ public class ListenerPlayerShop implements Listener {
                 int cost = (int) Math.ceil(price * 1.05);
                 Player receiver = MarketCraft.server.getPlayer(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".seller")));
 
-                String playerBalanceKey = "players." + player.getUniqueId().toString() + ".balance";
-                String receiverBalanceKey = "players." + UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".uid"))).toString() + ".balance";
+                String playerBalanceKey = "players." + player.getUniqueId().toString() + ".balances";
+                String receiverBalanceKey = "players." + UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".uid"))).toString() + ".balances";
 
-                if (!MarketCraft.files.balance.contains(playerBalanceKey)) {
-                    MarketCraft.files.balance.set(playerBalanceKey, 0);
+                if (!MarketCraft.files.balances.contains(playerBalanceKey)) {
+                    MarketCraft.files.balances.set(playerBalanceKey, 0);
                 }
-                if (!MarketCraft.files.balance.contains(receiverBalanceKey)) {
-                    MarketCraft.files.balance.set(playerBalanceKey, 0);
+                if (!MarketCraft.files.balances.contains(receiverBalanceKey)) {
+                    MarketCraft.files.balances.set(playerBalanceKey, 0);
                 }
 
-                int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
+                int balances = (int) MarketCraft.files.balances.get(playerBalanceKey);
                 Inventory playersInv = player.getOpenInventory().getBottomInventory();
 
                 ItemStack selectedItem = playerShopItemEvent(inventory);
@@ -85,7 +85,7 @@ public class ListenerPlayerShop implements Listener {
                     return;
                 }
 
-                if (!(balance >= cost)){
+                if (!(balances >= cost)){
                     player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");
                     return;
                 }
@@ -118,13 +118,13 @@ public class ListenerPlayerShop implements Listener {
     private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {
         playersInv.addItem(selectedItem);
 
-        int balance = (int) MarketCraft.files.balance.get(playerBalanceKey);
-        balance -= cost;
-        MarketCraft.files.balance.set(playerBalanceKey, balance);
+        int balances = (int) MarketCraft.files.balances.get(playerBalanceKey);
+        balances -= cost;
+        MarketCraft.files.balances.set(playerBalanceKey, balances);
 
-        int receiverBalance = (int) MarketCraft.files.balance.get(receiverBalanceKey);
+        int receiverBalance = (int) MarketCraft.files.balances.get(receiverBalanceKey);
         receiverBalance += price;
-        MarketCraft.files.balance.set(receiverBalanceKey, receiverBalance);
+        MarketCraft.files.balances.set(receiverBalanceKey, receiverBalance);
 
         inventory.clear(position + 9);
 

@@ -14,24 +14,23 @@ public class CommandBalance implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
+        if (!(sender instanceof Player)) {
+            return false;
+        }
 
-            Player player = (Player) sender;
+        Player player = (Player) sender;
 
             UUID uUID = player.getUniqueId();
             String playerBalanceKey = "players." + uUID + ".balance";
 
-            if (!files.balances.contains(playerBalanceKey)) {
-                files.balances.set(playerBalanceKey, 0);
-            }
+        if (!files.balances.contains(playerBalanceKey)) {
+            files.balances.set(playerBalanceKey, 0);
+        }
 
-            int balances = (int) files.balances.get(playerBalanceKey);
+        int balances = (int) files.balances.get(playerBalanceKey);
 
             sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balances);
 
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 }

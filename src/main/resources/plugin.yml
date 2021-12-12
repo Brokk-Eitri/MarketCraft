@@ -8,31 +8,50 @@ commands:
     description: Gets the prices of all items or a specific item
     usage: /price <all/item>
     aliases: price all
+    permission: Marketcraft.price
 
   shop:
     description: Opens the shop
     usage: /shop
+    permission: Marketcraft.shop
 
   pay:
     description: A command for op's to give player curency
     usage: /pay <player> <amount>
+    permission: Marketcraft.pay
 
   balance:
     description: A commmand to check player balance
     useage: /balance
     aliases: bal
-    permission: balance
+    permission: Marketcraft.balance
 
   villager:
     description: Used to spawn the villagers for the GUI interface
     usage: /villager <name>
+    permission: Marketcraft.villager
 
   playerShop:
     description: A command to add an item to the player shop
     usage: /playerShop
+    permission: playerShop
 
 permissions:
-  balance:
-    description: Allows all players to check their balance
+  Marketcraft.balance:
+    description: Allows players to check their balance
     default: true
 
+  Marketcraft.pay:
+    description: Allows players to use the pay command
+    default: true
+
+  Marketcraft.*:
+    description: Allows access to commands
+    default: op
+    children:
+      Marketcraft.balance: true
+      Marketcraft.pay: true
+      Marketcraft.price: true
+      Marketcraft.shop: true
+      Marketcraft.villager: true
+      Marketcraft.playerShop: true

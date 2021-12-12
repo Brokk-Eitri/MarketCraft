@@ -1,6 +1,7 @@
 package com.brokkandeitri.marketcraft;
 
 import com.brokkandeitri.marketcraft.MarketCraft.files;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,10 +25,17 @@ public class CommandPlayerShop implements CommandExecutor {
         }
         Player player = (Player) sender;
 
-        if (args[0].equals("open")){
-            openPlayerShop(player, Integer.parseInt(args[1]));
-        } else {
+        if (args.length < 1) {
+            player.sendMessage(ChatColor.RED + "Please specify weather you want to open the buy page or the sell page");
+            return true;
+        }
+
+        if (args[0].equals("buy")){
+            openPlayerShop(player, 0);
+        } else if (args[0].equals("sell")){
             addPLayerShop(player, null);
+        } else {
+            player.sendMessage(ChatColor.RED + "only \'sell\' and \'buy\' are valid options");
         }
         return true;
     }

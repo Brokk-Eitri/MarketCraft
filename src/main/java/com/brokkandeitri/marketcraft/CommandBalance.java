@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -20,16 +21,25 @@ public class CommandBalance implements CommandExecutor {
 
         Player player = (Player) sender;
 
-            UUID uUID = player.getUniqueId();
-            String playerBalanceKey = "players." + uUID + ".balance";
+        UUID uUID = player.getUniqueId();
+        String playerBalanceKey = "players." + uUID + ".balance";
 
         if (!files.balances.contains(playerBalanceKey)) {
             files.balances.set(playerBalanceKey, 0);
         }
 
-        int balances = (int) files.balances.get(playerBalanceKey);
+        int balance = (int) files.balances.get(playerBalanceKey);
+        int assets = 0;
 
-            sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balances);
+        for (ItemStack itemStack : ((Player) sender).getInventory().getContents()) {
+            if (itemStack != null) {
+                assets += MarketCraft.getPrice(itemStack) * itemStack.getAmount();
+            }
+        }
+
+        sender.sendMessage(ChatColor.GOLD + "Balance: £" + balance);
+        sender.sendMessage(ChatColor.GOLD + "Estimate Asset Value: £" + assets);
+        sender.sendMessage(ChatColor.GOLD + "Estimate Net Worth: £" + (balance + assets));
 
         return true;
     }

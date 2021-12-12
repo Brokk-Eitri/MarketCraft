@@ -63,12 +63,13 @@ public final class MarketCraft extends JavaPlugin {
             changeBuffer.add(itemChange);
         }
 
+        updatePrices();
         displayPrices();
 
         BukkitScheduler scheduler = server.getScheduler();
-        int delayStart = 61 - LocalDateTime.now().getSecond();
+        int delayStart = 60 - LocalDateTime.now().getSecond();
         scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 60);
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, 0, priceHistorySaveDelay);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, delayStart * 20, priceHistorySaveDelay);
 
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
         server.getPluginManager().registerEvents(new ListenerPlayerShop(), this);
@@ -139,7 +140,7 @@ public final class MarketCraft extends JavaPlugin {
         for (String key : itemCountMap.keySet()) {
             int value = itemCountMap.get(key);
             if (value < lowest) {
-                lowest = value;
+                lowest = value - 1;
             } else if (value > highest) {
                 highest = value;
             }

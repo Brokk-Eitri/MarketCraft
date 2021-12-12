@@ -38,8 +38,6 @@ public class CommandShopMenu implements CommandExecutor {
         if (children.size() == 0) {
             GUIItem item = new GUIItem();
 
-            player.sendMessage(menu);
-
             item.material = Objects.requireNonNull(Material.getMaterial(files.shop.getString(menu + ".material")));
             item.name = menu;
             CommandVillager.openShop(player, item.getItemStack(), item.getItemStack().getItemMeta().getDisplayName());

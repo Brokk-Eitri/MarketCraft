@@ -63,6 +63,7 @@ public final class MarketCraft extends JavaPlugin {
             changeBuffer.add(itemChange);
         }
 
+        updatePrices();
         displayPrices();
 
         BukkitScheduler scheduler = server.getScheduler();

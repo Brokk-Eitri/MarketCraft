@@ -66,7 +66,7 @@ public final class MarketCraft extends JavaPlugin {
         displayPrices();
 
         BukkitScheduler scheduler = server.getScheduler();
-        int delayStart = 61 - LocalDateTime.now().getSecond();
+        int delayStart = 60 - LocalDateTime.now().getSecond();
         scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 60);
         scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, 0, priceHistorySaveDelay);
 

@@ -107,7 +107,7 @@ public class ListenerShop implements Listener {
 
                 files.balances.set(balanceKey, balances + cost);
 
-                player.sendMessage(ChatColor.GOLD + "You have sold " + order.getAmount() + " " + order.getI18NDisplayName() + " £" + cost);
+                player.sendMessage(ChatColor.GOLD + "You have sold " + order.getAmount() + " " + order.getI18NDisplayName() + " for £" + cost);
 
                 return;
 

@@ -139,7 +139,7 @@ public final class MarketCraft extends JavaPlugin {
         for (String key : itemCountMap.keySet()) {
             int value = itemCountMap.get(key);
             if (value < lowest) {
-                lowest = value;
+                lowest = value - 1;
             } else if (value > highest) {
                 highest = value;
             }

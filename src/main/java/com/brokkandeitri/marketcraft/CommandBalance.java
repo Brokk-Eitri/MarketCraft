@@ -19,7 +19,7 @@ public class CommandBalance implements CommandExecutor {
             Player player = (Player) sender;
 
             UUID uUID = player.getUniqueId();
-            String playerBalanceKey = "players." + uUID + ".balances";
+            String playerBalanceKey = "players." + uUID + ".balance";
 
             if (!files.balances.contains(playerBalanceKey)) {
                 files.balances.set(playerBalanceKey, 0);
@@ -27,7 +27,7 @@ public class CommandBalance implements CommandExecutor {
 
             int balances = (int) files.balances.get(playerBalanceKey);
 
-            sender.sendMessage(ChatColor.GOLD + "Your balances is £" + balances);
+            sender.sendMessage(ChatColor.GOLD + "Your balance is £" + balances);
 
             return true;
         } else {

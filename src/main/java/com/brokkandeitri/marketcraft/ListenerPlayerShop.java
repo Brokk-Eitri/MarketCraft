@@ -64,8 +64,8 @@ public class ListenerPlayerShop implements Listener {
                 int cost = (int) Math.ceil(price * 1.05);
                 Player receiver = MarketCraft.server.getPlayer(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".seller")));
 
-                String playerBalanceKey = "players." + player.getUniqueId().toString() + ".balances";
-                String receiverBalanceKey = "players." + UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".uid"))).toString() + ".balances";
+                String playerBalanceKey = "players." + player.getUniqueId() + ".balance";
+                String receiverBalanceKey = "players." + UUID.fromString(String.valueOf(MarketCraft.files.playerShop.get(getPosition(inventory) + ".uid"))) + ".balance";
 
                 if (!MarketCraft.files.balances.contains(playerBalanceKey)) {
                     MarketCraft.files.balances.set(playerBalanceKey, 0);

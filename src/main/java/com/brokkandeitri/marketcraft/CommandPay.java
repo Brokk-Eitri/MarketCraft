@@ -43,8 +43,8 @@ public class CommandPay implements CommandExecutor {
                 return true;
             }
 
-            UUID Uuid = player.getUniqueId();
-            String playerBalanceKey = "players." + Uuid.toString() + ".balances";
+            UUID uUID = player.getUniqueId();
+            String playerBalanceKey = "players." + uUID + ".balance";
 
             if (!files.balances.contains(playerBalanceKey)) {
                 files.balances.set(playerBalanceKey, 0);
@@ -58,8 +58,8 @@ public class CommandPay implements CommandExecutor {
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
                 player.sendMessage(ChatColor.GOLD + "You have payed " + receiver.getDisplayName() + " £" + amount);
 
-                Uuid = receiver.getUniqueId();
-                playerBalanceKey = "players." + Uuid.toString() + ".balances";
+                uUID = receiver.getUniqueId();
+                playerBalanceKey = "players." + uUID.toString() + ".balance";
 
                 if (files.balances.contains(playerBalanceKey)) {
                     balances = (int) files.balances.get(playerBalanceKey) + amount;
@@ -93,7 +93,7 @@ public class CommandPay implements CommandExecutor {
         int amount = Integer.parseInt(args[1]);
         receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
 
-        String playerBalanceKey = "players." + uUID.toString() + ".balances";
+        String playerBalanceKey = "players." + uUID + ".balance";
 
         if (files.balances.contains(playerBalanceKey)) {
             int balances = (int) files.balances.get(playerBalanceKey) + amount;

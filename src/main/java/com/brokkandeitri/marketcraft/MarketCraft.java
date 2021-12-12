@@ -28,8 +28,8 @@ public final class MarketCraft extends JavaPlugin {
         public static YAMLFile itemCounts = new YAMLFile("itemCounts.yml");
         public static YAMLFile changeBuffer = new YAMLFile("changeBuffer.yml");
         public static YAMLFile balances = new YAMLFile("playerBalances.yml");
-        public static YAMLFile shop = new YAMLFile("playerShop.yml");
-        public static YAMLFile playerShop = new YAMLFile("shop.yml");
+        public static YAMLFile shop = new YAMLFile("shop.yml");
+        public static YAMLFile playerShop = new YAMLFile("playerShop.yml");
         public static YAMLFile priceHistory = new YAMLFile("priceHistory.yml");
     }
 
@@ -79,7 +79,7 @@ public final class MarketCraft extends JavaPlugin {
         server.getPluginManager().registerEvents(new ListenerPriceHistory(), this);
 
         Objects.requireNonNull(getCommand("villager")).setExecutor(new CommandVillager());
-        Objects.requireNonNull(getCommand("balances")).setExecutor(new CommandBalance());
+        Objects.requireNonNull(getCommand("balance")).setExecutor(new CommandBalance());
         Objects.requireNonNull(getCommand("shop")).setExecutor(new CommandShopMenu());
         Objects.requireNonNull(getCommand("pay")).setExecutor(new CommandPay());
         Objects.requireNonNull(getCommand("price")).setExecutor(new CommandPrice());

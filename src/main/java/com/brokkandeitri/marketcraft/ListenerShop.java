@@ -92,7 +92,7 @@ public class ListenerShop implements Listener {
         int orderAmount = shopInv.getItem(InvPos.MID).getAmount();
         ItemStack order = new ItemStack(orderMaterial, orderAmount);
 
-        String balanceKey = "players." + player.getUniqueId() + ".balances";
+        String balanceKey = "players." + player.getUniqueId() + ".balance";
         int balances = files.balances.getInt(balanceKey);
         int cost = MarketCraft.getPrice(order) * order.getAmount();
 

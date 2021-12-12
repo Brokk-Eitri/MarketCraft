@@ -34,7 +34,12 @@ commands:
   playerShop:
     description: A command to add an item to the player shop
     usage: /playerShop
-    permission: playerShop
+    permission: Marketcraft.playerShop
+
+  ranking:
+    description: A command to display top ten richest people
+    useage: /ranking
+    permission: Marketcraft.ranking
 
 permissions:
   Marketcraft.balance:
@@ -55,3 +60,4 @@ permissions:
       Marketcraft.shop: true
       Marketcraft.villager: true
       Marketcraft.playerShop: true
+      Maeketcraft.ranking: true

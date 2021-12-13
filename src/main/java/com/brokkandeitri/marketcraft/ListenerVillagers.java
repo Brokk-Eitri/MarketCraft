@@ -30,6 +30,8 @@ public class ListenerVillagers implements Listener {
             CommandPlayerShop.openPlayerShop(player, 0);
             } else if (name.equals("Price Trends") && villager.isInvulnerable()){
             CommandPrice.OpenPriceHistory(player, null);
+        } else if (name.equals("Rankings") && villager.isInvulnerable()) {
+            CommandRanking.sendRankings(player);
         }
 
     }

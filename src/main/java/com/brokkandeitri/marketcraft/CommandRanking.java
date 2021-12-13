@@ -18,16 +18,16 @@ public class CommandRanking implements CommandExecutor {
         }
         Player player = (Player) sender;
 
-        returnTopRanking(player);
+        sendRankings(player);
         return true;
     }
 
-    public void returnTopRanking(Player player) {
+    public static Map<String, Integer> returnTopRanking() {
         String[] keys = MarketCraft.files.balances.getKeys(true).toArray(new String[0]);
 
         Map<String, Integer> rankedMap = new HashMap<>();
 
-        for (int i = 2; i < keys.length; i+=2) {
+        for (int i = 2; i < keys.length; i += 2) {
             String name = Objects.requireNonNull(MarketCraft.server.getOfflinePlayer(UUID.fromString(keys[i].substring(8, 44)))).getName();
             int playerBalance = MarketCraft.files.balances.getInt(keys[i]);
 
@@ -45,13 +45,30 @@ public class CommandRanking implements CommandExecutor {
         List<String> names = new ArrayList<>(rankedMap.keySet());
         names.sort(compareBalance);
 
-        for (int i = 0; i < Math.min(names.size(), 10); i++) {
+        return rankedMap;
+    }
+
+    public static void sendRankings(Player player) {
+        Map<String, Integer> rankedMap = returnTopRanking();
+        String[] names = rankedMap.keySet().toArray(new String[0]);
+        for (int i = 0; i < Math.min(names.length, 10); i++) {
             ChatColor chatColor = ChatColor.GOLD;
-            if (player.getName().equals(names.get(i))) {
+            if (player.getName().equals(names[i])) {
                 chatColor = ChatColor.LIGHT_PURPLE;
             }
-            player.sendMessage( chatColor + String.valueOf(i + 1) + ": " + names.get(i) + ": " + rankedMap.get(names.get(i)));
+            player.sendMessage( chatColor + String.valueOf(i + 1) + ": " + names[i] + ": " + rankedMap.get(names[i]));
         }
-        player.sendMessage(ChatColor.GOLD + "You are in position " + (names.indexOf(player.getName()) + 1) + " With a balance of " + rankedMap.get(player.getName()));
+        player.sendMessage(ChatColor.GOLD + "You are in position " + (getIndexOf(names, player.getName()) + 1) + " With a balance of " + rankedMap.get(player.getName()));
+    }
+
+    private static int getIndexOf(String[] array, String value) {
+        int index = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(value)) {
+                index = i;
+            }
+        }
+
+        return index;
     }
 }

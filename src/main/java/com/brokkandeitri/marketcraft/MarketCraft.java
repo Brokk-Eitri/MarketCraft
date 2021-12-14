@@ -22,7 +22,7 @@ public final class MarketCraft extends JavaPlugin {
     private final static Map<String, Integer> itemPriceMap = new HashMap<>();
     public static List<ItemChange> changeBuffer = new ArrayList<>();
 
-    private static final long priceHistorySaveDelay = 20 * 60 * 60 * 12;
+    private static final long priceHistorySaveDelay = 20 * 60 * 20;
 
     public static class files {
         public static YAMLFile itemCounts = new YAMLFile("itemCounts.yml");
@@ -68,7 +68,7 @@ public final class MarketCraft extends JavaPlugin {
 
         BukkitScheduler scheduler = server.getScheduler();
         int delayStart = 60 - LocalDateTime.now().getSecond();
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 60);
+        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 10);
         scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, delayStart * 20, priceHistorySaveDelay);
 
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);

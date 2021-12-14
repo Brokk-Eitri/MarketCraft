@@ -8,15 +8,18 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +35,44 @@ public class ListenerItemChange implements Listener {
         materials.add(Material.BREWING_STAND);
 
         return materials;
+    }
+
+    @EventHandler
+    private void EatFoodEvent(FoodLevelChangeEvent event) {
+        ItemStack item = event.getItem();
+        if (item != null) {
+            logItemChange(item, -1);
+        }
+    }
+
+    @EventHandler
+    private void EntityExplosions(EntityExplodeEvent event) {
+        MarketCraft.server.getLogger().warning(event.blockList().toString());
+    }
+
+    @EventHandler
+    private void BlockExplosions(BlockExplodeEvent event) {
+        MarketCraft.server.getLogger().warning(event.blockList().toString());
+    }
+
+    @EventHandler
+    private void InventoryInteractEvent(InventoryClickEvent event) {
+        int amount;
+        InventoryType inventoryType = Objects.requireNonNull(event.getClickedInventory()).getType();
+        if (!inventoryType.equals(InventoryType.STONECUTTER)) {
+            return;
+        }
+
+        if (event.getRawSlot() == 1) {
+            if (event.getClick().equals(ClickType.SHIFT_LEFT)) {
+                amount = Objects.requireNonNull(event.getInventory().getItem(0)).getAmount();
+            } else {
+                amount = 1;
+            }
+
+            logItemChange(Objects.requireNonNull(event.getInventory().getItem(0)), -amount);
+            logItemChange(Objects.requireNonNull(event.getInventory().getItem(1)), amount);
+        }
     }
 
     @EventHandler

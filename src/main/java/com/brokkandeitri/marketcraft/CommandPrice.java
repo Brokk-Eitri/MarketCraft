@@ -14,8 +14,15 @@ import java.util.List;
 public class CommandPrice implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (args.length != 1){
+        if (!(sender instanceof Player)) {
             return false;
+        }
+
+        Player player = (Player) sender;
+
+        if (args.length != 1){
+            player.sendMessage(ChatColor.GOLD + "Price of " + player.getItemInHand().getI18NDisplayName() + " is: £" + MarketCraft.getPrice(player.getItemInHand()));
+            return true;
         }
 
         if (args[0].equals("all")) {
@@ -24,9 +31,8 @@ public class CommandPrice implements CommandExecutor {
             Material material = Material.getMaterial(args[0]);
             assert material != null;
             ItemStack item = new ItemStack(material, 1);
-            sender.sendMessage(ChatColor.AQUA + "Price of " + item.getI18NDisplayName() + " is: " + MarketCraft.getPrice(item));
+            player.sendMessage(ChatColor.GOLD + "Price of " + item.getI18NDisplayName() + " is: £" + MarketCraft.getPrice(item));
         }
-
         return true;
     }
 

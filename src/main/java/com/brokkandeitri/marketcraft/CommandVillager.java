@@ -36,8 +36,8 @@ public class CommandVillager implements CommandExecutor{
 
     public void SummonVillager(Location location, World world, String name){
         Villager villager = (Villager) world.spawnEntity(location, EntityType.VILLAGER);
-        villager.setProfession(Villager.Profession.LIBRARIAN);
-        villager.setVillagerType(Villager.Type.SWAMP);
+        villager.setProfession(Villager.Profession.CLERIC);
+        villager.setVillagerType(Villager.Type.JUNGLE);
         villager.setAI(false);
         villager.setCanPickupItems(false);
         villager.setInvulnerable(true);

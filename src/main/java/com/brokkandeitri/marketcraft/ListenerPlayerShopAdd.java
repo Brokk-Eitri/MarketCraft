@@ -82,6 +82,8 @@ public class ListenerPlayerShopAdd implements Listener {
         int price = 0;
         if (!Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")) {
             price = Integer.parseInt(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().replaceAll("[^\\d.]", ""));
+        } else {
+            price = MarketCraft.getPrice(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID)));
         }
         return price;
     }

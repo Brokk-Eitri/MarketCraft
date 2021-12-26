@@ -47,6 +47,7 @@ public class ListenerPlayerShopAdd implements Listener {
         } else {
             Inventory shop = player.getOpenInventory().getTopInventory();
             shop.setItem(GUIBuilder.InvPos.MID, event.getCurrentItem());
+            playerShopPriceEvent(shop);
         }
 
     }
@@ -61,10 +62,7 @@ public class ListenerPlayerShopAdd implements Listener {
         } else if (price > 0){
             price -= clickedItem.getAmount();
         }
-
         playerShopSwapEvent(inventory, price);
-
-
         player.openInventory(inventory);
     }
 
@@ -79,12 +77,13 @@ public class ListenerPlayerShopAdd implements Listener {
     }
 
     private int playerShopPriceEvent(Inventory inventory) {
-        int price = 0;
+        int price;
         if (!Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().equals("Select an option")) {
             price = Integer.parseInt(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().replaceAll("[^\\d.]", ""));
         } else {
             price = MarketCraft.getPrice(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID)));
         }
+        playerShopSwapEvent(inventory, price);
         return price;
     }
 

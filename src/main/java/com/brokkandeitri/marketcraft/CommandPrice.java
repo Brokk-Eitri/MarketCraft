@@ -26,7 +26,11 @@ public class CommandPrice implements CommandExecutor {
         }
 
         if (args[0].equals("all")) {
-            MarketCraft.displayPrices();
+            if (player.isOp()) {
+                MarketCraft.displayPrices();
+            } else {
+                player.sendMessage(ChatColor.RED + "You must be op to run this command");
+            }
         } else {
             Material material = Material.getMaterial(args[0]);
             assert material != null;

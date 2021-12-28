@@ -50,6 +50,10 @@ permissions:
     description: Allows players to use the pay command
     default: true
 
+  Marketcraft.price:
+    description: Allows players to use the price command
+    default: true
+
   Marketcraft.*:
     description: Allows access to commands
     default: op

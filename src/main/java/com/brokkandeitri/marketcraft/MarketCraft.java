@@ -31,10 +31,11 @@ public final class MarketCraft extends JavaPlugin {
         public static YAMLFile shop = new YAMLFile("shop.yml");
         public static YAMLFile playerShop = new YAMLFile("playerShop.yml");
         public static YAMLFile priceHistory = new YAMLFile("priceHistory.yml");
+        public static YAMLFile config = new YAMLFile("config.yml");
     }
 
     public static int getPrice(ItemStack item) {
-        return itemPriceMap.getOrDefault(item.getType().name(), files.shop.getInt("MAX_PRICE"));
+        return itemPriceMap.getOrDefault(item.getType().name(), files.config.getInt("MAX_PRICE"));
     }
 
     @Override
@@ -146,8 +147,8 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        double min = files.shop.getDouble("MIN_PRICE");
-        double max = files.shop.getDouble("MAX_PRICE");
+        double min = files.config.getDouble("MIN_PRICE");
+        double max = files.config.getDouble("MAX_PRICE");
 
         for (String key: itemCountMap.keySet()) {
             double rarity = 1 - ((itemCountMap.get(key) - lowest) / (highest - lowest));
@@ -170,10 +171,10 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public void SpawnVillagers(){
-        if (files.shop.contains("Villagers")) {
-            List<String> villagers = files.shop.getStringList("Villagers");
+        if (files.config.contains("VILLAGERS")) {
+            List<String> villagers = files.config.getStringList("VILLAGERS");
             for (String item: villagers) {
-                UUID uid = UUID.fromString(files.shop.getString(item));
+                UUID uid = UUID.fromString(files.config.getString(item));
                 if (server.getEntity(uid) != null) {
                     Entity villager = server.getEntity(uid);
                     assert villager != null;

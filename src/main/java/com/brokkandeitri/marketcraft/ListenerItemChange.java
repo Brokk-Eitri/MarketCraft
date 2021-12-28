@@ -8,11 +8,9 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
@@ -42,16 +40,6 @@ public class ListenerItemChange implements Listener {
         if (item != null) {
             logItemChange(item, -1);
         }
-    }
-
-    @EventHandler
-    private void EntityExplosions(EntityExplodeEvent event) {
-        MarketCraft.server.getLogger().warning(event.blockList().toString());
-    }
-
-    @EventHandler
-    private void BlockExplosions(BlockExplodeEvent event) {
-        MarketCraft.server.getLogger().warning(event.blockList().toString());
     }
 
     @EventHandler
@@ -163,6 +151,10 @@ public class ListenerItemChange implements Listener {
     }
 
     private void logItemChange(Material material, int change) {
+        if (!MarketCraft.files.config.getBool("ALLOW_NEGATIVE_COUNTS")) {
+            return;
+        }
+
         ItemChange itemChange = new ItemChange();
         itemChange.name = material.name();
         itemChange.change = change;

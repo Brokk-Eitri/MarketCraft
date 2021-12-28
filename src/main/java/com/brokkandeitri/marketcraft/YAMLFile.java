@@ -58,6 +58,10 @@ public class YAMLFile {
         return customFile.getString(key);
     }
 
+    public boolean getBool(String key) {
+        return customFile.getBoolean(key);
+    }
+
     public @NotNull List<String> getStringList(String key) {
         return customFile.getStringList(key);
     }

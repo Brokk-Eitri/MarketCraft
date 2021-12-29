@@ -6,11 +6,13 @@ import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 
 
 public final class MarketCraft extends JavaPlugin {
@@ -18,25 +20,25 @@ public final class MarketCraft extends JavaPlugin {
     public static MarketCraft plugin;
     public static Server server;
 
-    private final static Map<String, Integer> itemCountMap = new HashMap<>();
-    private final static Map<String, Integer> itemPriceMap = new HashMap<>();
-    public static List<ItemChange> changeBuffer = new ArrayList<>();
-
-    private static final long priceHistorySaveDelay = 20 * 60 * 20;
-
     public static class files {
         public static YAMLFile itemCounts = new YAMLFile("itemCounts.yml");
-        public static YAMLFile changeBuffer = new YAMLFile("changeBuffer.yml");
         public static YAMLFile balances = new YAMLFile("playerBalances.yml");
         public static YAMLFile shop = new YAMLFile("shop.yml");
         public static YAMLFile playerShop = new YAMLFile("playerShop.yml");
         public static YAMLFile priceHistory = new YAMLFile("priceHistory.yml");
         public static YAMLFile config = new YAMLFile("config.yml");
+
+        public static FileWriter priceHistoryCSV;
     }
 
     public static int getPrice(ItemStack item) {
         return itemPriceMap.getOrDefault(item.getType().name(), files.config.getInt("MAX_PRICE"));
     }
+
+    private final static Map<String, Integer> itemCountMap = new HashMap<>();
+    private final static Map<String, Integer> itemPriceMap = new HashMap<>();
+
+    private static int priceHistoryUpdateTime;
 
     @Override
     public void onLoad() {
@@ -63,20 +65,20 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        for (String key : files.changeBuffer.getKeys(false)) {
-            ItemChange itemChange = new ItemChange();
-            itemChange.name = key;
-            itemChange.change = files.changeBuffer.getInt(key);
-            changeBuffer.add(itemChange);
+        priceHistoryUpdateTime = files.config.getInt("PRICE_HISTORY_UPDATE_TIME");
+
+        try {
+            if (new File("priceHistory.csv").createNewFile()) {
+                server.getLogger().info("Created priceHistory.csv");
+            }
+
+            files.priceHistoryCSV = new FileWriter("priceHistory.csv", true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        updatePrices();
         displayPrices();
-
-        BukkitScheduler scheduler = server.getScheduler();
-        int delayStart = 60 - LocalDateTime.now().getSecond();
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePrices, delayStart * 20, 20 * 10);
-        scheduler.scheduleSyncRepeatingTask(plugin, MarketCraft::updatePriceHistory, delayStart * 20, priceHistorySaveDelay);
 
         server.getPluginManager().registerEvents(new ListenerItemChange(), this);
         server.getPluginManager().registerEvents(new ListenerPlayerShop(), this);
@@ -102,12 +104,16 @@ public final class MarketCraft extends JavaPlugin {
             files.itemCounts.set(item, itemCountMap.get(item));
         }
 
-        for (ItemChange itemChange : changeBuffer.toArray(new ItemChange[0])) {
-            files.changeBuffer.set(itemChange.name, itemChange.change);
-        }
-
         displayPrices();
+
+        updatePrices();
         updatePriceHistory();
+
+        try {
+            files.priceHistoryCSV.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         getLogger().info("Disabled");
     }
@@ -119,24 +125,23 @@ public final class MarketCraft extends JavaPlugin {
             }
         }
 
-        Set<String> keys = files.priceHistory.getKeys(true);
-
-        for (String key: keys){
+        for (String key: files.priceHistory.getKeys(true)){
             @NotNull List<String> prices = files.priceHistory.getStringList(key);
-            prices.add(String.valueOf(getPrice(new ItemStack(Material.valueOf(key)))));
+            int price = getPrice(new ItemStack(Material.valueOf(key)));
+            prices.add(String.valueOf(price));
             files.priceHistory.set(key, prices);
+
+            try {
+                files.priceHistoryCSV.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         server.getLogger().info(ChatColor.BLUE + "Price History Updated");
     }
 
     public static void updatePrices() {
-        for (ItemChange itemChange : changeBuffer) {
-            itemCountMap.put(itemChange.name, Math.max(itemCountMap.getOrDefault(itemChange.name, 0) + itemChange.change, 0));
-        }
-
-        changeBuffer.clear();
-
         if (itemCountMap.size() == 0) {
             return;
         }
@@ -174,6 +179,18 @@ public final class MarketCraft extends JavaPlugin {
         }
 
         server.getLogger().info(ChatColor.BLUE + "----------------------------------------");
+    }
+
+    static int changesSinceLastUpdate = 0;
+    public static void logItemChange(ItemChange itemChange) {
+        itemCountMap.put(itemChange.name, itemChange.change + itemCountMap.getOrDefault(itemChange.name, 0));
+
+        updatePrices();
+        changesSinceLastUpdate++;
+
+        if (changesSinceLastUpdate > priceHistoryUpdateTime) {
+            updatePriceHistory();
+        }
     }
 
     public void SpawnVillagers(){

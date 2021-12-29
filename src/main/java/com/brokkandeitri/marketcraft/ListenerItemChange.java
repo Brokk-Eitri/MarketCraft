@@ -151,14 +151,15 @@ public class ListenerItemChange implements Listener {
     }
 
     private void logItemChange(Material material, int change) {
-        if (!MarketCraft.files.config.getBool("ALLOW_NEGATIVE_COUNTS")) {
+        if (!MarketCraft.files.config.getBool("ALLOW_NEGATIVE_COUNTS") && change < 0) {
             return;
         }
 
         ItemChange itemChange = new ItemChange();
         itemChange.name = material.name();
         itemChange.change = change;
-        MarketCraft.changeBuffer.add(itemChange);
+
+        MarketCraft.logItemChange(itemChange);
 
         MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "") + change + " " + material.name());
     }

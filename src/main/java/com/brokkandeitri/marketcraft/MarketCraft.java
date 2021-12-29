@@ -48,6 +48,12 @@ public final class MarketCraft extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Enabled");
 
+        if (files.config.getBool("LOGGING")) {
+            server.getLogger().setLevel(Level.INFO);
+        } else {
+            server.getLogger().setLevel(Level.WARNING);
+        }
+
         SpawnVillagers();
 
         for (String key : files.itemCounts.getKeys(false)) {

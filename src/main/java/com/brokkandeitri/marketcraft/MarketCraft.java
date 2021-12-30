@@ -1,7 +1,6 @@
 package com.brokkandeitri.marketcraft;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
@@ -163,11 +162,13 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public static void displayPrices() {
+        updatePrices();
+
         server.getLogger().info(ChatColor.BLUE + "---------------< PRICES >---------------");
 
         for (String key : itemCountMap.keySet()) {
             server.getLogger().info(ChatColor.BLUE + key + ": " + " ".repeat(40 - key.length()) +
-                    " £" + getPrice(new ItemStack(Material.valueOf(key))) + "\t(" + itemCountMap.get(key) + ")");
+                    " £" + getPrice(key) + "\t(" + itemCountMap.get(key) + ")");
         }
 
         server.getLogger().info(ChatColor.BLUE + "----------------------------------------");

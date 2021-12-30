@@ -6,7 +6,6 @@ import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,13 +26,15 @@ public final class MarketCraft extends JavaPlugin {
         public static YAMLFile itemCounts = new YAMLFile("\\data", "itemCounts.yml");
         public static YAMLFile balances = new YAMLFile("\\data", "playerBalances.yml");
         public static YAMLFile playerShop = new YAMLFile("\\data", "playerShop.yml");
-        public static YAMLFile priceHistory = new YAMLFile("\\data", "priceHistory.yml");
-
-        public static File priceHistoryCSV;
+        public static File priceHistory;
     }
 
     public static int getPrice(ItemStack item) {
         return itemPriceMap.getOrDefault(item.getType().name(), files.config.getInt("MAX_PRICE"));
+    }
+
+    public static int getPrice(String itemName) {
+        return itemPriceMap.getOrDefault(itemName, files.config.getInt("MAX_PRICE"));
     }
 
     private final static Map<String, Integer> itemCountMap = new HashMap<>();
@@ -69,13 +70,13 @@ public final class MarketCraft extends JavaPlugin {
         priceHistoryUpdateTime = files.config.getInt("PRICE_HISTORY_UPDATE_TIME");
 
         try {
-            files.priceHistoryCSV = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
-            boolean created = files.priceHistoryCSV .createNewFile();
+            files.priceHistory = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
+            boolean created = files.priceHistory.createNewFile();
 
 
             if (created) {
                 server.getLogger().info("Created priceHistory.csv");
-                FileWriter writer = new FileWriter(files.priceHistoryCSV , true);
+                FileWriter writer = new FileWriter(files.priceHistory, true);
                 writer.write("time,item_name,price,count\n");
                 writer.close();
             }
@@ -119,21 +120,10 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public static void updatePriceHistory() {
-        for (String key: itemPriceMap.keySet()){
-            if (!files.priceHistory.contains(key)){
-                files.priceHistory.set(key, "");
-            }
-        }
-
-        for (String key: files.priceHistory.getKeys(true)){
-            @NotNull List<String> prices = files.priceHistory.getStringList(key);
-            int price = getPrice(new ItemStack(Material.valueOf(key)));
-            prices.add(String.valueOf(price));
-            files.priceHistory.set(key, prices);
-
+        for (String itemName: itemPriceMap.keySet()){
             try {
-                FileWriter writer = new FileWriter(files.priceHistoryCSV , true);
-                writer.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key) + "\n");
+                FileWriter writer = new FileWriter(files.priceHistory, true);
+                writer.write(System.currentTimeMillis() / 1000L + "," + itemName + "," + getPrice(itemName) + "," + itemCountMap.get(itemName) + "\n");
                 writer.close();
             } catch (IOException e) {
                 e.printStackTrace();

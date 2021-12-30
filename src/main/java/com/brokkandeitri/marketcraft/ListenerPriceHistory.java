@@ -1,4 +1,5 @@
 package com.brokkandeitri.marketcraft;
+
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -9,22 +10,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ListenerPriceHistory implements Listener{
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        if (!event.getView().getTitle().contains("Price history") || event.getCurrentItem() == null) {
+        if (!event.getView().getTitle().contains("Price History") || event.getCurrentItem() == null) {
             return;
         }
-        PriceHistoryEvent(event);
 
-        event.setCancelled(true);
-    }
-
-    private void PriceHistoryEvent(InventoryClickEvent event) {
         event.setCancelled(true);
 
         ItemStack clickedItem = event.getCurrentItem();
@@ -32,14 +27,14 @@ public class ListenerPriceHistory implements Listener{
 
         Player player = (Player) event.getWhoClicked();
 
-        if (event.getCurrentItem().getLore() != null) {
+        if (event.getCurrentItem().lore() != null) {
             switch (Objects.requireNonNull(clickedItem.getItemMeta().getLore()).get(0)) {
                 case "Decrease time":
                 case "Increase time":
-                    priceHistoryTimeEvent(event, player, clickedItem);
+                    changeTimeFrame(event, player, clickedItem);
                     return;
                 case "Confirm":
-                    PriceHistoryConfirmEvent(event, player);
+                    priceHistoryConfirmEvent(event, player);
                     return;
                 case "Exit":
                     player.closeInventory();
@@ -52,117 +47,166 @@ public class ListenerPriceHistory implements Listener{
         }
     }
 
-    private void PriceHistoryConfirmEvent(InventoryClickEvent event, Player player) {
+    private void priceHistoryConfirmEvent(InventoryClickEvent event, Player player) {
         Inventory inventory = event.getClickedInventory();
         assert inventory != null;
-
-        int time = PriceHistoryPriceEvent(inventory);
 
         if (inventory.getItem(GUIBuilder.InvPos.MID) == null){
             return;
         }
-        ItemStack selected = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID));
+
+        ItemStack item = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID));
+        String itemName = item.displayName().toString();
+        MarketCraft.server.getLogger().warning(itemName);
 
         inventory.setItem(GUIBuilder.InvPos.MID, null);
 
-        List<Integer> fullSample = MarketCraft.files.priceHistory.getStringList(selected.getType().toString()).stream().map(Integer::parseInt).collect(Collectors.toList());
-        time = PriceHistorySampleSize(fullSample, time, player);
-        if (time == 0) { return; }
-        List<Integer> sample = fullSample.subList(0, time);
-        float mean = PriceHistoryMean(sample);
-        float median = PriceHistoryMedian(sample);
-        int mode = PriceHistoryMode(sample);
-        int current = MarketCraft.getPrice(selected);
-        int max = PriceHistoryMax(sample);
-        int min = PriceHistoryMin(sample);
-        CommandPrice.DisplayStats(player, mean, median, mode, current, max, min, selected);
-    }
+        List<DataPoint> data = new ArrayList<>();
 
-    private int PriceHistoryMin(List<Integer> sample) {
-        int minPrice = sample.get(0);
+        int timeFrame = priceHistorySampleSize(data, getTimeFrame(inventory), player);
+        if (timeFrame == 0) { return; }
 
-        for (int point : sample) {
-            minPrice = Math.min(minPrice, point);
-        }
-        return minPrice;
-    }
+        try {
+            Scanner scanner = new Scanner(MarketCraft.files.priceHistory);
 
-    private int PriceHistoryMax(List<Integer> sample) {
-        int maxPrice = 0;
-        for (int point : sample) {
-            maxPrice = Math.max(maxPrice, point);
-        }
-        return maxPrice;
-    }
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] split = line.split(",");
 
-    private Integer PriceHistoryMode(List<Integer> sample) {
-        return sample.stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet().stream().max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey).orElse(null);
-    }
+                if (split[1].equals(itemName)) {
+                    DataPoint dataPoint = new DataPoint(line);
+                    data.add(dataPoint);
 
-    private float PriceHistoryMedian(List<Integer> sample) {
-        float index = ((float) sample.size() + 1) / 2 - 1;
+                    if (dataPoint.time > System.currentTimeMillis() / 1000L + timeFrame) {
+                        break;
+                    }
+                }
+            }
 
-        Collections.sort(sample);
-
-        int indexHigh = sample.get((int) (index + 0.5));
-        int indexLow = sample.get((int) (index - 0.5));
-
-        return ((float) indexHigh + (float) indexLow) / (float) 2;
-    }
-
-    private float PriceHistoryMean(List<Integer> sample) {
-        int count = 0;
-
-        for (Integer integer : sample) {
-            count += integer;
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            MarketCraft.server.getLogger().warning(e.getMessage());
         }
 
-        return (float) count / (float) sample.size();
+        HistoryStats stats = new HistoryStats(data);
+        CommandPrice.DisplayStats(player, item, stats);
     }
 
-    private int PriceHistorySampleSize(List<Integer> sample, int time, Player player) {
+    private int priceHistorySampleSize(List<DataPoint> sample, int time, Player player) {
         if (sample.size() < time){
-            player.sendMessage(ChatColor.RED + "Sample size of " + time + " cannot be used as there isn't enough data using " + sample.size() + " instead");
+            player.sendMessage(ChatColor.RED + "Sample size of " + time + " cannot be used as there isn't enough data, using " + sample.size() + " instead");
             time = sample.size();
         }
 
         return  time;
     }
 
-    private int PriceHistoryPriceEvent(Inventory inventory) {
+    private int getTimeFrame(Inventory inventory) {
         int time = 0;
-        if (!Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().equals("Click an item to select to view price history")) {
-            time = Integer.parseInt(Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName().replaceAll("[^\\d.]", ""));
+
+        String itemName = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).displayName().toString();
+
+        if (!itemName.equals("Click an item to select to view price history")) {
+            time = Integer.parseInt(itemName.replaceAll("[^\\d.]", ""));
         }
+
         return time;
     }
 
-    private void priceHistoryTimeEvent(InventoryClickEvent event, Player player, ItemStack clickedItem) {
+    private void changeTimeFrame(InventoryClickEvent event, Player player, ItemStack clickedItem) {
         Inventory inventory = event.getClickedInventory();
         assert inventory != null;
 
-        int time = PriceHistoryPriceEvent(inventory);
+        int time = getTimeFrame(inventory);
         if (clickedItem.getItemMeta().getDisplayName().contains("Increase")) {
             time += clickedItem.getAmount();
         } else if (time > 0){
             time -= clickedItem.getAmount();
         }
 
-        priceHistorySwapEvent(inventory, time);
-
-        player.openInventory(inventory);
-    }
-
-    private void priceHistorySwapEvent(Inventory inventory, int time) {
-        GUIItem item;
-        item = new GUIItem();
+        GUIItem item = new GUIItem();
         item.name = "See stats for " + time + " days";
         item.lore.add(Component.text("Confirm"));
         item.amount = 1;
         item.material = Material.LIME_DYE;
+
         inventory.setItem(GUIBuilder.InvPos.BOT_MID, item.getItemStack());
+
+        player.openInventory(inventory);
+    }
+}
+
+class HistoryStats {
+    float mean;
+    float median;
+    int mode;
+    int current;
+    int max;
+    int min;
+
+    HistoryStats(List<DataPoint> dataPoints) {
+        current = dataPoints.get(dataPoints.size() - 1).price;
+        min = dataPoints.get(0).price;
+
+        float total = 0;
+
+        List<Integer> prices = new ArrayList<>();
+
+        for (DataPoint point : dataPoints) {
+            if (point.price > max) {
+                max = point.price;
+            } else if (point.price < min) {
+                min = point.price;
+            }
+
+            total += point.price;
+
+            prices.add(point.price);
+        }
+
+        mean = total / dataPoints.size();
+
+        Collections.sort(prices);
+        mode = mode(prices);
+        mean = median(prices);
+    }
+
+
+    private Integer mode(List<Integer> prices) {
+        Set<Integer> unique = new LinkedHashSet<>(prices);
+        int mode = prices.get(0);
+
+        for (int u : unique) {
+            int f = Collections.frequency(prices, u);
+            if (f > mode) {
+                mode = u;
+            }
+        }
+
+        return mode;
+    }
+
+    private float median(List<Integer> prices) {
+        float midpoint = prices.size() / 2f;
+
+        int floored = (int) Math.floor(midpoint);
+        if (midpoint % 1 == 0) {
+            return (prices.get(floored) + prices.get(floored)) / 2f;
+        } else {
+            return prices.get((int) Math.ceil(midpoint));
+        }
+    }
+}
+
+class DataPoint {
+    int time;
+    int price;
+    int count;
+
+    DataPoint(String csv) {
+        String[] split = csv.split(",");
+        time = Integer.parseInt(split[0]);
+        price = Integer.parseInt(split[2]);
+        count = Integer.parseInt(split[3]);
     }
 }

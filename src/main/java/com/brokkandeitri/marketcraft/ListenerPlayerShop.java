@@ -105,7 +105,7 @@ public class ListenerPlayerShop implements Listener {
     }
 
     private int getPosition(Inventory inventory) {
-        ArrayList<String> itemLore = (ArrayList<String>) Objects.requireNonNull(inventory.getItem(49)).getLore();
+        List<String> itemLore = inventory.getItem(49).getLore();
         assert itemLore != null;
         return Integer.parseInt(itemLore.get(0));
     }
@@ -172,8 +172,8 @@ public class ListenerPlayerShop implements Listener {
         } else if (Objects.equals(clickedItem.getItemMeta().getDisplayName(), "Previous page") && page > 0){
             page -= 1;
         }
-        CommandPlayerShop.openPlayerShop(player, page);
 
+        CommandPlayerShop.openPlayerShop(player, page);
     }
 
     private void playerShopCancelEvent(Inventory inventory) {

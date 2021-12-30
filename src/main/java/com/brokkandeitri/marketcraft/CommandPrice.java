@@ -1,6 +1,7 @@
 package com.brokkandeitri.marketcraft;
 
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -75,8 +76,8 @@ public class CommandPrice implements CommandExecutor {
 
     }
 
-    public static void DisplayStats(Player player, float mean, float median, int mode, int current, int max, int min, ItemStack selected) {
-        GUIBuilder stats = new GUIBuilder();
+    public static void DisplayStats(Player player, ItemStack selected, HistoryStats stats) {
+        GUIBuilder guiBuilder = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
 
@@ -86,36 +87,38 @@ public class CommandPrice implements CommandExecutor {
         items.add(new GUIItem(4));
 
         // Row 2
-        items.add(new GUIItem("Mean: " + mean, GetMaterialType(current, mean), 1, "Mean", 1));
+        items.add(new GUIItem("Mean: " + stats.mean, getMaterialType(stats, stats.mean), 1, "Mean", 1));
         items.add(new GUIItem(1));
-        items.add(new GUIItem("Median: " + median, GetMaterialType(current, median), 1, "Median", 1));
+        items.add(new GUIItem("Median: " + stats.median, getMaterialType(stats, stats.median), 1, "Median", 1));
         items.add(new GUIItem(1));
-        items.add(new GUIItem("Mode: " + mode, GetMaterialType(current, mode), 1, "Mode", 1));
+        items.add(new GUIItem("Mode: " + stats.mode, getMaterialType(stats, stats.mode), 1, "Mode", 1));
         items.add(new GUIItem(1));
-        items.add(new GUIItem("Min price: " + min, GetMaterialType(current, min), 1, "Min", 1));
+        items.add(new GUIItem("Min price: " + stats.min, getMaterialType(stats, stats.min), 1, "Min", 1));
         items.add(new GUIItem(1));
-        items.add(new GUIItem("Max price: " + max, GetMaterialType(current, max), 1, "Max", 1));
+        items.add(new GUIItem("Max price: " + stats.max, getMaterialType(stats, stats.max), 1, "Max", 1));
 
         // Row 3
         items.add(new GUIItem(4));
-        items.add(new GUIItem("Current price : " + current, selected.getType(), 1, "Current", 1));
+        items.add(new GUIItem("Current price : " + stats.current, selected.getType(), 1, "Current", 1));
         items.add(new GUIItem(4));
 
 
-        stats.makeGUI("Price history", items);
-        stats.showGUI(player);
+        guiBuilder.makeGUI("Price history", items);
+        guiBuilder.showGUI(player);
 
     }
 
-    private static Material GetMaterialType(int current, float selected) {
+    private static Material getMaterialType(HistoryStats stats, float selected) {
         Material material;
-        if (current > selected) {
+
+        if (stats.current > selected) {
             material = Material.RED_STAINED_GLASS_PANE;
-        } else  if (current < selected) {
+        } else if (stats.current < selected) {
             material = Material.GREEN_STAINED_GLASS_PANE;
         } else {
             material = Material.ORANGE_STAINED_GLASS_PANE;
         }
+
         return material;
     }
 }

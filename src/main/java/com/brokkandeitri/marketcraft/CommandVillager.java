@@ -50,6 +50,7 @@ public class CommandVillager implements CommandExecutor{
             villagers.add(name);
             MarketCraft.files.config.set("VILLAGERS", villagers);
         }
+
         MarketCraft.files.config.set(name, villager.getUniqueId().toString());
     }
 

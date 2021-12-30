@@ -71,6 +71,7 @@ public final class MarketCraft extends JavaPlugin {
             File file = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
 
             if (file.createNewFile()) {
+                files.priceHistoryCSV.write("time,item_name,price,count\n");
                 server.getLogger().info("Created priceHistory.csv");
             }
 
@@ -134,7 +135,7 @@ public final class MarketCraft extends JavaPlugin {
             files.priceHistory.set(key, prices);
 
             try {
-                files.priceHistoryCSV.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key));
+                files.priceHistoryCSV.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key) + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -199,7 +200,7 @@ public final class MarketCraft extends JavaPlugin {
         if (files.config.contains("VILLAGERS")) {
             List<String> villagers = files.config.getStringList("VILLAGERS");
             for (String item: villagers) {
-                UUID uid = UUID.fromString(files.config.getString(item));
+                UUID uid = UUID.fromString(files.shop.getString(item));
                 if (server.getEntity(uid) != null) {
                     Entity villager = server.getEntity(uid);
                     assert villager != null;

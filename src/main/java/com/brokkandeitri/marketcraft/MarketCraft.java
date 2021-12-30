@@ -186,8 +186,8 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public void SpawnVillagers(){
-        if (files.config.contains("VILLAGERS")) {
-            List<String> villagers = files.config.getStringList("VILLAGERS");
+        if (files.shop.contains("VILLAGERS")) {
+            List<String> villagers = files.shop.getStringList("VILLAGERS");
             for (String item: villagers) {
                 UUID uid = UUID.fromString(files.shop.getString(item));
                 if (server.getEntity(uid) != null) {
@@ -198,8 +198,6 @@ public final class MarketCraft extends JavaPlugin {
                     new CommandVillager().SummonVillager(villager.getLocation(), villager.getWorld(), villager.getCustomName());
                 }
             }
-        } else {
-            server.getLogger().warning("config.yml does not contain VILLAGER list");
         }
     }
 }

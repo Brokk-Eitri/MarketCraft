@@ -56,14 +56,13 @@ public class ListenerPriceHistory implements Listener{
         }
 
         ItemStack item = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.MID));
-        String itemName = item.displayName().toString();
-        MarketCraft.server.getLogger().warning(itemName);
+        String itemName = item.getType().name();
 
         inventory.setItem(GUIBuilder.InvPos.MID, null);
 
         List<DataPoint> data = new ArrayList<>();
 
-        int timeFrame = priceHistorySampleSize(data, getTimeFrame(inventory), player);
+        int timeFrame = getTimeFrame(inventory);
         if (timeFrame == 0) { return; }
 
         try {
@@ -73,11 +72,12 @@ public class ListenerPriceHistory implements Listener{
                 String line = scanner.nextLine();
                 String[] split = line.split(",");
 
+
                 if (split[1].equals(itemName)) {
                     DataPoint dataPoint = new DataPoint(line);
                     data.add(dataPoint);
 
-                    if (dataPoint.time > System.currentTimeMillis() / 1000L + timeFrame) {
+                    if (dataPoint.time > (System.currentTimeMillis() / 1000L) + (timeFrame * 86400L)) {
                         break;
                     }
                 }
@@ -88,26 +88,32 @@ public class ListenerPriceHistory implements Listener{
             MarketCraft.server.getLogger().warning(e.getMessage());
         }
 
-        HistoryStats stats = new HistoryStats(data);
-        CommandPrice.DisplayStats(player, item, stats);
-    }
-
-    private int priceHistorySampleSize(List<DataPoint> sample, int time, Player player) {
-        if (sample.size() < time){
-            player.sendMessage(ChatColor.RED + "Sample size of " + time + " cannot be used as there isn't enough data, using " + sample.size() + " instead");
-            time = sample.size();
+        if (data.size() == 0) {
+            player.sendMessage(ChatColor.RED + "No data for that item");
+            return;
         }
 
-        return  time;
+        // TODO: Validate History Ranges
+
+        HistoryStats stats = new HistoryStats(data);
+        player.sendMessage(ChatColor.GOLD + "Stats For: " + itemName + " (" + data.size() + " data points)");
+        player.sendMessage(ChatColor.GOLD + "Current Price: £" + stats.current);
+        player.sendMessage(ChatColor.GOLD + "Mean Price: £" + stats.colour(stats.mean) + stats.mean);
+        player.sendMessage(ChatColor.GOLD + "Median Price: £" + stats.colour(stats.median) + stats.median);
+        player.sendMessage(ChatColor.GOLD + "Modal Price: £" + stats.colour(stats.mode) + stats.mode);
+        player.sendMessage(ChatColor.GOLD + "Range: £" + (stats.max - stats.min) + " (£" + stats.min + " to £" + stats.max + ")");
+        player.sendMessage(ChatColor.GOLD + "(" + ChatColor.RED + "lower " + ChatColor.YELLOW + "equal " + ChatColor.GREEN + "higher" + ChatColor.GOLD + " than current)");
+
+        player.getOpenInventory().close();
     }
 
     private int getTimeFrame(Inventory inventory) {
         int time = 0;
 
-        String itemName = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).displayName().toString();
+        String itemName = Objects.requireNonNull(inventory.getItem(GUIBuilder.InvPos.BOT_MID)).getItemMeta().getDisplayName();
 
         if (!itemName.equals("Click an item to select to view price history")) {
-            time = Integer.parseInt(itemName.replaceAll("[^\\d.]", ""));
+            time = Integer.parseInt(itemName.replaceAll("[^\\d]", ""));
         }
 
         return time;
@@ -168,9 +174,18 @@ class HistoryStats {
 
         Collections.sort(prices);
         mode = mode(prices);
-        mean = median(prices);
+        median = median(prices);
     }
 
+    ChatColor colour(float v) {
+        if (v > current) {
+            return ChatColor.GREEN;
+        } else if (v < current) {
+            return ChatColor.RED;
+        }
+
+        return ChatColor.YELLOW;
+    }
 
     private Integer mode(List<Integer> prices) {
         Set<Integer> unique = new LinkedHashSet<>(prices);

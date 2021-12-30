@@ -20,20 +20,16 @@ public class ListenerVillagers implements Listener {
         String name = Objects.requireNonNull(villager.getCustomName());
 
         if(name.equals("Shop") && villager.isInvulnerable()) {
-            CommandShopMenu commandShopMenu = new CommandShopMenu();
-            commandShopMenu.doMenu("root", player, "Shop menu");
-
+            new CommandShopMenu().doMenu("root", player, "Shop menu");
         } else if (name.equals("Auction - Sell") && villager.isInvulnerable()){
             CommandPlayerShop.addPLayerShop(player, null);
-
         } else if (name.equals("Auction - Buy") && villager.isInvulnerable()) {
             CommandPlayerShop.openPlayerShop(player, 0);
-            } else if (name.equals("Price Trends") && villager.isInvulnerable()){
-            CommandPrice.OpenPriceHistory(player, null);
+        } else if (name.equals("Price History") && villager.isInvulnerable()){
+            CommandPrice.openPriceHistory(player, null);
         } else if (name.equals("Rankings") && villager.isInvulnerable()) {
             CommandRanking.sendRankings(player);
         }
-
     }
 
 }

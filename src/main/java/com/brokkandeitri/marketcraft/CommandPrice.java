@@ -41,7 +41,7 @@ public class CommandPrice implements CommandExecutor {
         return true;
     }
 
-    public static void OpenPriceHistory(Player player, ItemStack item){
+    public static void openPriceHistory(Player player, ItemStack item){
         GUIBuilder priceHistory = new GUIBuilder();
 
         List<GUIItem> items = new ArrayList<>();
@@ -71,54 +71,8 @@ public class CommandPrice implements CommandExecutor {
         items.add(new GUIItem(4));
 
 
-        priceHistory.makeGUI("Price history", items);
+        priceHistory.makeGUI("Price History", items);
         priceHistory.showGUI(player);
 
-    }
-
-    public static void DisplayStats(Player player, ItemStack selected, HistoryStats stats) {
-        GUIBuilder guiBuilder = new GUIBuilder();
-
-        List<GUIItem> items = new ArrayList<>();
-
-        // Row 1
-        items.add(new GUIItem(4));
-        items.add(new GUIItem("Exit", Material.RED_DYE, 1, "Exit", 1));
-        items.add(new GUIItem(4));
-
-        // Row 2
-        items.add(new GUIItem("Mean: " + stats.mean, getMaterialType(stats, stats.mean), 1, "Mean", 1));
-        items.add(new GUIItem(1));
-        items.add(new GUIItem("Median: " + stats.median, getMaterialType(stats, stats.median), 1, "Median", 1));
-        items.add(new GUIItem(1));
-        items.add(new GUIItem("Mode: " + stats.mode, getMaterialType(stats, stats.mode), 1, "Mode", 1));
-        items.add(new GUIItem(1));
-        items.add(new GUIItem("Min price: " + stats.min, getMaterialType(stats, stats.min), 1, "Min", 1));
-        items.add(new GUIItem(1));
-        items.add(new GUIItem("Max price: " + stats.max, getMaterialType(stats, stats.max), 1, "Max", 1));
-
-        // Row 3
-        items.add(new GUIItem(4));
-        items.add(new GUIItem("Current price : " + stats.current, selected.getType(), 1, "Current", 1));
-        items.add(new GUIItem(4));
-
-
-        guiBuilder.makeGUI("Price history", items);
-        guiBuilder.showGUI(player);
-
-    }
-
-    private static Material getMaterialType(HistoryStats stats, float selected) {
-        Material material;
-
-        if (stats.current > selected) {
-            material = Material.RED_STAINED_GLASS_PANE;
-        } else if (stats.current < selected) {
-            material = Material.GREEN_STAINED_GLASS_PANE;
-        } else {
-            material = Material.ORANGE_STAINED_GLASS_PANE;
-        }
-
-        return material;
     }
 }

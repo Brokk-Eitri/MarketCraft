@@ -45,13 +45,13 @@ public class CommandVillager implements CommandExecutor{
         villager.setRecipes(new ArrayList<>());
         villager.setSilent(true);
 
-        List<String> villagers = MarketCraft.files.config.getStringList("VILLAGERS");
+        List<String> villagers = MarketCraft.files.shop.getStringList("VILLAGERS");
         if (!villagers.contains(name)){
             villagers.add(name);
-            MarketCraft.files.config.set("VILLAGERS", villagers);
+            MarketCraft.files.shop.set("VILLAGERS", villagers);
         }
 
-        MarketCraft.files.config.set(name, villager.getUniqueId().toString());
+        MarketCraft.files.shop.set(name, villager.getUniqueId().toString());
     }
 
 

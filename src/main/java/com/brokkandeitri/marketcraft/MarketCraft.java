@@ -68,11 +68,13 @@ public final class MarketCraft extends JavaPlugin {
         priceHistoryUpdateTime = files.config.getInt("PRICE_HISTORY_UPDATE_TIME");
 
         try {
-            if (new File("priceHistory.csv").createNewFile()) {
+            File file = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
+
+            if (file.createNewFile()) {
                 server.getLogger().info("Created priceHistory.csv");
             }
 
-            files.priceHistoryCSV = new FileWriter("priceHistory.csv", true);
+            files.priceHistoryCSV = new FileWriter(file, true);
 
         } catch (IOException e) {
             e.printStackTrace();

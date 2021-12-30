@@ -21,14 +21,15 @@ public final class MarketCraft extends JavaPlugin {
     public static Server server;
 
     public static class files {
-        public static YAMLFile itemCounts = new YAMLFile("itemCounts.yml");
-        public static YAMLFile balances = new YAMLFile("playerBalances.yml");
         public static YAMLFile shop = new YAMLFile("shop.yml");
-        public static YAMLFile playerShop = new YAMLFile("playerShop.yml");
-        public static YAMLFile priceHistory = new YAMLFile("priceHistory.yml");
         public static YAMLFile config = new YAMLFile("config.yml");
 
-        public static FileWriter priceHistoryCSV;
+        public static YAMLFile itemCounts = new YAMLFile(".itemCounts.yml");
+        public static YAMLFile balances = new YAMLFile(".playerBalances.yml");
+        public static YAMLFile playerShop = new YAMLFile(".playerShop.yml");
+        public static YAMLFile priceHistory = new YAMLFile(".priceHistory.yml");
+
+        public static File priceHistoryCSV;
     }
 
     public static int getPrice(ItemStack item) {
@@ -68,14 +69,16 @@ public final class MarketCraft extends JavaPlugin {
         priceHistoryUpdateTime = files.config.getInt("PRICE_HISTORY_UPDATE_TIME");
 
         try {
-            File file = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
+            files.priceHistoryCSV = new File(MarketCraft.plugin.getDataFolder(), "priceHistory.csv");
+            boolean created = files.priceHistoryCSV .createNewFile();
 
-            if (file.createNewFile()) {
-                files.priceHistoryCSV.write("time,item_name,price,count\n");
+
+            if (created) {
                 server.getLogger().info("Created priceHistory.csv");
+                FileWriter writer = new FileWriter(files.priceHistoryCSV , true);
+                writer.write("time,item_name,price,count\n");
+                writer.close();
             }
-
-            files.priceHistoryCSV = new FileWriter(file, true);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,12 +115,6 @@ public final class MarketCraft extends JavaPlugin {
         updatePrices();
         updatePriceHistory();
 
-        try {
-            files.priceHistoryCSV.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         getLogger().info("Disabled");
     }
 
@@ -135,7 +132,9 @@ public final class MarketCraft extends JavaPlugin {
             files.priceHistory.set(key, prices);
 
             try {
-                files.priceHistoryCSV.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key) + "\n");
+                FileWriter writer = new FileWriter(files.priceHistoryCSV , true);
+                writer.write(System.currentTimeMillis() / 1000L + "," + key + "," + price + "," + itemCountMap.get(key) + "\n");
+                writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -209,6 +208,8 @@ public final class MarketCraft extends JavaPlugin {
                     new CommandVillager().SummonVillager(villager.getLocation(), villager.getWorld(), villager.getCustomName());
                 }
             }
+        } else {
+            server.getLogger().warning("config.yml does not contain VILLAGER list");
         }
     }
 }

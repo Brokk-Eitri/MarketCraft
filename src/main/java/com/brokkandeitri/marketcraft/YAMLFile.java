@@ -15,15 +15,16 @@ public class YAMLFile {
     private final File file;
     private final FileConfiguration customFile;
 
-    public YAMLFile(String fileName) {
-        file = new File(MarketCraft.plugin.getDataFolder(), fileName);
+    public YAMLFile(String folder, String fileName) {
+        new File(MarketCraft.plugin.getDataFolder() + folder).mkdirs();
+        file = new File(MarketCraft.plugin.getDataFolder() + folder, fileName);
 
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                    Bukkit.getLogger().info("Created new YAML file: " + fileName);
-                }
-            } catch (IOException ignored) { }
+        try {
+            if (file.createNewFile()) {
+                Bukkit.getLogger().info("Created new YAML file: " + fileName);
+            }
+        } catch (IOException e) {
+            MarketCraft.server.getLogger().warning(e.toString());
         }
 
         customFile = YamlConfiguration.loadConfiguration(file);

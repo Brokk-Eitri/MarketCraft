@@ -21,13 +21,13 @@ public final class MarketCraft extends JavaPlugin {
     public static Server server;
 
     public static class files {
-        public static YAMLFile shop = new YAMLFile("shop.yml");
-        public static YAMLFile config = new YAMLFile("config.yml");
+        public static YAMLFile shop = new YAMLFile("", "shop.yml");
+        public static YAMLFile config = new YAMLFile("", "config.yml");
 
-        public static YAMLFile itemCounts = new YAMLFile(".itemCounts.yml");
-        public static YAMLFile balances = new YAMLFile(".playerBalances.yml");
-        public static YAMLFile playerShop = new YAMLFile(".playerShop.yml");
-        public static YAMLFile priceHistory = new YAMLFile(".priceHistory.yml");
+        public static YAMLFile itemCounts = new YAMLFile("\\data", "itemCounts.yml");
+        public static YAMLFile balances = new YAMLFile("\\data", "playerBalances.yml");
+        public static YAMLFile playerShop = new YAMLFile("\\data", "playerShop.yml");
+        public static YAMLFile priceHistory = new YAMLFile("\\data", "priceHistory.yml");
 
         public static File priceHistoryCSV;
     }

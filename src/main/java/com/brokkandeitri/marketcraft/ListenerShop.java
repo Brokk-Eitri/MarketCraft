@@ -88,8 +88,8 @@ public class ListenerShop implements Listener {
     }
 
     private void doOrder(Player player, Inventory shopInv, Inventory playerInv, String type) {
-        Material orderMaterial = shopInv.getItem(InvPos.MID).getType();
-        int orderAmount = shopInv.getItem(InvPos.MID).getAmount();
+        Material orderMaterial = Objects.requireNonNull(shopInv.getItem(InvPos.MID)).getType();
+        int orderAmount = Objects.requireNonNull(shopInv.getItem(InvPos.MID)).getAmount();
         ItemStack order = new ItemStack(orderMaterial, orderAmount);
 
         String balanceKey = "players." + player.getUniqueId() + ".balance";
@@ -104,6 +104,7 @@ public class ListenerShop implements Listener {
                 }
 
                 playerInv.removeItemAnySlot(order);
+                logItemChange(orderMaterial, 10 * orderAmount);
 
                 files.balances.set(balanceKey, balances + cost);
 
@@ -119,6 +120,7 @@ public class ListenerShop implements Listener {
                     if (balances >= cost) {
 
                         playerInv.addItem(order);
+                        logItemChange(orderMaterial, -1 * 10 * orderAmount);
 
                         files.balances.set(balanceKey, balances - cost);
 
@@ -137,6 +139,7 @@ public class ListenerShop implements Listener {
                 player.sendMessage(ChatColor.RED + "Something went wrong: " + type + " please try again");
         }
     }
+
     private void openPrevious(Player player) {
         if (files.shop.contains(player.getUniqueId().toString())){
             String name = files.shop.getString(player.getUniqueId().toString());
@@ -152,5 +155,16 @@ public class ListenerShop implements Listener {
         } else {
             player.sendMessage(ChatColor.RED + "No menu to go to");
         }
+    }
+
+    private void logItemChange(Material material, int change) {
+
+        ItemChange itemChange = new ItemChange();
+        itemChange.name = material.name();
+        itemChange.change = change;
+
+        MarketCraft.logItemChange(itemChange);
+
+        MarketCraft.server.getLogger().info(ChatColor.GREEN + (change > 0 ? "+" : "") + change + " " + material.name());
     }
 }

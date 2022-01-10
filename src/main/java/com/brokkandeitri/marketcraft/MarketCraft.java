@@ -151,10 +151,10 @@ public final class MarketCraft extends JavaPlugin {
 
         double min = files.config.getDouble("MIN_PRICE");
         double max = files.config.getDouble("MAX_PRICE");
+        double curveMultiplier = files.config.getDouble("CURVE_MULTIPLIER");
 
         for (String key: itemCountMap.keySet()) {
-            double rarity = 1 - ((itemCountMap.get(key) - lowest) / (highest - lowest));
-            int price = (int)(min + ((max - min) * rarity));
+            int price = (int) (1/((curveMultiplier*itemCountMap.get(key))+1) * max + min);
             itemPriceMap.put(key, price);
         }
 
@@ -183,6 +183,7 @@ public final class MarketCraft extends JavaPlugin {
 
         if (changesSinceLastUpdate > priceHistoryUpdateTime) {
             updatePriceHistory();
+            changesSinceLastUpdate = 0;
         }
     }
 

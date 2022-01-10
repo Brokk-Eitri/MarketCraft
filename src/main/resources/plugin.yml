@@ -54,6 +54,18 @@ permissions:
     description: Allows players to use the price command
     default: true
 
+  Marketcraft.shop:
+    description: Allows players to use the shop command
+    default: true
+
+  Marketcraft.playerShop:
+    description: Allows players to use the playershop command
+    default: true
+
+  Maeketcraft.ranking:
+    description: Allows players to use the rankings command
+    default: true
+
   Marketcraft.*:
     description: Allows access to commands
     default: op

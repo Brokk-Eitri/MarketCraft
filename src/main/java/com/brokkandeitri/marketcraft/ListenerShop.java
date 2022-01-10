@@ -95,6 +95,8 @@ public class ListenerShop implements Listener {
         String balanceKey = "players." + player.getUniqueId() + ".balance";
         int balances = files.balances.getInt(balanceKey);
         int cost = MarketCraft.getPrice(order) * order.getAmount();
+        double tax = files.config.getDouble("TAX");
+        int aggressiveness = files.config.getInt("AGGRESSIVENESS");
 
         switch (type) {
             case "Sell":
@@ -104,7 +106,7 @@ public class ListenerShop implements Listener {
                 }
 
                 playerInv.removeItemAnySlot(order);
-                logItemChange(orderMaterial, 10 * orderAmount);
+                logItemChange(orderMaterial, aggressiveness * orderAmount);
 
                 files.balances.set(balanceKey, balances + cost);
 
@@ -114,13 +116,13 @@ public class ListenerShop implements Listener {
 
 
             case "Buy":
-                cost = (int) Math.ceil(cost * 1.05);
+                cost = (int) Math.ceil(cost * (1 + tax / 100));
                 if (player.getInventory().firstEmpty() != -1) {
 
                     if (balances >= cost) {
 
                         playerInv.addItem(order);
-                        logItemChange(orderMaterial, -1 * 10 * orderAmount);
+                        logItemChange(orderMaterial, -1 * aggressiveness * orderAmount);
 
                         files.balances.set(balanceKey, balances - cost);
 

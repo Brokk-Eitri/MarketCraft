@@ -106,11 +106,12 @@ public class CommandPlayerShop implements CommandExecutor {
 
         int counter = 0;
         int addedAmount = 0;
+        double tax = files.config.getDouble("TAX");
         for (Object i : uids){
             if (page * 36 <= counter && counter < (page + 1) * 36){
                 int price = (int) files.playerShop.get(i + ".price");
-                int cost = (int) Math.ceil(price * 1.05) + 1;
-                int tax = cost - price;
+                int cost = (int) Math.ceil(price * (tax / 100 + 1)) + 1;
+                tax = cost - price;
                 String seller = String.valueOf(files.playerShop.get(i + ".seller"));
                 ItemStack item = (ItemStack) files.playerShop.get(i + ".item");
                 ArrayList<String> loreList = new ArrayList<>();

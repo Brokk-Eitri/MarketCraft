@@ -1,24 +1,19 @@
 package com.brokkandeitri.marketcraft;
 
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerHarvestBlockEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class ListenerItemChange implements Listener {
@@ -35,55 +30,17 @@ public class ListenerItemChange implements Listener {
     }
 
     @EventHandler
-    private void EatFoodEvent(FoodLevelChangeEvent event) {
-        ItemStack item = event.getItem();
-        if (item != null) {
-            logItemChange(item, -1);
-        }
-    }
-
-    @EventHandler
-    private void InventoryInteractEvent(InventoryClickEvent event) {
-        int amount;
-        InventoryType inventoryType = Objects.requireNonNull(event.getClickedInventory()).getType();
-        if (!inventoryType.equals(InventoryType.STONECUTTER)) {
-            return;
-        }
-
-        if (event.getRawSlot() == 1) {
-            if (event.getClick().equals(ClickType.SHIFT_LEFT)) {
-                amount = Objects.requireNonNull(event.getInventory().getItem(0)).getAmount();
-            } else {
-                amount = 1;
-            }
-
-            logItemChange(Objects.requireNonNull(event.getInventory().getItem(0)), -amount);
-            logItemChange(Objects.requireNonNull(event.getInventory().getItem(1)), amount);
-        }
-    }
-
-    @EventHandler
     private void BlockDropItemEvent(BlockDropItemEvent event) {
         if (event.getItems().size() == 0) {
             return;
         }
-
         Item lastItem = event.getItems().get(event.getItems().size() - 1);
-
         if (inventoryMaterials().contains(lastItem.getItemStack().getType())) {
-            logItemChange(lastItem.getItemStack());
-            return;
-        }
-
-        for (Item item : event.getItems()) {
-            logItemChange(item.getItemStack());
-        }
-    }
-
-    @EventHandler
-    private void PlayerHarvestBlockEvent(PlayerHarvestBlockEvent event) {
-        for (ItemStack item : event.getItemsHarvested()) {
-            logItemChange(item.getType(), item.getAmount());
+            for (Item item : event.getItems()) {
+                if (item != lastItem) {
+                    logItemChange(item.getItemStack().getType(), -1 * item.getItemStack().getAmount());
+                }
+            }
         }
     }
 
@@ -102,45 +59,48 @@ public class ListenerItemChange implements Listener {
         }
 
         logItemChange(product, crafted * product.getAmount());
-        for (ItemStack itemStack : event.getInventory().getMatrix()) {
-            if (itemStack != null) {
-                logItemChange(itemStack.getType(), -crafted);
-            }
-        }
     }
 
     @EventHandler
-    private void FurnaceSmeltEvent(FurnaceSmeltEvent event) {
-        logItemChange(Objects.requireNonNull(event.getRecipe()).getInput().getType(), -event.getRecipe().getInput().getAmount());
-        logItemChange(event.getResult().getType(), event.getResult().getAmount());
+    private void DropItemEvent(PlayerDropItemEvent event) {
+        Item item = event.getItemDrop();
+        logItemChange(item.getItemStack().getType(), -1 * item.getItemStack().getAmount());
     }
 
     @EventHandler
-    private void EntityDropItemEvent(EntityDropItemEvent event) {
-        if (event.getEntity().getType() == EntityType.PLAYER) {
+    private void PickupItemEvent(EntityPickupItemEvent event) {
+        if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
             return;
         }
-
-        logItemChange(event.getItemDrop().getItemStack());
+        logItemChange(event.getItem().getItemStack());
     }
 
-    @EventHandler
-    private void EntityDeathEvent(EntityDeathEvent event) {
-        if (event.getEntity().getType() == EntityType.PLAYER) {
-            return;
-        }
 
-        for (ItemStack item: event.getDrops()) {
-            logItemChange(item.getType(), item.getAmount());
-        }
-    }
+//    @EventHandler
+//    private void BrewEvent(BrewEvent event) {
+//        event.getContents();
+//        MarketCraft.server.getLogger().warning(event.getContents().toString());
+//    }
+//
+//    @EventHandler
+//    private void  BrewFuel(BrewingStandFuelEvent event) {
+//        logItemChange(event.getFuel(), -1);
+//    }
+//
+//    @EventHandler
+//    private void FurnaceFuel(FurnaceBurnEvent event) {
+//        logItemChange(event.getFuel(), -1);
+//    }
 
-    @EventHandler
-    private void BlockPlaceEvent(BlockPlaceEvent event) {
-        if (event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
-            logItemChange(event.getItemInHand(), -1);
-        }
-    }
+
+
+//    @EventHandler
+//    private void FishingCatchEvent(PlayerFishEvent event) {
+//        event.
+//    }
+
+
+
 
     private void logItemChange(ItemStack itemStack) {
         logItemChange(itemStack.getType(), itemStack.getAmount());

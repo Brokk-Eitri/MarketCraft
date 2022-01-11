@@ -4,6 +4,11 @@ main: com.brokkandeitri.marketcraft.MarketCraft
 api-version: 1.17
 
 commands:
+  count:
+    description: Gets the count of all items or a specific item
+    usage: /count <item>
+    permission: Marketcraft.cost
+
   price:
     description: Gets the prices of all items or a specific item
     usage: /price <all/item>
@@ -70,6 +75,7 @@ permissions:
     description: Allows access to commands
     default: op
     children:
+      Marketcraft.count: true
       Marketcraft.balance: true
       Marketcraft.pay: true
       Marketcraft.price: true

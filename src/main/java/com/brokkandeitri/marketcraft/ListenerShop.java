@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class ListenerShop implements Listener {
         event.setCancelled(true);
 
         ItemStack clickedItem = event.getCurrentItem();
+        assert clickedItem != null;
         Player player = (Player) event.getWhoClicked();
         Inventory topInventory = player.getOpenInventory().getTopInventory();
         Inventory botInventory = player.getOpenInventory().getBottomInventory();
@@ -37,11 +39,11 @@ public class ListenerShop implements Listener {
             return;
         }
 
-        List<String> itemLore = Objects.requireNonNull(clickedItem.getItemMeta().getLore());
+        List<String> itemLore = clickedItem.getItemMeta().getLore();
         int cost = MarketCraft.getPrice(Objects.requireNonNull(topInventory.getItem(InvPos.MID)));
         double tax = files.config.getDouble("TAX");
 
-        switch (itemLore.get(0)) {
+        switch (Objects.requireNonNull(itemLore).get(0)) {
             case "Buy":
                 cost = (int) Math.ceil(cost * (1 + tax / 100));
                 changeOrder(player, clickedItem, topInventory, cost);
@@ -52,7 +54,8 @@ public class ListenerShop implements Listener {
                 return;
 
             case "Confirm":
-                doOrder(player, topInventory, botInventory, ((TextComponent)(clickedItem.getItemMeta().displayName())).content().split(" ")[0], tax);
+                doOrder(player, topInventory, botInventory, ((TextComponent)(Objects.requireNonNull(clickedItem.getItemMeta().displayName()))).content().split(" ")[0], tax);
+                changeOrderPrice(topInventory);
                 return;
 
             case "Back":
@@ -62,6 +65,30 @@ public class ListenerShop implements Listener {
 
             default:
         }
+    }
+
+    private void changeOrderPrice(Inventory topInventory) {
+        ItemStack originalItem = topInventory.getItem(InvPos.MID);
+        int cost = MarketCraft.getPrice(Objects.requireNonNull(originalItem));
+
+        ItemStack currentItem = topInventory.getItem(InvPos.BOT_MID);
+        String currentName = Objects.requireNonNull(currentItem).displayName().toString();
+
+        String name;
+        int orderAmount = Objects.requireNonNull(topInventory.getItem(InvPos.MID)).getAmount();
+        if (currentName.contains("Sell")) {
+            name = "Sell " + orderAmount + " for £" + cost * orderAmount;
+        } else {
+            name = "Buy " + orderAmount + " for £" + cost * orderAmount;
+        }
+
+        GUIItem item;
+        item = new GUIItem();
+        item.name = name;
+        item.lore.add(Component.text("Confirm"));
+        item.amount = 1;
+        item.material = Material.LIME_DYE;
+        topInventory.setItem(InvPos.BOT_MID, item.getItemStack());
     }
 
     private void changeOrder(Player player, ItemStack option, Inventory inventory, int cost) {

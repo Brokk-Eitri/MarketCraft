@@ -39,10 +39,11 @@ public class ListenerShop implements Listener {
 
         List<String> itemLore = Objects.requireNonNull(clickedItem.getItemMeta().getLore());
         int cost = MarketCraft.getPrice(Objects.requireNonNull(topInventory.getItem(InvPos.MID)));
+        double tax = files.config.getDouble("TAX");
 
         switch (itemLore.get(0)) {
             case "Buy":
-                cost = (int) Math.ceil(cost * 1.05);
+                cost = (int) Math.ceil(cost * (1 + tax / 100));
                 changeOrder(player, clickedItem, topInventory, cost);
                 return;
                 
@@ -51,7 +52,7 @@ public class ListenerShop implements Listener {
                 return;
 
             case "Confirm":
-                doOrder(player, topInventory, botInventory, ((TextComponent)(clickedItem.getItemMeta().displayName())).content().split(" ")[0]);
+                doOrder(player, topInventory, botInventory, ((TextComponent)(clickedItem.getItemMeta().displayName())).content().split(" ")[0], tax);
                 return;
 
             case "Back":
@@ -87,7 +88,7 @@ public class ListenerShop implements Listener {
         player.openInventory(inventory);
     }
 
-    private void doOrder(Player player, Inventory shopInv, Inventory playerInv, String type) {
+    private void doOrder(Player player, Inventory shopInv, Inventory playerInv, String type, double tax) {
         Material orderMaterial = Objects.requireNonNull(shopInv.getItem(InvPos.MID)).getType();
         int orderAmount = Objects.requireNonNull(shopInv.getItem(InvPos.MID)).getAmount();
         ItemStack order = new ItemStack(orderMaterial, orderAmount);
@@ -95,7 +96,6 @@ public class ListenerShop implements Listener {
         String balanceKey = "players." + player.getUniqueId() + ".balance";
         int balances = files.balances.getInt(balanceKey);
         int cost = MarketCraft.getPrice(order) * order.getAmount();
-        double tax = files.config.getDouble("TAX");
         int aggressiveness = files.config.getInt("AGGRESSIVENESS");
 
         switch (type) {
@@ -106,12 +106,12 @@ public class ListenerShop implements Listener {
                 }
 
                 playerInv.removeItemAnySlot(order);
-                logItemChange(orderMaterial, aggressiveness * orderAmount);
 
+                MarketCraft.changeBalanceScore(player, cost);
                 files.balances.set(balanceKey, balances + cost);
 
                 player.sendMessage(ChatColor.GOLD + "You have sold " + order.getAmount() + " " + order.getI18NDisplayName() + " for £" + cost);
-
+                logItemChange(orderMaterial, aggressiveness * orderAmount);
                 return;
 
 
@@ -122,11 +122,12 @@ public class ListenerShop implements Listener {
                     if (balances >= cost) {
 
                         playerInv.addItem(order);
-                        logItemChange(orderMaterial, -1 * aggressiveness * orderAmount);
 
+                        MarketCraft.changeBalanceScore(player, cost);
                         files.balances.set(balanceKey, balances - cost);
 
                         player.sendMessage(ChatColor.GOLD + "You have bought " + order.getAmount() + " " + order.getI18NDisplayName() + " for £" + cost);
+                        logItemChange(orderMaterial, -1 * aggressiveness * orderAmount);
 
                     } else {
                         player.sendMessage(ChatColor.RED + "Not enough money to buy this item (Cost: £" + cost + ").");

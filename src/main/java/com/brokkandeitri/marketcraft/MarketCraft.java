@@ -1,10 +1,16 @@
 package com.brokkandeitri.marketcraft;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,7 +35,21 @@ public final class MarketCraft extends JavaPlugin {
     }
 
     public static int getPrice(ItemStack item) {
-        return itemPriceMap.getOrDefault(item.getType().name(), files.config.getInt("MAX_PRICE"));
+        String name = item.getType().name();
+        int amount = item.getAmount();
+
+        if (itemPriceMap.get(name) != null) {
+            return itemPriceMap.get(name);
+        }
+
+        ItemChange itemChange = new ItemChange();
+        itemChange.name = name;
+        itemChange.change = amount;
+
+        logItemChange(itemChange);
+        MarketCraft.server.getLogger().info(ChatColor.GREEN + (amount > 0 ? "+" : "") + amount + " " + name);
+        return itemPriceMap.get(name);
+
     }
 
     public static int getPrice(String itemName) {
@@ -57,7 +77,7 @@ public final class MarketCraft extends JavaPlugin {
             server.getLogger().setLevel(Level.WARNING);
         }
 
-        SpawnVillagers();
+        spawnVillagers();
 
         for (String key : files.itemCounts.getKeys(false)) {
             int count = files.itemCounts.getInt(key);
@@ -187,7 +207,7 @@ public final class MarketCraft extends JavaPlugin {
         }
     }
 
-    public void SpawnVillagers(){
+    public void spawnVillagers(){
         if (files.shop.contains("VILLAGERS")) {
             List<String> villagers = files.shop.getStringList("VILLAGERS");
             for (String item: villagers) {
@@ -201,6 +221,23 @@ public final class MarketCraft extends JavaPlugin {
                 }
             }
         }
+    }
+
+    public static void changeBalanceScore(Player player, int balanceChange) {
+        ScoreboardManager scoreboardManager = server.getScoreboardManager();
+        Scoreboard scoreboard = scoreboardManager.getMainScoreboard();
+        Objective objective;
+        if (scoreboard.getObjective("Balances") == null) {
+            objective = scoreboard.registerNewObjective("Balances", "dummy", Component.text("Balances"));
+            objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        } else {
+            objective = scoreboard.getObjective("Balances");
+        }
+        assert objective != null;
+        Score score = objective.getScore(player.getName());
+        String playerBalanceKey = "players." + player.getUniqueId() + ".balance";
+        int balance = (int) MarketCraft.files.balances.get(playerBalanceKey);
+        score.setScore(balance + balanceChange);
     }
 }
 

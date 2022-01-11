@@ -53,14 +53,16 @@ public class CommandPay implements CommandExecutor {
             if ((int) files.balances.get(playerBalanceKey) >= amount){
 
                 int balances = (int) files.balances.get(playerBalanceKey) - amount;
+                MarketCraft.changeBalanceScore(player, -1 * amount);
                 files.balances.set(playerBalanceKey, balances);
 
+
                 receiver.sendMessage(ChatColor.GOLD + "You have been payed £" + amount + " by " + sender.getName());
-                player.sendMessage(ChatColor.GOLD + "You have payed " + receiver.getDisplayName() + " £" + amount);
+                player.sendMessage(ChatColor.GOLD + "You have payed " + receiver.getName() + " £" + amount);
 
                 uUID = receiver.getUniqueId();
                 playerBalanceKey = "players." + uUID.toString() + ".balance";
-
+                MarketCraft.changeBalanceScore(receiver, amount);
                 if (files.balances.contains(playerBalanceKey)) {
                     balances = (int) files.balances.get(playerBalanceKey) + amount;
                     files.balances.set(playerBalanceKey, balances);
@@ -95,6 +97,7 @@ public class CommandPay implements CommandExecutor {
 
         String playerBalanceKey = "players." + uUID + ".balance";
 
+        MarketCraft.changeBalanceScore(receiver, amount);
         if (files.balances.contains(playerBalanceKey)) {
             int balances = (int) files.balances.get(playerBalanceKey) + amount;
             files.balances.set(playerBalanceKey, balances);

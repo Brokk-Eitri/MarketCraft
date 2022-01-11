@@ -90,9 +90,9 @@ public class ListenerPlayerShop implements Listener {
                     return;
                 }
 
-                playerShopSellEvent(inventory, playersInv,selectedItem, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory), cost);
                 assert receiver != null;
                 playerPayEvent(receiver, player, selectedItem, price, cost);
+                playerShopSellEvent(inventory, playersInv,selectedItem, price, playerBalanceKey, receiverBalanceKey, getPosition(inventory), cost);
 
                 playerShopCancelEvent(inventory);
                 break;
@@ -111,8 +111,10 @@ public class ListenerPlayerShop implements Listener {
     }
 
     private void playerPayEvent(Player receiver, Player player, ItemStack selectedItem, int price, int cost) {
-        receiver.sendMessage(ChatColor.GOLD + "You have sold " + selectedItem.getI18NDisplayName() + " for: £" + price);
+        receiver.sendMessage(ChatColor.GOLD + player.getName() + " has Bought " + selectedItem.getI18NDisplayName() + " for: £" + price);
         player.sendMessage(ChatColor.GOLD + "You have Bought " + selectedItem.getI18NDisplayName() + " for: £" + cost);
+        MarketCraft.changeBalanceScore(player, -1 * cost);
+        MarketCraft.changeBalanceScore(receiver, price);
     }
 
     private void playerShopSellEvent(Inventory inventory, Inventory playersInv, ItemStack selectedItem, int price, String playerBalanceKey, String receiverBalanceKey, int position, int cost) {

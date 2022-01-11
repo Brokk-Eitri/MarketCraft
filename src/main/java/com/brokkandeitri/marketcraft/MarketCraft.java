@@ -31,6 +31,10 @@ public final class MarketCraft extends JavaPlugin {
         public static File priceHistory;
     }
 
+    public static int getCount(ItemStack item) {
+        return itemCountMap.get(item.getType().name());
+    }
+
     public static int getPrice(ItemStack item) {
         String name = item.getType().name();
         int amount = item.getAmount();
@@ -118,6 +122,7 @@ public final class MarketCraft extends JavaPlugin {
         Objects.requireNonNull(getCommand("price")).setExecutor(new CommandPrice());
         Objects.requireNonNull(getCommand("playershop")).setExecutor(new CommandPlayerShop());
         Objects.requireNonNull(getCommand("ranking")).setExecutor(new CommandRanking());
+        Objects.requireNonNull(getCommand("count")).setExecutor(new CommandCount());
     }
 
 
